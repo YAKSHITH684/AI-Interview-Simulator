@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Interview Simulator</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <h2>🤖 AI Interview</h2>
+
+        <div class="menu">
+
+            <button class="nav-btn">🏠 Dashboard</button>
+            <button class="nav-btn">📄 Upload Resume</button>
+            <button class="nav-btn">🧠 AI Analysis</button>
+            <button class="nav-btn">💬 Interview Chat</button>
+            <button class="nav-btn">🎯 Practice</button>
+            <button class="nav-btn">🎭 Mock Interview</button>
+            <button class="nav-btn">🎙 Voice Interview</button>
+            <button class="nav-btn">💻 Coding Interview</button>
+            <button class="nav-btn">📊 Progress</button>
+            <button class="nav-btn">📚 Resources</button>
+
+            <button
+                type="button"
+                class="nav-btn"
+                onclick="logout()">
+
+                🚪 Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+            <div>
+
+                <h1>Welcome Back 👋</h1>
+
+                <p>
+                    Upload your resume and get ATS insights,
+                    AI feedback and interview preparation.
+                </p>
+
+            </div>
+
+            <button class="upload-btn">
+                Upload Resume
+            </button>
+
+        </section>
+
+        <!-- TOP STATS -->
+
+        <section class="top-cards">
+
+            <div class="card stat-card">
+                <h1 id="atsScore">0%</h1>
+                <p>ATS Score</p>
+            </div>
+
+            <div class="card stat-card">
+                <h1 id="resumeScore">0%</h1>
+                <p>Resume Score</p>
+            </div>
+
+            <div class="card stat-card">
+                <h1 id="readinessScore">0%</h1>
+                <p>Interview Readiness</p>
+            </div>
+
+            <div class="card stat-card">
+                <h1 id="skillsCount">0</h1>
+                <p>Skills Found</p>
+            </div>
+
+        </section>
+
+        <!-- DASHBOARD -->
+
+        <section class="dashboard-grid">
+
+            <!-- LEFT COLUMN -->
+
+            <div>
+
+                <div class="card">
+
+                    <h3>📄 Upload Resume</h3>
+
+                    <input type="file" id="fileInput">
+
+                    <button onclick="uploadResume()">
+                        Analyze Resume
+                    </button>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>🎯 ATS Analysis</h3>
+
+                    <label>Skills Match</label>
+
+                    <div class="progress">
+                        <div id="skillsProgress"></div>
+                    </div>
+
+                    <label>Keyword Match</label>
+
+                    <div class="progress">
+                        <div id="keywordProgress"></div>
+                    </div>
+
+                    <label>Experience Match</label>
+
+                    <div class="progress">
+                        <div id="experienceProgress"></div>
+                    </div>
+
+                    <label>Education Score</label>
+
+                    <div class="progress">
+                        <div id="educationProgress"></div>
+                    </div>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>👤 Resume Details</h3>
+
+                    <p>
+                        <strong>Name:</strong>
+                        <span id="candidateName">-</span>
+                    </p>
+
+                    <p>
+                        <strong>Email:</strong>
+                        <span id="candidateEmail">-</span>
+                    </p>
+
+                    <h4>Education</h4>
+
+                    <div id="educationData">
+                        No Data Available
+                    </div>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>🛠 Extracted Skills</h3>
+
+                    <div id="skillsContainer"></div>
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+
+            <div>
+
+                <div class="card">
+
+                    <h3>⚠ Missing Keywords</h3>
+
+                    <ul id="missingKeywords">
+                        <li>Upload Resume First</li>
+                    </ul>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>🤖 AI Suggestions</h3>
+
+                    <ul id="suggestionsList">
+                        <li>Upload Resume First</li>
+                    </ul>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>💪 Strengths</h3>
+
+                    <ul id="strengthList"></ul>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>📉 Weaknesses</h3>
+
+                    <ul id="weaknessList"></ul>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>🎤 Interview Readiness</h3>
+
+                    <p id="technicalScore">
+                        Technical Skills: 0%
+                    </p>
+
+                    <p id="communicationScore">
+                        Communication: 0%
+                    </p>
+
+                    <p id="problemSolvingScore">
+                        Problem Solving: 0%
+                    </p>
+
+                    <p id="confidenceScore">
+                        Confidence: 0%
+                    </p>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>💬 AI Interview Chat</h3>
+
+                    <div id="chatBox"></div>
+
+                    <div class="chat-input">
+
+                        <input
+                            type="text"
+                            id="userInput"
+                            placeholder="Ask interview question..."
+                        >
+
+                        <button onclick="sendMessage()">
+                            Send
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+
+function logout() {
+
+    localStorage.clear();
+    sessionStorage.clear();
+
+    alert("Logged Out Successfully");
+
+    window.location.replace("./01_login.html");
+}
+
+</script>
+
+</body>
+
+</html>

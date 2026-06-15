@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>Create Account</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  background: url("https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5")
+  no-repeat center center/cover;
+
+  overflow:hidden;
+}
+
+/* GLASS BOX */
+.box{
+  width:400px;
+  padding:30px;
+
+  background: rgba(0, 255, 120, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(0, 255, 120, 0.3);
+  border-radius: 20px;
+
+  color: white;
+
+  box-shadow: 0 0 15px rgba(0,255,120,0.4),
+              0 0 35px rgba(0,255,120,0.2);
+
+  transition:0.3s;
+}
+
+.box:hover{
+  transform:scale(1.02);
+  box-shadow: 0 0 25px rgba(0,255,120,0.6),
+              0 0 60px rgba(0,255,120,0.4);
+}
+
+/* TITLE */
+h2{
+  text-align:center;
+  margin-bottom:20px;
+  font-size:28px;
+  color:#00ff99;
+}
+
+/* INPUT */
+input{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border-radius:12px;
+  border:1px solid rgba(0,255,120,0.4);
+  outline:none;
+  background: rgba(0,0,0,0.2);
+  color:white;
+}
+
+input::placeholder{
+  color:#bfffe0;
+}
+
+/* MESSAGE */
+#passMsg{
+  font-size:13px;
+  margin-top:5px;
+  color:red;
+}
+
+/* BUTTON */
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+
+  background: linear-gradient(90deg,#00ff99,#00cc66);
+  color:black;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:10px;
+  transition:0.3s;
+}
+
+button:hover{
+  box-shadow:0 0 20px #00ff99;
+  transform:scale(1.03);
+}
+
+/* LINK */
+a{
+  display:block;
+  text-align:center;
+  margin-top:15px;
+  color:#00ff99;
+  text-decoration:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Create Account</h2>
+
+<input id="name" placeholder="Full Name">
+<input id="email" placeholder="Email">
+
+<input type="password" id="password" placeholder="Password" onkeyup="checkPassword()">
+
+<div id="passMsg">Password is required</div>
+
+<button onclick="register()">Register</button>
+
+<a href="01_login.html">Back to Login</a>
+
+</div>
+
+<script>
+
+// 🔐 LIVE PASSWORD CHECK
+function checkPassword(){
+
+  let password = document.getElementById("password").value;
+  let msg = document.getElementById("passMsg");
+
+  let upper = /[A-Z]/.test(password);
+  let lower = /[a-z]/.test(password);
+  let number = /[0-9]/.test(password);
+  let special = /[@$!%*?&]/.test(password);
+  let length = password.length >= 8;
+
+  if(password.length === 0){
+    msg.style.color = "red";
+    msg.innerHTML = "Password is required";
+    return;
+  }
+
+  if(upper && lower && number && special && length){
+    msg.style.color = "lime";
+    msg.innerHTML = "Strong Password ✔";
+  } else {
+    msg.style.color = "red";
+    msg.innerHTML =
+      (upper ? "✔ Uppercase<br>" : "❌ Uppercase<br>") +
+      (lower ? "✔ Lowercase<br>" : "❌ Lowercase<br>") +
+      (number ? "✔ Number<br>" : "❌ Number<br>") +
+      (special ? "✔ Special Character<br>" : "❌ Special Character<br>") +
+      (length ? "✔ Minimum 8 characters" : "❌ Minimum 8 characters");
+  }
+}
+
+// 🔐 REGISTER FUNCTION
+function register(){
+
+  let name = document.getElementById("name").value;
+  let email = document.getElementById("email").value;
+  let password = document.getElementById("password").value;
+
+  if(name === "" || email === "" || password === ""){
+    alert("Fill all fields");
+    return;
+  }
+
+  // password rules
+  let pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+  if(!pattern.test(password)){
+    alert("Password must contain:\n- Uppercase\n- Lowercase\n- Number\n- Special character\n- 8+ length");
+    return;
+  }
+
+  // save user
+  let user = {
+    name: name,
+    email: email,
+    password: password
+  };
+
+  localStorage.setItem("user", JSON.stringify(user));
+
+  // reset login state
+  localStorage.setItem("loggedIn", "false");
+
+  alert("Account Created Successfully!");
+
+  // go to login page
+  window.location.href = "01_login.html";
+}
+
+</script>
+
+</body>
+</html>
