@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from routes import router
 
-from database.database import engine
 from database.database import Base
-
-
-Base.metadata.create_all(bind=engine)
+from database.database import engine
+Base.metadata.create_all(
+bind=engine
+)
 
 app=FastAPI()
 
@@ -14,14 +14,10 @@ router
 )
 
 
-@app.get("/")
-
+@app.get("/") 
 def home():
 
-    return{
-
-    "message":
-
-    "AI Interview Simulator API Running"
-
+    return {
+        "message":
+        "AI Interview Simulator API Running"
     }

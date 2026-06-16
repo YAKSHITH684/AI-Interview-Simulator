@@ -137,74 +137,181 @@ a{
 
 <script>
 
-// 🔐 LIVE PASSWORD CHECK
+// PASSWORD CHECK
 function checkPassword(){
 
-  let password = document.getElementById("password").value;
-  let msg = document.getElementById("passMsg");
+let password =
+document.getElementById("password").value;
 
-  let upper = /[A-Z]/.test(password);
-  let lower = /[a-z]/.test(password);
-  let number = /[0-9]/.test(password);
-  let special = /[@$!%*?&]/.test(password);
-  let length = password.length >= 8;
+let msg =
+document.getElementById("passMsg");
 
-  if(password.length === 0){
-    msg.style.color = "red";
-    msg.innerHTML = "Password is required";
-    return;
-  }
+let upper = /[A-Z]/.test(password);
+let lower = /[a-z]/.test(password);
+let number = /[0-9]/.test(password);
+let special = /[@$!%*?&]/.test(password);
+let length = password.length >= 8;
 
-  if(upper && lower && number && special && length){
-    msg.style.color = "lime";
-    msg.innerHTML = "Strong Password ✔";
-  } else {
-    msg.style.color = "red";
-    msg.innerHTML =
-      (upper ? "✔ Uppercase<br>" : "❌ Uppercase<br>") +
-      (lower ? "✔ Lowercase<br>" : "❌ Lowercase<br>") +
-      (number ? "✔ Number<br>" : "❌ Number<br>") +
-      (special ? "✔ Special Character<br>" : "❌ Special Character<br>") +
-      (length ? "✔ Minimum 8 characters" : "❌ Minimum 8 characters");
-  }
+if(password===""){
+
+msg.style.color="red";
+
+msg.innerHTML=
+"Password is required";
+
+return;
+
 }
 
-// 🔐 REGISTER FUNCTION
-function register(){
+if(
+upper &&
+lower &&
+number &&
+special &&
+length
+){
 
-  let name = document.getElementById("name").value;
-  let email = document.getElementById("email").value;
-  let password = document.getElementById("password").value;
+msg.style.color="lime";
 
-  if(name === "" || email === "" || password === ""){
-    alert("Fill all fields");
-    return;
-  }
+msg.innerHTML=
+"Strong Password ✔";
 
-  // password rules
-  let pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+}
 
-  if(!pattern.test(password)){
-    alert("Password must contain:\n- Uppercase\n- Lowercase\n- Number\n- Special character\n- 8+ length");
-    return;
-  }
+else{
 
-  // save user
-  let user = {
-    name: name,
-    email: email,
-    password: password
-  };
+msg.style.color="red";
 
-  localStorage.setItem("user", JSON.stringify(user));
+msg.innerHTML=
 
-  // reset login state
-  localStorage.setItem("loggedIn", "false");
+(upper ? "✔ Uppercase<br>" : "❌ Uppercase<br>")+
 
-  alert("Account Created Successfully!");
+(lower ? "✔ Lowercase<br>" : "❌ Lowercase<br>")+
 
-  // go to login page
-  window.location.href = "01_login.html";
+(number ? "✔ Number<br>" : "❌ Number<br>")+
+
+(special ? "✔ Special Character<br>" : "❌ Special Character<br>")+
+
+(length ? "✔ Minimum 8 Characters" : "❌ Minimum 8 Characters");
+
+}
+
+}
+
+
+
+// REGISTER → DATABASE
+async function register(){
+
+let name =
+document.getElementById("name")
+.value
+.trim();
+
+let email =
+document.getElementById("email")
+.value
+.trim();
+
+let password =
+document.getElementById("password")
+.value
+.trim();
+
+
+
+if(
+name===""
+||
+email===""
+||
+password===""
+){
+
+alert(
+"Fill all fields"
+);
+
+return;
+
+}
+
+
+
+let pattern =
+
+/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+
+
+if(
+!pattern.test(password)
+){
+
+alert(
+
+"Password must contain:\n\nUppercase\nLowercase\nNumber\nSpecial Character\nMinimum 8 Characters"
+
+);
+
+return;
+
+}
+
+
+try{
+
+let response = await fetch(
+
+"http://127.0.0.1:8000/register",
+
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body: JSON.stringify({
+
+name:name,
+email:email,
+password:password
+
+})
+
+}
+
+);
+
+
+console.log(response);
+
+let data = await response.json();
+
+console.log(data);
+
+alert(
+data.message
+||
+"Registration Successful"
+);
+
+window.location.href =
+"01_login.html";
+
+}
+
+catch(error){
+
+console.log(error);
+
+alert(
+error.message
+);
+
+}
 }
 
 </script>

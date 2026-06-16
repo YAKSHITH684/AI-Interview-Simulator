@@ -213,30 +213,139 @@ a{
 </div>
 
 <script>
-function login(){
 
-  let email = document.getElementById("email").value;
-  let pass = document.getElementById("password").value;
+async function login(){
 
-  let user = JSON.parse(localStorage.getItem("user"));
+let email =
+document
+.getElementById("email")
+.value
+.trim();
 
-  if(!user){
-    document.getElementById("error").innerHTML = "No account found. Please register first.";
-    return;
-  }
+let password =
+document
+.getElementById("password")
+.value
+.trim();
 
-  if(email === user.email && pass === user.password){
+let error =
+document
+.getElementById("error");
 
-    localStorage.setItem("loggedIn", "true");
 
-    alert("Login Successful");
+error.innerHTML="";
 
-    window.location.href = "index.html";
 
-  } else {
-    document.getElementById("error").innerHTML = "Invalid Email or Password";
-  }
+if(
+email===""
+||
+password===""
+){
+
+error.innerHTML=
+"Fill all fields";
+
+return;
+
 }
+
+
+try{
+
+let response =
+
+await fetch(
+
+"http://127.0.0.1:8000/login",
+
+{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":
+"application/json"
+
+},
+
+body:
+
+JSON.stringify({
+
+email:email,
+
+password:password
+
+})
+
+}
+
+);
+
+
+let data =
+
+await response.json();
+
+
+
+if(
+data.success
+){
+
+localStorage.setItem(
+"loggedIn",
+"true"
+);
+
+alert(
+"Login Successful"
+);
+
+window.location.href=
+"index.html";
+
+}
+
+else{
+
+error.innerHTML=
+"Invalid Email or Password";
+
+}
+
+}
+
+catch{
+
+error.innerHTML=
+
+"Backend not running";
+
+}
+
+}
+
+
+
+// ENTER KEY LOGIN
+document
+.addEventListener(
+"keypress",
+function(e){
+
+if(
+e.key==="Enter"
+){
+
+login();
+
+}
+
+}
+);
+
 </script>
 
 </body>

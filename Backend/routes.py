@@ -2,38 +2,61 @@ from fastapi import APIRouter
 from database.database import SessionLocal
 from database.models import User
 
-router = APIRouter()
+router=APIRouter()
 
 
-@router.post("/signup")
-def signup(email: str, password: str):
+@router.post("/register")
+def register(
+email:str,
+password:str
+):
 
-    db = SessionLocal()
+    db=SessionLocal()
 
-    user = User(
+    exists=(
+        db.query(User)
+        .filter(User.email==email)
+        .first()
+    )
+
+    if exists:
+
+        db.close()
+
+        return {
+            "message":"User already exists"
+        }
+
+    user=User(
         email=email,
         password=password
     )
 
     db.add(user)
+
     db.commit()
+
     db.close()
 
     return {
-        "message": "Account Created"
+        "message":"Registration Successful"
     }
 
 
+
 @router.post("/login")
-def login(email: str, password: str):
+def login(
+email:str,
+password:str
+):
 
-    db = SessionLocal()
+    db=SessionLocal()
 
-    user = (
+    user=(
         db.query(User)
         .filter(
-            User.email == email,
-            User.password == password
+            User.email==email,
+            User.password==password
         )
         .first()
     )
@@ -43,9 +66,9 @@ def login(email: str, password: str):
     if user:
 
         return {
-            "success": True
+            "success":True
         }
 
     return {
-        "success": False
+        "success":False
     }
