@@ -1,21 +1,38 @@
+
 from fastapi import APIRouter
+from pydantic import BaseModel
+
 from database.database import SessionLocal
 from database.models import User
 
-router=APIRouter()
+
+router = APIRouter()
+
+
+class RegisterRequest(BaseModel):
+    email: str
+    password: str
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+    new_password: str
+
 
 
 @router.post("/register")
-def register(
-email:str,
-password:str
-):
+def register(data: RegisterRequest):
 
-    db=SessionLocal()
+    db = SessionLocal()
 
-    exists=(
+    exists = (
         db.query(User)
-        .filter(User.email==email)
+        .filter(User.email == data.email)
         .first()
     )
 
@@ -24,12 +41,14 @@ password:str
         db.close()
 
         return {
-            "message":"User already exists"
+            "message":
+            "User already exists"
         }
 
-    user=User(
-        email=email,
-        password=password
+
+    user = User(
+        email=data.email,
+        password=data.password
     )
 
     db.add(user)
@@ -39,36 +58,63 @@ password:str
     db.close()
 
     return {
-        "message":"Registration Successful"
+        "message":
+        "Registration Successful"
     }
 
 
 
 @router.post("/login")
-def login(
-email:str,
-password:str
-):
+def login(data: LoginRequest):
 
-    db=SessionLocal()
+    db = SessionLocal()
 
-    user=(
+    user = (
         db.query(User)
         .filter(
-            User.email==email,
-            User.password==password
+            User.email == data.email,
+            User.password == data.password
         )
         .first()
     )
 
     db.close()
 
-    if user:
+    return {
+        "success": bool(user)
+    }
+
+
+
+@router.post("/forgot-password")
+def forgot_password(data: ForgotPasswordRequest):
+
+    db = SessionLocal()
+
+    user = (
+        db.query(User)
+        .filter(User.email == data.email)
+        .first()
+    )
+
+    if not user:
+
+        db.close()
 
         return {
-            "success":True
+            "message":
+            "Email not found"
         }
 
+
+    user.password = data.new_password
+
+    db.commit()
+
+    db.close()
+
     return {
-        "success":False
+        "message":
+        "Password Updated Successfully"
     }
+

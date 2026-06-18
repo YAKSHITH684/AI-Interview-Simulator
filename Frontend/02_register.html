@@ -135,6 +135,7 @@ a{
 
 </div>
 
+```javascript
 <script>
 
 // PASSWORD CHECK
@@ -146,11 +147,21 @@ document.getElementById("password").value;
 let msg =
 document.getElementById("passMsg");
 
-let upper = /[A-Z]/.test(password);
-let lower = /[a-z]/.test(password);
-let number = /[0-9]/.test(password);
-let special = /[@$!%*?&]/.test(password);
-let length = password.length >= 8;
+let upper =
+/[A-Z]/.test(password);
+
+let lower =
+/[a-z]/.test(password);
+
+let number =
+/[0-9]/.test(password);
+
+let special =
+/[@$!%*?&]/.test(password);
+
+let length =
+password.length >= 8;
+
 
 if(password===""){
 
@@ -162,6 +173,7 @@ msg.innerHTML=
 return;
 
 }
+
 
 if(
 upper &&
@@ -184,15 +196,17 @@ msg.style.color="red";
 
 msg.innerHTML=
 
-(upper ? "✔ Uppercase<br>" : "❌ Uppercase<br>")+
+(upper ? "✔ Uppercase<br>" : "❌ Uppercase<br>") +
 
-(lower ? "✔ Lowercase<br>" : "❌ Lowercase<br>")+
+(lower ? "✔ Lowercase<br>" : "❌ Lowercase<br>") +
 
-(number ? "✔ Number<br>" : "❌ Number<br>")+
+(number ? "✔ Number<br>" : "❌ Number<br>") +
 
-(special ? "✔ Special Character<br>" : "❌ Special Character<br>")+
+(special ? "✔ Special Character<br>" : "❌ Special Character<br>") +
 
-(length ? "✔ Minimum 8 Characters" : "❌ Minimum 8 Characters");
+(length
+? "✔ Minimum 8 Characters"
+: "❌ Minimum 8 Characters");
 
 }
 
@@ -200,31 +214,32 @@ msg.innerHTML=
 
 
 
-// REGISTER → DATABASE
+// REGISTER → BACKEND → DATABASE
 async function register(){
 
 let name =
-document.getElementById("name")
+document
+.getElementById("name")
 .value
 .trim();
 
 let email =
-document.getElementById("email")
+document
+.getElementById("email")
 .value
 .trim();
 
 let password =
-document.getElementById("password")
+document
+.getElementById("password")
 .value
 .trim();
 
 
 
 if(
-name===""
-||
-email===""
-||
+name==="" ||
+email==="" ||
 password===""
 ){
 
@@ -238,10 +253,9 @@ return;
 
 
 
+// PASSWORD VALIDATION
 let pattern =
-
 /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-
 
 
 if(
@@ -249,9 +263,7 @@ if(
 ){
 
 alert(
-
-"Password must contain:\n\nUppercase\nLowercase\nNumber\nSpecial Character\nMinimum 8 Characters"
-
+"Password requirements not satisfied"
 );
 
 return;
@@ -259,21 +271,23 @@ return;
 }
 
 
+
 try{
 
-let response = await fetch(
-
+let response =
+await fetch(
 "http://127.0.0.1:8000/register",
-
 {
 
 method:"POST",
 
 headers:{
-"Content-Type":"application/json"
+"Content-Type":
+"application/json"
 },
 
-body: JSON.stringify({
+body:
+JSON.stringify({
 
 name:name,
 email:email,
@@ -286,20 +300,40 @@ password:password
 );
 
 
-console.log(response);
 
-let data = await response.json();
+let data =
+await response.json();
 
-console.log(data);
+
+
+if(response.ok){
 
 alert(
-data.message
-||
+data.message ||
 "Registration Successful"
 );
 
+
+// CLEAR FIELDS
+document.getElementById("name").value="";
+document.getElementById("email").value="";
+document.getElementById("password").value="";
+
+
+// MOVE TO LOGIN
 window.location.href =
 "01_login.html";
+
+}
+
+else{
+
+alert(
+data.message ||
+"Registration Failed"
+);
+
+}
 
 }
 
@@ -308,13 +342,33 @@ catch(error){
 console.log(error);
 
 alert(
-error.message
+"Backend not running on port 8000"
 );
 
 }
+
 }
 
+
+
+// ENTER KEY SUPPORT
+document.addEventListener(
+"keydown",
+function(event){
+
+if(event.key==="Enter"){
+
+register();
+
+}
+
+}
+);
+
 </script>
+```
+
+
 
 </body>
 </html>
