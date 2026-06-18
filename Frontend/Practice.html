@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Interview Practice</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial;
+
+    /* PURE CLEAR IMAGE BACKGROUND */
+    background: url("https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781798325/ai-art-blue-background-mountains-digital-art-sky-stars-light_cszc2c.jpg");
+
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: white;
+}
+
+/* MAIN CARD */
+.container {
+    width: 720px;
+    height: 780px;
+
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(30px);
+    border-radius: 20px;
+
+    border: 1px solid rgba(255,255,255,0.12);
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+/* HEADER */
+.header {
+    padding: 14px;
+    background: rgba(15, 20, 50, 0.8);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-weight: bold;
+}
+
+/* BACK BUTTON */
+.back-btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 10px;
+
+    background: linear-gradient(135deg, #6366f1, #38bdf8);
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* PROGRESS BAR */
+.progress {
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+}
+
+.progress-bar {
+    height: 6px;
+    width: 0%;
+    background: linear-gradient(90deg,#38bdf8,#6366f1);
+    transition: 0.3s;
+}
+
+/* CHAT BOX */
+.chat {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+/* AI MESSAGE */
+.ai {
+    background: rgba(59,130,246,0.85);
+    padding: 10px 14px;
+    margin: 8px;
+    border-radius: 12px;
+    max-width: 75%;
+    width: fit-content;
+}
+
+/* USER MESSAGE */
+.user {
+    background: rgba(34,197,94,0.85);
+    padding: 10px 14px;
+    margin: 8px;
+    border-radius: 12px;
+    margin-left: auto;
+    max-width: 75%;
+}
+
+/* TYPING */
+.typing {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-left: 10px;
+}
+
+/* INPUT */
+.input-box {
+    display: flex;
+    padding: 12px;
+    background: rgba(15, 20, 50, 0.85);
+}
+
+input {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    color: white;
+}
+
+button.send {
+    margin-left: 10px;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #6366f1, #38bdf8);
+    font-weight: bold;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+
+    <div style="display:flex;align-items:center;gap:10px;">
+        
+        <img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781799602/artificial-intelligence_yqv3ol.png"
+             width="26" height="26">
+
+        <div>AI Interview Practice Mode</div>
+
+    </div>
+
+    <button class="back-btn" onclick="goBack()">← Back</button>
+
+</div>
+
+    <!-- PROGRESS -->
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div id="typing" class="typing" style="display:none;">
+        🤖 AI is thinking...
+    </div>
+
+    <!-- CHAT -->
+    <div class="chat" id="chat"></div>
+
+    <!-- INPUT -->
+    <div class="input-box">
+        <input id="input" placeholder="Type your answer..." />
+        <button class="send" onclick="send()">Send</button>
+    </div>
+
+</div>
+
+<script>
+
+let step = 0;
+
+function goBack() {
+    window.location.href = "index.html";
+}
+
+function updateProgress() {
+    let percent = (step / 10) * 100;
+    document.getElementById("progressBar").style.width = percent + "%";
+}
+
+function addAI(text) {
+    document.getElementById("chat").innerHTML +=
+    `<div class="ai">🤖 ${text}</div>`;
+}
+
+function addUser(text) {
+    document.getElementById("chat").innerHTML +=
+    `<div class="user">👤 ${text}</div>`;
+}
+
+// START
+window.onload = async function () {
+
+    let res = await fetch("http://127.0.0.1:8000/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ message: "", step: 0 })
+    });
+
+    let data = await res.json();
+
+    step = data.next_step;
+
+    addAI(data.reply);
+    updateProgress();
+}
+
+// SEND
+async function send() {
+
+    let input = document.getElementById("input");
+    let text = input.value;
+
+    if (!text) return;
+
+    addUser(text);
+    input.value = "";
+
+    document.getElementById("typing").style.display = "block";
+
+    let res = await fetch("http://127.0.0.1:8000/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            message: text,
+            step: step
+        })
+    });
+
+    let data = await res.json();
+
+    document.getElementById("typing").style.display = "none";
+
+    step = data.next_step;
+
+    addAI(data.reply);
+    updateProgress();
+}
+
+</script>
+
+</body>
+</html>

@@ -211,3 +211,136 @@ async def analyze_resume(resume: UploadFile = File(...)):
         "ai_verdict": ai_verdict,
         "ai_feedback": ai_feedback
     }
+
+@router.post("/chat")
+def chat(data: dict):
+
+    msg = data.get("message", "").strip().lower()
+    step = data.get("step", 0)
+
+    questions = [
+        "Tell me about yourself (STRICT: answer in 3 lines only).",
+        "What are your strengths?",
+        "What are your weaknesses?",
+        "Explain your best project.",
+        "What challenges did you face in that project?",
+        "What technologies did you use?",
+        "Why did you choose this field?",
+        "Describe a problem you solved recently.",
+        "How do you handle pressure or deadlines?",
+        "Why should we hire you?"
+    ]
+
+    feedback = [
+        "Good introduction 👍",
+        "Nice strength 👍",
+        "Honest answer 👍",
+        "Good project explanation 👨‍💻",
+        "Strong problem solving 🔥",
+        "Good technical clarity ⚙️",
+        "Nice career reasoning 🎯",
+        "Good real example 🧠",
+        "Good pressure handling 💼",
+        "Excellent final answer 🚀"
+    ]
+
+    # FIRST MESSAGE
+    if step == 0:
+        return {
+            "reply": (
+                "👋 Welcome to AI Interview!\n\n"
+                "We will evaluate your communication and technical skills.\n\n"
+                + questions[0]
+            ),
+            "next_step": 1
+        }
+
+    # STOP CONDITION
+    if step >= len(questions):
+        return {
+            "reply": "🎉 Interview completed successfully!",
+            "next_step": step
+        }
+
+    # NORMAL FLOW
+    reply = (
+        f"🤖 Feedback: {feedback[step - 1]}\n\n"
+        f"➡️ Next Question:\n{questions[step]}"
+    )
+
+    return {
+        "reply": reply,
+        "next_step": step + 1
+    }
+
+@router.post("/chat")
+def chat(data: dict):
+
+    msg = data.get("message", "").strip().lower()
+    step = data.get("step", 0)
+
+    questions = [
+        "Tell me about yourself (STRICT: answer in 3 lines only).",
+        "What are your strengths?",
+        "What are your weaknesses?",
+        "Explain your best project.",
+        "What challenges did you face in that project?",
+        "What technologies did you use?",
+        "Why did you choose this field?",
+        "Describe a problem you solved recently.",
+        "How do you handle pressure or deadlines?",
+        "Why should we hire you?"
+    ]
+
+    feedback = [
+        "Good introduction 👍",
+        "Nice strength 👍",
+        "Honest answer 👍",
+        "Good project explanation 👨‍💻",
+        "Strong problem solving 🔥",
+        "Good technical clarity ⚙️",
+        "Nice career reasoning 🎯",
+        "Good real example 🧠",
+        "Good pressure handling 💼",
+        "Excellent final answer 🚀"
+    ]
+
+    # FIRST MESSAGE
+    if step == 0:
+        return {
+            "reply": (
+                "👋 Welcome to AI Interview!\n\n"
+                "We will evaluate your communication, confidence, and technical skills.\n\n"
+                "💡 Tip: Keep answers short and structured.\n\n"
+                + questions[0]
+            ),
+            "next_step": 1
+        }
+
+    # STOP CONDITION
+    if step >= len(questions):
+        return {
+            "reply": (
+                "🎉 Interview completed successfully!\n\n"
+                "📊 You can now review your performance and try again to improve."
+            ),
+            "next_step": step
+        }
+
+    # SIMPLE INTELLIGENT CHECK (NEW ADDITION)
+    if len(msg) < 5:
+        warning = "⚠️ Try to give a more detailed answer."
+    else:
+        warning = ""
+
+    # NORMAL FLOW
+    reply = (
+        f"🧠 Your Answer Note: {warning}\n\n"
+        f"🤖 Feedback: {feedback[step - 1]}\n\n"
+        f"➡️ Next Question:\n{questions[step]}"
+    )
+
+    return {
+        "reply": reply,
+        "next_step": step + 1
+    }

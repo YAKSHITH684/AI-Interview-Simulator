@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Interview Simulator</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial;
+
+    /* CLEAN FULL IMAGE BACKGROUND */
+    background: url("https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781780195/surreal-scenery-ai-1920x1080-18778_avqi7u.jpg");
+
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: white;
+}
+
+/* GLASS CONTAINER */
+.chat-container {
+    width: 680px;
+    height: 720px;
+
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(32px);
+
+    border-radius: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,0.7),
+        inset 0 0 18px rgba(255,255,255,0.05);
+}
+
+/* HEADER */
+.header {
+    background: rgba(20, 25, 50, 0.85);
+    padding: 16px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-weight: 600;
+    font-size: 16px;
+
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* BACK BUTTON */
+.back-btn {
+    padding: 7px 14px;
+
+    background: linear-gradient(135deg, #6366f1, #38bdf8);
+    border: none;
+    border-radius: 10px;
+
+    color: black;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.25s;
+}
+
+.back-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 18px rgba(56,189,248,0.6);
+}
+
+/* CHAT AREA */
+.messages {
+    flex: 1;
+    padding: 18px;
+    overflow-y: auto;
+}
+
+/* AI MESSAGE (BLUE GLASS) */
+.ai {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    padding: 12px 14px;
+    margin: 10px;
+    border-radius: 14px;
+
+    width: fit-content;
+    max-width: 75%;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+/* USER MESSAGE (GREEN GLASS) */
+.user {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    padding: 12px 14px;
+    margin: 10px;
+    border-radius: 14px;
+
+    margin-left: auto;
+    width: fit-content;
+    max-width: 75%;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+/* INPUT AREA */
+.input-box {
+    display: flex;
+    padding: 14px;
+
+    background: rgba(15, 20, 40, 0.85);
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+input {
+    flex: 1;
+    padding: 12px 14px;
+
+    border: none;
+    outline: none;
+    border-radius: 12px;
+
+    font-size: 14px;
+
+    background: rgba(255,255,255,0.10);
+    color: white;
+}
+
+input::placeholder {
+    color: rgba(255,255,255,0.55);
+}
+
+/* SEND BUTTON */
+button.send-btn {
+    margin-left: 10px;
+    padding: 12px 16px;
+
+    border: none;
+    cursor: pointer;
+
+    background: linear-gradient(135deg, #6366f1, #38bdf8);
+    color: black;
+
+    border-radius: 12px;
+
+    font-weight: bold;
+
+    transition: 0.25s;
+}
+
+button.send-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 18px rgba(99,102,241,0.5);
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <!-- HEADER -->
+    <!-- HEADER -->
+<div class="header">
+
+    <div style="display:flex;align-items:center;gap:10px;">
+        
+        <div>AI Interview Simulator</div>
+
+        <!-- PNG IMAGE AFTER TEXT -->
+        <img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781798675/ai_obxb2v.png"
+             width="28" height="28">
+
+    </div>
+
+    <button class="back-btn" onclick="goBack()">
+        ← Back
+    </button>
+
+</div>
+
+    <!-- CHAT -->
+    <div class="messages" id="messages"></div>
+
+    <!-- INPUT -->
+    <div class="input-box">
+        <input id="input" placeholder="Type your answer..." />
+        <button class="send-btn" onclick="send()">Send</button>
+    </div>
+
+</div>
+
+<script>
+
+let step = 0;
+
+// BACK BUTTON
+function goBack() {
+    window.location.href = "index.html";
+}
+
+// AI MESSAGE
+function addAI(text) {
+    document.getElementById("messages").innerHTML +=
+    `<div class="ai">🤖 ${text}</div>`;
+}
+
+// USER MESSAGE
+function addUser(text) {
+    document.getElementById("messages").innerHTML +=
+    `<div class="user">👤 ${text}</div>`;
+}
+
+// START
+window.onload = async function () {
+
+    let res = await fetch("http://127.0.0.1:8000/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            message: "",
+            step: 0
+        })
+    });
+
+    let data = await res.json();
+
+    step = data.next_step;
+
+    addAI("Welcome to AI Interview 🚀");
+    addAI(data.reply);
+}
+
+// SEND
+async function send() {
+
+    let input = document.getElementById("input");
+    let text = input.value;
+
+    if (!text) return;
+
+    addUser(text);
+    input.value = "";
+
+    let res = await fetch("http://127.0.0.1:8000/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            message: text,
+            step: step
+        })
+    });
+
+    let data = await res.json();
+
+    step = data.next_step;
+
+    addAI(data.reply);
+}
+
+</script>
+
+</body>
+</html>
