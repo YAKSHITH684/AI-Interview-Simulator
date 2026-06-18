@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Resume Analysis</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+
+  /* background image + dark overlay */
+  background: 
+    linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)),
+    url("https://images.unsplash.com/photo-1550751827-4bd374c3f58b");
+
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+/* GLASS CARD */
+.container {
+  width: 450px;
+
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  padding: 25px;
+  text-align: center;
+
+  box-shadow: 0 10px 35px rgba(0,0,0,0.6);
+}
+
+h2 {
+  color: #ffffff;
+}
+
+/* INPUT */
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.2);
+
+  background: rgba(0,0,0,0.25);
+  color: white;
+
+  outline: none;
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+
+  background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+  border: none;
+  border-radius: 10px;
+
+  cursor: pointer;
+  font-weight: bold;
+  color: black;
+
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.03);
+}
+
+/* RESULT GLASS */
+.result {
+  margin-top: 20px;
+  text-align: left;
+
+  background: rgba(0,0,0,0.35);
+  padding: 15px;
+  border-radius: 12px;
+
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* BADGES */
+.badge {
+  display: inline-block;
+  padding: 5px 10px;
+  margin: 3px;
+
+  border-radius: 8px;
+  background: #38bdf8;
+  color: black;
+  font-size: 12px;
+}
+
+/* BACK BUTTON */
+.back-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
+
+  background: transparent;
+  border: 1px solid #38bdf8;
+  color: #f9f9f9;
+
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.back-btn:hover {
+  background: #38bdf8;
+  color: black;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>
+  <img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781763958/ai-image_a6hbir.png"
+       width="50"
+       style="vertical-align: middle; margin-right: 8px;">
+  AI Resume Analyzer
+</h2>
+
+<input type="file" id="resumeFile">
+
+<button onclick="uploadResume()">Analyze Resume</button>
+
+<div class="result" id="resultBox">
+Upload a resume to see AI analysis
+</div>
+
+<button class="back-btn" onclick="goLogin()">⬅ Back to Login</button>
+
+</div>
+
+<script>
+
+function goLogin() {
+    window.location.href = "index.html";
+}
+
+async function uploadResume() {
+
+    const fileInput = document.getElementById("resumeFile");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Please select a file");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    const response = await fetch("http://127.0.0.1:8000/analyze-resume", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await response.json();
+
+    document.getElementById("resultBox").innerHTML = `
+        <p>📊 <b>ATS Score:</b> ${data.ats_score}</p>
+        <p>🤖 <b>AI Verdict:</b> ${data.ai_verdict}</p>
+
+        <p>🧠 <b>Skills Found:</b></p>
+        ${data.ai_skills_found.map(skill => `<span class="badge">${skill}</span>`).join('')}
+
+        <p>💡 <b>Feedback:</b> ${data.ai_feedback}</p>
+    `;
+}
+</script>
+
+</body>
+</html>

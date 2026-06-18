@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Resume Analyzer</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+
+  /* ✅ BACKGROUND IMAGE */
+  background: 
+    url("https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781497982/how-integration-enables-ai_jcjmn2.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgb(168, 250, 164);
+}
+
+.container {
+  width: 420px;
+  height:300px;
+  
+
+  /* glass effect */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  padding: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  text-align: center;
+}
+input {
+  margin-top: 15px;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px;
+  width: 100%;
+  background: #38bdf8;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.result {
+  margin-top: 20px;
+  text-align: left;
+  background: #0f172a;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* Back button style */
+.back-btn {
+  margin-top: 20px;
+  padding: 8px;
+  width: 100%;
+  background: transparent;
+  border: 1px solid #38bdf8;
+  color: #38bdf8;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.back-btn:hover {
+  background: #38bdf8;
+  color: black;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>📄 Resume Upload & Analysis</h2>
+
+<input type="file" id="resumeFile">
+
+<button onclick="uploadResume()">Analyze</button>
+
+<div class="result" id="resultBox">
+Result will appear here...
+</div>
+
+<!-- ✅ BACK BUTTON MOVED TO END -->
+<button class="back-btn" onclick="goLogin()">⬅ Back to Login</button>
+
+</div>
+
+<script>
+
+function goLogin() {
+    window.location.href = "index.html";
+}
+
+async function uploadResume() {
+
+    const fileInput = document.getElementById("resumeFile");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Please select a file");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    const response = await fetch("http://127.0.0.1:8000/analyze-resume", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await response.json();
+
+    document.getElementById("resultBox").innerHTML = `
+        <p><b>ATS Score:</b> ${data.ats_score}</p>
+        <p><b>Resume Score:</b> ${data.resume_score}</p>
+        <p><b>Readiness:</b> ${data.readiness}</p>
+        <p><b>Skills Count:</b> ${data.skills}</p>
+    `;
+}
+</script>
+
+</body>
+</html>
