@@ -201,16 +201,38 @@ async def analyze_resume(resume: UploadFile = File(...)):
     ai_feedback = " | ".join(ai_feedback)
 
     return {
-        "ats_score": ats,
-        "resume_score": max(ats - 5, 0),
-        "readiness": max(ats - 10, 0),
-        "skills": skills,
 
-        # AI OUTPUT (ADDED ONLY)
-        "ai_skills_found": ai_skills_found,
-        "ai_verdict": ai_verdict,
-        "ai_feedback": ai_feedback
-    }
+    "ats_score": ats,
+    "resume_score": max(ats - 5, 0),
+    "readiness": max(ats - 10, 0),
+    "skills": skills,
+
+    # AI OUTPUT
+    "ai_skills_found": ai_skills_found,
+    "ai_verdict": ai_verdict,
+    "ai_feedback": ai_feedback,
+
+    # PROGRESS DATA
+    "resume_progress": ats,
+
+    "interview_progress": 0,
+
+    "overall_progress":
+        int(
+            (
+                ats + 0
+            ) / 2
+        ),
+
+    "level":
+        "Excellent 🚀"
+        if ats >= 80
+        else "Good 👍"
+        if ats >= 60
+        else "Average ⚡"
+        if ats >= 40
+        else "Needs Improvement 📚"
+}
 
 @router.post("/chat")
 def chat(data: dict):
@@ -343,4 +365,53 @@ def chat(data: dict):
     return {
         "reply": reply,
         "next_step": step + 1
+    }
+# ==========================
+# STUDENT PROGRESS API
+# ADD BELOW YOUR CODE
+# ==========================
+
+class ProgressRequest(BaseModel):
+    ats_score: int = 0
+    interview_step: int = 0
+
+
+@router.post("/student-progress")
+def student_progress(data: ProgressRequest):
+
+    ats = data.ats_score
+    interview = data.interview_step
+
+    resume_progress = min(ats, 100)
+
+    interview_progress = min(
+        int((interview / 10) * 100),
+        100
+    )
+
+    overall = int(
+        (resume_progress + interview_progress) / 2
+    )
+
+    if overall >= 80:
+        level = "Excellent 🚀"
+
+    elif overall >= 60:
+        level = "Good 👍"
+
+    elif overall >= 40:
+        level = "Average ⚡"
+
+    else:
+        level = "Needs Improvement 📚"
+
+    return {
+
+        "resume_progress": resume_progress,
+
+        "interview_progress": interview_progress,
+
+        "overall_progress": overall,
+
+        "level": level
     }

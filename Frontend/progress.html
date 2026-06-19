@@ -1,147 +1,439 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
+
 <meta charset="UTF-8">
+
 <title>Interview Progress</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Arial;
-    background: linear-gradient(135deg, #0f172a, #1e1b4b);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
+
+body{
+margin:0;
+
+font-family:Arial;
+
+background:
+url("https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781863161/5815532-3840x2160-desktop-hd-4k-wallpaper-image_vhguty.jpg");
+
+background-size:cover;
+
+height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+color:white;
 }
 
-/* CARD */
-.container {
-    width: 500px;
-    padding: 25px;
+.container{
 
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(20px);
-    border-radius: 16px;
+width:550px;
 
-    border: 1px solid rgba(255,255,255,0.12);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+padding:30px;
+
+border-radius:20px;
+
+background:
+rgba(255,255,255,.08);
+
+backdrop-filter:
+blur(20px);
+
 }
 
-/* HEADER */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+.header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
 }
 
-/* BACK BUTTON */
-button {
-    padding: 8px 14px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
+.title{
 
-    background: linear-gradient(135deg, #6366f1, #38bdf8);
-    font-weight: bold;
-    color: black;
+display:flex;
+
+gap:10px;
+
+font-size:24px;
+
+font-weight:bold;
+
 }
 
-/* PROGRESS BAR */
-.progress-bar-bg {
-    width: 100%;
-    height: 12px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 20px;
-    overflow: hidden;
-    margin-top: 15px;
+.title img{
+
+width:42px;
+
 }
 
-.progress-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #38bdf8, #6366f1);
-    transition: 0.4s;
+button{
+
+padding:10px 15px;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
+
+font-weight:bold;
+
 }
 
-/* INFO BOX */
-.info {
-    margin-top: 20px;
-    line-height: 1.8;
+.upload{
+
+background:
+linear-gradient(
+90deg,
+#22c55e,
+#16a34a
+);
+
+color:white;
+
 }
+
+.back{
+
+background:
+linear-gradient(
+90deg,
+#38bdf8,
+#0ea5e9
+);
+
+}
+
+.status{
+
+margin-top:20px;
+
+padding:15px;
+
+background:
+rgba(255,255,255,.05);
+
+border-radius:12px;
+
+}
+
+.progress-bg{
+
+margin-top:20px;
+
+height:20px;
+
+background:
+rgba(255,255,255,.1);
+
+border-radius:40px;
+
+overflow:hidden;
+
+}
+
+.progress{
+
+height:100%;
+
+width:0;
+
+background:
+linear-gradient(
+90deg,
+#38bdf8,
+#6366f1
+);
+
+transition:1s;
+
+}
+
+.score{
+
+font-size:40px;
+
+text-align:center;
+
+margin-top:20px;
+
+color:#38bdf8;
+
+}
+
+.info{
+
+margin-top:20px;
+
+line-height:2;
+
+}
+
+input{
+
+display:none;
+
+}
+
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-    <div class="header">
-        <div>Interview Progress</div>
-        <button onclick="goBack()">Back</button>
-    </div>
+<div class="header">
 
-    <div id="status">Status: In Progress</div>
+<div class="title">
 
-    <div class="progress-bar-bg">
-        <div class="progress-bar" id="bar"></div>
-    </div>
+<img
+src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781763958/ai-image_a6hbir.png">
 
-    <div class="info">
-        <p>Current Step: <span id="step">0</span> / 10</p>
-        <p>Score: <span id="score">0</span></p>
-        <p>Performance: <span id="performance">Not Started</span></p>
-    </div>
+Interview Progress
+
+</div>
+
+<div>
+
+<input
+type="file"
+id="resumeFile">
+
+<button
+class="upload"
+onclick="pickResume()">
+
+Upload Resume
+
+</button>
+
+<button
+class="back"
+onclick="goBack()">
+
+← Back
+
+</button>
+
+</div>
+
+</div>
+
+<div
+class="status"
+id="status">
+
+Click Upload Resume
+
+</div>
+
+<div class="progress-bg">
+
+<div
+class="progress"
+id="bar">
+
+</div>
+
+</div>
+
+<div
+class="score"
+id="score">
+
+0%
+
+</div>
+
+<div class="info">
+
+Resume Score:
+<span id="resume">0</span>
+
+<br>
+
+Readiness:
+<span id="ready">0</span>
+
+<br>
+
+Skills:
+<span id="skills">0</span>
+
+<br>
+
+Performance:
+<span id="performance">
+
+Waiting
+
+</span>
+
+</div>
 
 </div>
 
 <script>
 
-let step = 0;
-let score = 0;
+function goBack(){
 
-function updateUI() {
+window.location.href=
+"index.html";
 
-    document.getElementById("step").innerText = step;
-
-    let percent = (step / 10) * 100;
-    document.getElementById("bar").style.width = percent + "%";
-
-    document.getElementById("score").innerText = score;
-
-    if (step == 0) {
-        document.getElementById("performance").innerText = "Not Started";
-    } 
-    else if (step < 5) {
-        document.getElementById("performance").innerText = "Needs Improvement";
-    } 
-    else if (step < 10) {
-        document.getElementById("performance").innerText = "Good";
-    } 
-    else {
-        document.getElementById("performance").innerText = "Excellent";
-        document.getElementById("status").innerText = "Status: Completed";
-    }
 }
 
-/* simulate progress */
-function nextStep() {
-    if (step < 10) {
-        step++;
-        score += 10;
-        updateUI();
-    }
+function pickResume(){
+
+document
+.getElementById(
+"resumeFile"
+)
+.click();
+
 }
 
-function goBack() {
-    window.location.href = "index.html";
+document
+.getElementById(
+"resumeFile"
+)
+
+.addEventListener(
+
+"change",
+
+uploadResume
+
+);
+
+async function uploadResume(){
+
+const file=
+
+document
+.getElementById(
+"resumeFile"
+)
+.files[0];
+
+if(!file)
+return;
+
+const formData=
+new FormData();
+
+formData.append(
+"resume",
+file
+);
+
+document
+.getElementById(
+"status"
+)
+.innerText=
+
+"Analyzing...";
+
+const res=
+
+await fetch(
+
+"http://127.0.0.1:8000/analyze-resume",
+
+{
+
+method:"POST",
+
+body:formData
+
 }
 
-updateUI();
+);
+
+const data=
+await res.json();
+
+let ats=
+data.ats_score||0;
+
+document
+.getElementById(
+"bar"
+)
+.style.width=
+
+ats+"%";
+
+document
+.getElementById(
+"score"
+)
+.innerText=
+
+ats+"%";
+
+document
+.getElementById(
+"resume"
+)
+.innerText=
+
+data.resume_score;
+
+document
+.getElementById(
+"ready"
+)
+.innerText=
+
+data.readiness;
+
+document
+.getElementById(
+"skills"
+)
+.innerText=
+
+data.skills;
+
+let p=
+"Needs Improvement";
+
+if(ats>=60)
+p="Good";
+
+if(ats>=80)
+p="Excellent";
+
+document
+.getElementById(
+"performance"
+)
+.innerText=p;
+
+document
+.getElementById(
+"status"
+)
+.innerText=
+
+"Resume Uploaded Successfully";
+
+}
 
 </script>
 
 </body>
+
 </html>
+
