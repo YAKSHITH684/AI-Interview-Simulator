@@ -7,7 +7,12 @@ from database.models import User
 router = APIRouter()
 
 
+# ==========================
+# MODELS
+# ==========================
+
 class RegisterRequest(BaseModel):
+    name: str
     email: str
     password: str
 
@@ -22,6 +27,10 @@ class ForgotPasswordRequest(BaseModel):
     new_password: str
 
 
+# ==========================
+# REGISTER
+# ==========================
+
 @router.post("/register")
 def register(data: RegisterRequest):
 
@@ -35,9 +44,13 @@ def register(data: RegisterRequest):
 
     if exists:
         db.close()
-        return {"message": "User already exists"}
+        return {
+            "success": False,
+            "message": "User already exists"
+        }
 
     user = User(
+        name=data.name,
         email=data.email,
         password=data.password
     )
@@ -46,8 +59,15 @@ def register(data: RegisterRequest):
     db.commit()
     db.close()
 
-    return {"message": "Registration Successful"}
+    return {
+        "success": True,
+        "message": "Registration Successful"
+    }
 
+
+# ==========================
+# LOGIN
+# ==========================
 
 @router.post("/login")
 def login(data: LoginRequest):
@@ -65,8 +85,23 @@ def login(data: LoginRequest):
 
     db.close()
 
-    return {"success": bool(user)}
+    if user:
 
+        return {
+            "success": True,
+            "message": "Login Successful",
+            "name": user.name
+        }
+
+    return {
+        "success": False,
+        "message": "Invalid Email or Password"
+    }
+
+
+# ==========================
+# FORGOT PASSWORD
+# ==========================
 
 @router.post("/forgot-password")
 def forgot_password(data: ForgotPasswordRequest):
@@ -81,14 +116,21 @@ def forgot_password(data: ForgotPasswordRequest):
 
     if not user:
         db.close()
-        return {"message": "Email not found"}
+
+        return {
+            "success": False,
+            "message": "Email not found"
+        }
 
     user.password = data.new_password
 
     db.commit()
     db.close()
 
-    return {"message": "Password Updated Successfully"}
+    return {
+        "success": True,
+        "message": "Password Updated Successfully"
+    }
 
 
 @router.post("/analyze-resume")

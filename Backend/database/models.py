@@ -7,19 +7,23 @@ from database.database import Base
 
 class User(Base):
 
-    __tablename__="users"
+    __tablename__ = "users"
 
-    id=Column(
+    id = Column(
         Integer,
         primary_key=True,
         index=True
     )
 
-    email=Column(
+    name = Column(
+        String
+    )
+
+    email = Column(
         String,
         unique=True
     )
 
-    password=Column(
+    password = Column(
         String
     )
