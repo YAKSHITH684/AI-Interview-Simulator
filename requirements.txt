@@ -3,3 +3,5 @@ uvicorn
 sqlalchemy
 pdfplumber
 python-docx
+python-multipart
+aiofiles
