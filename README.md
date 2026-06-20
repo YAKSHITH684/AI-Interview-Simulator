@@ -70,11 +70,7 @@ Then visit `http://localhost:8000` in your browser.
 
 ---
 
-## 📸 Screenshots
 
-> _Add screenshots of your dashboard, interview chat, and progress page here._
-
----
 
 ## 🤝 Contributing
 
