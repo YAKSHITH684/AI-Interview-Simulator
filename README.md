@@ -75,7 +75,7 @@ Then visit `http://localhost:8000` in your browser.
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome!  
-Feel free to open an [issue](https://github.com/your-username/ai-interview-simulator/issues) or submit a pull request.
+Feel free to open an issue or submit a pull request.
 
 1. Fork the project
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
