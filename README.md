@@ -42,30 +42,6 @@
 
 ---
 
-# 📂 Project Structure
-
-
-AI-Interview-Simulator/
-│
-├── Frontend/
-│   ├── index.html
-│   ├── resume.html
-│   ├── ai_analysis.html
-│   ├── interview.html
-│   ├── Practice.html
-│   ├── progress.html
-│   └── resources.html
-│
-├── Backend/
-│   ├── app.py
-│   ├── requirements.txt
-│   └── database/
-│
-├── static/
-├── README.md
-└── .gitignore
-```
-
 
 ## 🛠️ Tech Stack
 
