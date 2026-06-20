@@ -42,6 +42,31 @@
 
 ---
 
+# 📂 Project Structure
+
+
+AI-Interview-Simulator/
+│
+├── Frontend/
+│   ├── index.html
+│   ├── resume.html
+│   ├── ai_analysis.html
+│   ├── interview.html
+│   ├── Practice.html
+│   ├── progress.html
+│   └── resources.html
+│
+├── Backend/
+│   ├── app.py
+│   ├── requirements.txt
+│   └── database/
+│
+├── static/
+├── README.md
+└── .gitignore
+```
+
+
 ## 🛠️ Tech Stack
 
 - **Frontend:** HTML, CSS, JavaScript
@@ -68,13 +93,7 @@ python -m http.server 8000
 
 Then visit `http://localhost:8000` in your browser.
 
----
 
-## 📸 Screenshots
-
-> _Add screenshots of your dashboard, interview chat, and progress page here._
-
----
 
 ## 🤝 Contributing
 
@@ -89,11 +108,7 @@ Feel free to open an [issue](https://github.com/your-username/ai-interview-simul
 
 ---
 
-## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
-
----
 
 ## 🙌 Acknowledgements
 
