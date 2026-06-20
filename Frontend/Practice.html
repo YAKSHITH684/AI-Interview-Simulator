@@ -209,7 +209,7 @@ function addUser(text) {
 // START
 window.onload = async function () {
 
-    let res = await fetch("http://127.0.0.1:8000/chat", {
+    let res = await fetch("https://ai-interview-simulator-316l.onrender.com/chat", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ message: "", step: 0 })
@@ -236,7 +236,7 @@ async function send() {
 
     document.getElementById("typing").style.display = "block";
 
-    let res = await fetch("http://127.0.0.1:8000/chat", {
+    let res = await fetch("https://ai-interview-simulator-316l.onrender.com/chat", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
