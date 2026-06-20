@@ -89,11 +89,7 @@ Feel free to open an [issue](https://github.com/your-username/ai-interview-simul
 
 ---
 
-## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
-
----
 
 ## 🙌 Acknowledgements
 
