@@ -3,221 +3,107 @@
 > **Transform your interview preparation using Artificial Intelligence.**  
 > Analyze resumes, practice interviews, and track your growth — all in one platform.
 
-### 🌐 Live Demo
-https://ai-interview-simulator-1-xp6n.onrender.com/index.html
+🔗 **Live Demo:** [https://ai-interview-simulator-1-xp6n.onrender.com/index.html](https://ai-interview-simulator-1-xp6n.onrender.com/index.html)
 
 ---
 
-# 📌 Overview
-
-AI Interview Simulator is an intelligent interview preparation platform designed to help users improve confidence, interview readiness, and performance using AI.
-
-The platform combines resume analysis, AI-driven interview practice, progress tracking, and learning resources into one experience.
-
----
-
-# ✨ Features
+## ✨ Features
 
 | Feature | Description |
 |---|---|
-| 📄 Resume Intelligence | Upload resumes and receive ATS score analysis, skill extraction, and personalized recommendations |
-| 🤖 AI Interviewer | Experience realistic technical and HR interviews generated dynamically |
-| 📊 Progress Tracking | Monitor performance, readiness scores, and improvement over time |
-| 🎯 Practice Mode | Dedicated interview practice sessions |
-| 📚 Resources | Curated preparation resources and learning materials |
+| 📄 **Resume Intelligence** | Upload your resume and receive ATS scores, skill extraction, and personalized suggestions |
+| 🤖 **AI Interviewer** | Experience realistic technical and HR interviews generated dynamically using AI |
+| 📊 **Progress Tracking** | Monitor performance, readiness scores, and improvement over time |
+| 🎯 **Practice Mode** | Dedicated practice sessions to sharpen your answers |
+| 📚 **Resources** | Curated resources to help you prepare better |
 
 ---
 
-# 🚀 How It Works
+## 🚀 How It Works
 
-```text
-01. Upload Resume
-      ↓
-Submit your resume for AI analysis
-
-02. Get Insights
-      ↓
-Receive ATS score and skill evaluation
-
-03. Practice Interviews
-      ↓
-Answer AI-generated interview questions
-
-04. Track Progress
-      ↓
-Measure growth and continuously improve
+```
+01. Upload Resume  →  Submit your resume for AI-based analysis
+02. Get Insights   →  Receive ATS score and skill evaluation
+03. Practice       →  Answer AI-generated interview questions
+04. Track Progress →  Measure growth and improve continuously
 ```
 
 ---
 
-# 🖥️ Pages & Navigation
+## 🖥️ Pages & Navigation
 
-| Page | Description | Link |
-|------|-------------|------|
-| Dashboard | Overview and quick access | [Open](https://ai-interview-simulator-1-xp6n.onrender.com/index.html) |
-| Upload Resume | Submit resume for analysis | [Open](https://ai-interview-simulator-1-xp6n.onrender.com/resume.html) |
-| AI Analysis | View ATS score and extracted skills | [Open](https://ai-interview-simulator-1-xp6n.onrender.com/ai_analysis.html) |
-| Interview Chat | Practice AI-generated interviews | [Open](https://ai-interview-simulator-1-xp6n.onrender.com/interview.html) |
-| Practice | Improve interview performance | [Open](https://ai-interview-simulator-1-xp6n.onrender.com/Practice.html) |
-| Progress | Track learning journey | [Open](https://ai-interview-simulator-1-xp6n.onrender.com/progress.html) |
-| Resources | Study materials and guidance | [Open](https://ai-interview-simulator-1-xp6n.onrender.com/resources.html) |
+- [**Dashboard**](https://ai-interview-simulator-1-xp6n.onrender.com/index.html) — Overview and quick start
+- [**Upload Resume**](https://ai-interview-simulator-1-xp6n.onrender.com/resume.html) — Submit your resume for analysis
+- [**AI Analysis**](https://ai-interview-simulator-1-xp6n.onrender.com/ai_analysis.html) — View ATS scores and skill insights
+- [**Interview Chat**](https://ai-interview-simulator-1-xp6n.onrender.com/interview.html) — Live AI-powered interview simulation
+- [**Practice**](https://ai-interview-simulator-1-xp6n.onrender.com/Practice.html) — Targeted practice questions
+- [**Progress**](https://ai-interview-simulator-1-xp6n.onrender.com/progress.html) — Track your improvement over time
+- [**Resources**](https://ai-interview-simulator-1-xp6n.onrender.com/resources.html) — Interview tips and study materials
 
 ---
 
-# 🛠️ Tech Stack
+## 🛠️ Tech Stack
 
-## Frontend
-- HTML5
-- CSS3
-- JavaScript
-
-## Backend
-- FastAPI
-- Python
-
-## AI Integration
-- LLM-powered interview generation
-- Resume analysis
-- AI feedback system
-
-## Deployment
-- Render
+- **Frontend:** HTML, CSS, JavaScript
+- **AI Integration:** Large Language Model (LLM) powered question generation and feedback
+- **Hosting:** [Render](https://render.com)
 
 ---
 
-# 📂 Project Structure
+## 📦 Getting Started
+
+### Run Locally
 
 ```bash
-AI-Interview-Simulator/
-│
-├── Frontend/
-│   ├── index.html
-│   ├── resume.html
-│   ├── ai_analysis.html
-│   ├── interview.html
-│   ├── Practice.html
-│   ├── progress.html
-│   └── resources.html
-│
-├── Backend/
-│   ├── app.py
-│   ├── requirements.txt
-│   └── database/
-│
-├── static/
-├── README.md
-└── .gitignore
-```
+# Clone the repository
+git clone https://github.com/your-username/ai-interview-simulator.git
 
----
+# Navigate to the project directory
+cd ai-interview-simulator
 
-# ⚙️ Installation
-
-## Clone Repository
-
-```bash
-git clone https://github.com/your-username/AI-Interview-Simulator.git
-```
-
-Move into project:
-
-```bash
-cd AI-Interview-Simulator
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Run backend:
-
-```bash
-uvicorn app:app --reload
-```
-
-Open:
-
-```bash
-http://127.0.0.1:8000
-```
-
----
-
-# 📦 Run Frontend Locally
-
-```bash
+# Open index.html in your browser
+# Or use a local server (e.g., VS Code Live Server, Python, etc.)
 python -m http.server 8000
 ```
 
-Visit:
-
-```text
-http://localhost:8000
-```
+Then visit `http://localhost:8000` in your browser.
 
 ---
 
-# 🎯 Future Enhancements
+## 📸 Screenshots
 
-- 🎤 Voice-based interviews
-- 📑 AI feedback reports
-- 🎥 Mock interview recording
-- 🏆 Leaderboard system
-- 📄 Resume templates
-- 📈 Advanced analytics
+> _Add screenshots of your dashboard, interview chat, and progress page here._
 
 ---
 
-# 🤝 Contributing
+## 🤝 Contributing
 
-Contributions are welcome.
+Contributions, issues, and feature requests are welcome!  
+Feel free to open an [issue](https://github.com/your-username/ai-interview-simulator/issues) or submit a pull request.
 
-1. Fork repository
-
-2. Create branch
-
-```bash
-git checkout -b feature/new-feature
-```
-
-3. Commit
-
-```bash
-git commit -m "Add new feature"
-```
-
-4. Push
-
-```bash
-git push origin feature/new-feature
-```
-
-5. Open Pull Request
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
-# 🙌 Acknowledgements
+## 📄 License
 
-Built to help students and job seekers prepare smarter with AI.
-
----
-
-# 👨‍💻 Author
-
-**Yakshith**
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-<div align="center">
+## 🙌 Acknowledgements
 
-## ⭐ Support
+- Built with ❤️ to help job seekers ace their interviews
+- Powered by AI to deliver realistic, personalized interview experiences
 
-If you found this project useful, give it a **Star** on GitHub.
+---
 
-### 🚀 Live Demo
-
-https://ai-interview-simulator-1-xp6n.onrender.com/index.html
-
-</div>
+<p align="center">
+  <a href="https://ai-interview-simulator-1-xp6n.onrender.com/index.html">
+    <strong>🚀 Try the Live Demo »</strong>
+  </a>
+</p>
