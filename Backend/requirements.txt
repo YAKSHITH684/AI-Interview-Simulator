@@ -2,4 +2,10 @@ fastapi
 uvicorn
 sqlalchemy
 pdfplumber
+<<<<<<< HEAD
 python-docx
+=======
+python-docx
+python-multipart
+aiofiles
+>>>>>>> 76975fc094ecbf441ba4b2405203c4f8dcd722da
