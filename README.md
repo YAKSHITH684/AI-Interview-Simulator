@@ -1,4 +1,4 @@
-````md
+
 # 🤖 AI Interview Simulator
 
 > Transform your interview preparation using Artificial Intelligence.
