@@ -634,37 +634,16 @@ async function cwSendMsg() {
     document.getElementById("cwSend").disabled = true;
 
     try {
-        const res = await fetch("https://api.anthropic.com/v1/messages", {
+        const res = await fetch(`${BACKEND}/assistant`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                model: "claude-sonnet-4-6",
-                max_tokens: 600,
-                system: `You are a friendly and expert AI Interview Coach assistant embedded in the AI Interview Simulator dashboard.
-Help users with: interview preparation tips, resume advice, common interview questions, behavioral interview strategies, technical interview guidance, and career advice.
-Keep answers concise and practical (3-5 sentences max). Use simple language. Be encouraging and supportive.
-If asked to start a full interview, tell them to click "Interview Chat" in the navigation menu.`,
-                messages: cwHistory
-            })
+            body: JSON.stringify({ message: text, history: cwHistory })
         });
         const data = await res.json();
-        const reply = data.content[0].text;
-        cwHistory.push({ role: "assistant", content: reply });
-        cwAddAI(reply);
+        cwHistory = data.history || cwHistory;
+        cwAddAI(data.reply);
     } catch (e) {
-        // Fallback to backend if Anthropic direct fails
-        try {
-            const res = await fetch(`${BACKEND}/chat`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: text, history: cwHistory, mode: "hr" })
-            });
-            const data = await res.json();
-            cwHistory = data.history || cwHistory;
-            cwAddAI(data.reply);
-        } catch (e2) {
-            cwAddAI("⚠️ Could not connect to the AI. Please check your internet connection.");
-        }
+        cwAddAI("⚠️ Could not connect to the AI. Please check your internet connection.");
     } finally {
         cwBusy = false;
         document.getElementById("cwSend").disabled = false;
