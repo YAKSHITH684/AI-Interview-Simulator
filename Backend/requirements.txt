@@ -3,6 +3,7 @@ uvicorn
 sqlalchemy
 pdfplumber
 python-docx
+python-docx
 python-multipart
 aiofiles
 anthropic
