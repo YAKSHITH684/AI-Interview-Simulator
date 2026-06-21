@@ -235,8 +235,12 @@ def chat(data: ChatRequest):
     ai_turns = [h for h in history if h.get("role") == "assistant"]
     q_index = len(ai_turns)
 
-    # First message — welcome + first question
-    if not history or not msg:
+    # First message — welcome + first question.
+    # IMPORTANT: only an empty history should trigger the welcome message.
+    # Previously this also fired whenever msg was empty, which silently
+    # restarted the interview and discarded the user's real answer any
+    # time the frontend sent a blank/whitespace message on a later turn.
+    if not history:
         reply = (
             f"👋 Welcome to the AI Interview Simulator!\n\n"
             f"Mode: {'Technical' if mode == 'technical' else 'HR / Behavioral' if mode == 'hr' else 'System Design' if mode == 'system' else 'DSA'}\n\n"
@@ -246,6 +250,12 @@ def chat(data: ChatRequest):
             f"Question 1/{len(questions)}:\n{questions[0]}"
         )
         history.append({"role": "assistant", "content": reply})
+        return {"reply": reply, "history": history}
+
+    # If we're mid-interview but the message is empty, ask for a real
+    # answer instead of treating it as a fresh start.
+    if not msg:
+        reply = "⚠️ I didn't catch an answer there — could you type your response?"
         return {"reply": reply, "history": history}
 
     # Add user message to history
