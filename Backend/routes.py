@@ -96,8 +96,30 @@ async def analyze_resume(resume: UploadFile = File(...)):
         except Exception:
             text = ""
 
+    # If no text extracted, return error immediately
+    if not text.strip():
+        return {
+            "ats_score": 0,
+            "resume_score": 0,
+            "readiness": 0,
+            "skills": 0,
+            "ai_skills_found": [],
+            "ai_verdict": "Empty Resume ❌ (No content detected)",
+            "ai_feedback": "No text could be extracted from this file. Please upload a valid resume with readable text.",
+            "summary": "No content detected in uploaded file.",
+            "strengths": [],
+            "suggestions": ["Upload a valid PDF/DOCX resume", "Make sure the file is not blank or image-only", "Try copy-pasting your resume as text"],
+            "skill_breakdown": {
+                "Technical Skills": 0,
+                "Communication": 0,
+                "Experience": 0,
+                "Education": 0,
+                "Projects": 0
+            }
+        }
+
     text_lower = text.lower()
-    ats = 50
+    ats = 30  # start lower — must earn the score
     skill_map = {
         "python": "Python", "machine learning": "Machine Learning",
         "deep learning": "Deep Learning", "sql": "SQL",
@@ -228,22 +250,21 @@ FEEDBACK = [
 def chat(data: ChatRequest):
     mode = data.mode if data.mode in QUESTIONS else "technical"
     questions = QUESTIONS[mode]
-    history = data.history
+    history = list(data.history)  # copy to avoid mutation issues
     msg = data.message.strip()
 
-    # Count how many questions have been asked
-    ai_turns = [h for h in history if h.get("role") == "assistant"]
-    q_index = len(ai_turns)
-
-    # First message — welcome + first question.
-    # IMPORTANT: only an empty history should trigger the welcome message.
-    # Previously this also fired whenever msg was empty, which silently
-    # restarted the interview and discarded the user's real answer any
-    # time the frontend sent a blank/whitespace message on a later turn.
+    # First message — no history yet, send welcome + Q1
     if not history:
+        mode_label = {
+            "technical": "Technical",
+            "hr": "HR / Behavioral",
+            "system": "System Design",
+            "dsa": "DSA"
+        }.get(mode, "Technical")
+
         reply = (
             f"👋 Welcome to the AI Interview Simulator!\n\n"
-            f"Mode: {'Technical' if mode == 'technical' else 'HR / Behavioral' if mode == 'hr' else 'System Design' if mode == 'system' else 'DSA'}\n\n"
+            f"Mode: {mode_label}\n\n"
             f"I'll ask you {len(questions)} questions. Take your time and answer clearly.\n\n"
             f"💡 Tip: Be specific, use examples, and stay confident!\n\n"
             f"━━━━━━━━━━━━━━━━━━━\n"
@@ -252,51 +273,37 @@ def chat(data: ChatRequest):
         history.append({"role": "assistant", "content": reply})
         return {"reply": reply, "history": history}
 
-    # If we're mid-interview but the message is empty, ask for a real
-    # answer instead of treating it as a fresh start.
-    if not msg:
-        reply = "⚠️ I didn't catch an answer there — could you type your response?"
-        return {"reply": reply, "history": history}
+    # Count user answers so far to know which question comes next
+    user_turns = [h for h in history if h.get("role") == "user"]
+    answered_count = len(user_turns)  # how many questions answered
 
-    # Add user message to history
+    # Add user message
     history.append({"role": "user", "content": msg})
 
     # Interview complete
-    if q_index >= len(questions):
+    if answered_count >= len(questions):
         reply = (
             "🎉 Interview Complete!\n\n"
-            "You answered all questions. Here's your summary:\n\n"
-            f"✅ Questions answered: {len(questions)}\n"
-            "📊 Visit the Progress page to see your scores.\n\n"
-            "💪 Keep practicing to improve your confidence!\n"
-            "Click 'New' to start another round."
+            f"✅ You answered all {len(questions)} questions.\n\n"
+            "💪 Great job! Keep practicing to improve your confidence.\n"
+            "Click '🔄 New' to start another round."
         )
         history.append({"role": "assistant", "content": reply})
         return {"reply": reply, "history": history}
 
     # Validate answer length
-    if len(msg) < 10:
-        warning = "⚠️ Your answer seems too short. Try to elaborate more.\n\n"
-    else:
-        warning = ""
+    warning = "⚠️ Your answer seems too short. Try to elaborate more.\n\n" if len(msg) < 10 else ""
 
-    # Pick feedback
+    # Feedback + next question
     fb = random.choice(FEEDBACK)
-
-    # Next question
-    next_q_index = q_index
-    if next_q_index < len(questions):
-        next_question = (
-            f"Question {next_q_index + 1}/{len(questions)}:\n{questions[next_q_index]}"
-        )
-    else:
-        next_question = "That was the last question! Great job completing the interview."
+    next_q_num = answered_count + 1
+    next_question = questions[answered_count]
 
     reply = (
         f"{warning}"
         f"🤖 Feedback: {fb}\n\n"
         f"━━━━━━━━━━━━━━━━━━━\n"
-        f"➡️ {next_question}"
+        f"➡️ Question {next_q_num}/{len(questions)}:\n{next_question}"
     )
 
     history.append({"role": "assistant", "content": reply})
