@@ -16,6 +16,260 @@ AI Interview Simulator
 rel="stylesheet"
 href="style.css">
 
+<style>
+/* ═══════════════════════════════════════
+   FLOATING CHATBOT
+═══════════════════════════════════════ */
+
+/* FAB BUTTON */
+#chatFab {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #38bdf8);
+    border: none;
+    cursor: pointer;
+    font-size: 26px;
+    box-shadow: 0 8px 30px rgba(99,102,241,0.5);
+    z-index: 9999;
+    transition: transform 0.25s, box-shadow 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#chatFab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 40px rgba(99,102,241,0.7);
+}
+
+/* NOTIFICATION BADGE */
+#chatBadge {
+    position: fixed;
+    bottom: 78px;
+    right: 24px;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 2px 7px;
+    z-index: 10000;
+    display: none;
+}
+
+/* CHAT WINDOW */
+#chatWindow {
+    position: fixed;
+    bottom: 100px;
+    right: 28px;
+    width: 370px;
+    height: 520px;
+    background: rgba(10, 12, 30, 0.97);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    display: none;
+    flex-direction: column;
+    z-index: 9998;
+    overflow: hidden;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+#chatWindow.open { display: flex; }
+
+/* CHAT HEADER */
+.cw-header {
+    background: rgba(20, 25, 60, 0.95);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+}
+
+.cw-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cw-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #38bdf8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.cw-title { color: white; font-weight: 700; font-size: 14px; }
+.cw-sub { color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 1px; }
+
+.cw-close {
+    background: rgba(255,255,255,0.08);
+    border: none;
+    color: white;
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+}
+
+.cw-close:hover { background: rgba(255,255,255,0.18); }
+
+/* MESSAGES */
+.cw-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-behavior: smooth;
+}
+
+.cw-messages::-webkit-scrollbar { width: 3px; }
+.cw-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+.cw-msg-ai {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    padding: 10px 13px;
+    border-radius: 14px 14px 14px 3px;
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 88%;
+    width: fit-content;
+    white-space: pre-wrap;
+}
+
+.cw-msg-user {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    padding: 10px 13px;
+    border-radius: 14px 14px 3px 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 88%;
+    width: fit-content;
+    margin-left: auto;
+}
+
+/* TYPING */
+.cw-typing {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    padding: 10px 13px;
+    background: rgba(37,99,235,0.3);
+    border-radius: 14px 14px 14px 3px;
+    width: fit-content;
+}
+
+.cw-typing span {
+    width: 6px; height: 6px;
+    background: white;
+    border-radius: 50%;
+    animation: cwbounce 1.2s infinite;
+    opacity: 0.7;
+}
+
+.cw-typing span:nth-child(2) { animation-delay: 0.2s; }
+.cw-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes cwbounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-5px); }
+}
+
+/* QUICK ACTIONS */
+.cw-quick {
+    display: flex;
+    gap: 6px;
+    padding: 0 14px 10px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.cw-quick button {
+    background: rgba(99,102,241,0.2);
+    border: 1px solid rgba(99,102,241,0.4);
+    color: #a5b4fc;
+    border-radius: 999px;
+    font-size: 11px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+
+.cw-quick button:hover { background: rgba(99,102,241,0.4); color: white; }
+
+/* INPUT */
+.cw-input-row {
+    display: flex;
+    padding: 12px;
+    gap: 8px;
+    background: rgba(15,20,45,0.95);
+    border-top: 1px solid rgba(255,255,255,0.07);
+    flex-shrink: 0;
+    align-items: flex-end;
+}
+
+.cw-input-row textarea {
+    flex: 1;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    color: white;
+    font-size: 13px;
+    padding: 9px 12px;
+    outline: none;
+    resize: none;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    min-height: 38px;
+    max-height: 100px;
+    line-height: 1.4;
+}
+
+.cw-input-row textarea::placeholder { color: rgba(255,255,255,0.35); }
+.cw-input-row textarea:focus { border-color: rgba(99,102,241,0.5); }
+
+.cw-send {
+    width: 38px; height: 38px;
+    border-radius: 11px;
+    background: linear-gradient(135deg, #6366f1, #38bdf8);
+    border: none;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.2s;
+}
+
+.cw-send:hover { transform: scale(1.08); }
+.cw-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+@media (max-width: 420px) {
+    #chatWindow { width: calc(100vw - 20px); right: 10px; bottom: 90px; }
+}
+</style>
+
 </head>
 
 
@@ -173,8 +427,6 @@ Logout
 </section>
 
 
-<!-- ================= STATS ================= -->
-
 <!-- ================= ABOUT WEBSITE ================= -->
 
 <section class="website-info">
@@ -224,151 +476,221 @@ Logout
 </section>
 
 
+<!-- ═══════════════════════════════════════
+     FLOATING CHATBOT
+═══════════════════════════════════════ -->
 
+<!-- Badge -->
+<div id="chatBadge">1</div>
 
+<!-- FAB -->
+<button id="chatFab" onclick="toggleChat()" title="Chat with AI Assistant">🤖</button>
 
+<!-- Chat Window -->
+<div id="chatWindow">
 
+    <!-- Header -->
+    <div class="cw-header">
+        <div class="cw-header-left">
+            <div class="cw-avatar">🤖</div>
+            <div>
+                <div class="cw-title">AI Assistant</div>
+                <div class="cw-sub">● Online — Ask me anything</div>
+            </div>
+        </div>
+        <button class="cw-close" onclick="toggleChat()">✕</button>
+    </div>
 
+    <!-- Messages -->
+    <div class="cw-messages" id="cwMessages"></div>
+
+    <!-- Quick actions -->
+    <div class="cw-quick" id="cwQuick">
+        <button onclick="quickSend('How do I prepare for a technical interview?')">💡 Tech prep tips</button>
+        <button onclick="quickSend('What is ATS score?')">📄 ATS score</button>
+        <button onclick="quickSend('Give me a sample interview question')">🎯 Sample question</button>
+        <button onclick="quickSend('How to answer Tell me about yourself?')">🗣️ Tell me about yourself</button>
+    </div>
+
+    <!-- Input -->
+    <div class="cw-input-row">
+        <textarea id="cwInput" placeholder="Ask anything about interviews..." rows="1"></textarea>
+        <button class="cw-send" id="cwSend" onclick="cwSendMsg()">➤</button>
+    </div>
+
+</div>
 
 
 <script>
-    javascript
-async function uploadResume(){
 
-let file =
-
-document
-.getElementById(
-"fileInput"
-)
-.files[0];
-
-
-if(!file){
-
-alert(
-"Upload Resume First"
-);
-
-return;
-
+// ── ORIGINAL SCRIPTS ──
+async function uploadResume() {
+    let file = document.getElementById("fileInput").files[0];
+    if (!file) { alert("Upload Resume First"); return; }
+    let formData = new FormData();
+    formData.append("resume", file);
+    try {
+        let response = await fetch("https://ai-interview-simulator-316l.onrender.com/analyze-resume", { method: "POST", body: formData });
+        let data = await response.json();
+        document.getElementById("atsScore").innerHTML = data.ats_score + "%";
+        document.getElementById("resumeScore").innerHTML = data.resume_score + "%";
+        document.getElementById("readinessScore").innerHTML = data.readiness + "%";
+        document.getElementById("skillsCount").innerHTML = data.skills;
+        alert("Resume Analyzed");
+    } catch (error) {
+        console.log(error);
+        alert("Backend not running");
+    }
 }
 
-
-let formData =
-
-new FormData();
-
-formData.append(
-"resume",
-file
-);
-
-
-try{
-
-let response =
-
-await fetch(
-
-"https://ai-interview-simulator-316l.onrender.com/analyze-resume",
-
-{
-
-method:"POST",
-
-body:formData
-
+function menu() {
+    document.getElementById("nav").classList.toggle("show");
 }
 
-);
-
-
-let data =
-
-await response.json();
-
-
-document
-.getElementById(
-"atsScore"
-)
-.innerHTML =
-
-data.ats_score + "%";
-
-
-document
-.getElementById(
-"resumeScore"
-)
-.innerHTML =
-
-data.resume_score + "%";
-
-
-document
-.getElementById(
-"readinessScore"
-)
-.innerHTML =
-
-data.readiness + "%";
-
-
-document
-.getElementById(
-"skillsCount"
-)
-.innerHTML =
-
-data.skills;
-
-
-alert(
-"Resume Analyzed"
-);
-
+function logout() {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = "01_login.html";
 }
 
-catch(error){
+// ── CHATBOT ──
+const BACKEND = "https://ai-interview-simulator-316l.onrender.com";
+let cwHistory = [];
+let cwBusy = false;
+let chatOpened = false;
 
-console.log(error);
+function toggleChat() {
+    const win = document.getElementById("chatWindow");
+    const badge = document.getElementById("chatBadge");
+    win.classList.toggle("open");
+    badge.style.display = "none";
 
-alert(
-"Backend not running"
-);
-
+    if (!chatOpened) {
+        chatOpened = true;
+        cwWelcome();
+    }
 }
 
+async function cwWelcome() {
+    cwAddAI("👋 Hi! I'm your AI Interview Assistant.\n\nI can help you with:\n• Interview tips & strategies\n• Resume advice\n• Practice questions\n• Career guidance\n\nWhat would you like to know?");
 }
 
-
-
-
-
-
-function menu(){
-
-document
-.getElementById("nav")
-.classList
-.toggle("show");
-
+function cwAddAI(text) {
+    cwRemoveTyping();
+    const div = document.createElement("div");
+    div.className = "cw-msg-ai";
+    div.textContent = text;
+    document.getElementById("cwMessages").appendChild(div);
+    cwScroll();
 }
 
-
-
-function logout(){
-
-localStorage.clear();
-
-sessionStorage.clear();
-
-window.location.href=
-"01_login.html";
-
+function cwAddUser(text) {
+    const div = document.createElement("div");
+    div.className = "cw-msg-user";
+    div.textContent = text;
+    document.getElementById("cwMessages").appendChild(div);
+    cwScroll();
+    // Hide quick actions after first message
+    document.getElementById("cwQuick").style.display = "none";
 }
+
+function cwShowTyping() {
+    cwRemoveTyping();
+    const div = document.createElement("div");
+    div.className = "cw-typing";
+    div.id = "cwTyping";
+    div.innerHTML = "<span></span><span></span><span></span>";
+    document.getElementById("cwMessages").appendChild(div);
+    cwScroll();
+}
+
+function cwRemoveTyping() {
+    const t = document.getElementById("cwTyping");
+    if (t) t.remove();
+}
+
+function cwScroll() {
+    const m = document.getElementById("cwMessages");
+    m.scrollTop = m.scrollHeight;
+}
+
+function quickSend(text) {
+    document.getElementById("cwInput").value = text;
+    cwSendMsg();
+}
+
+async function cwSendMsg() {
+    const input = document.getElementById("cwInput");
+    const text = input.value.trim();
+    if (!text || cwBusy) return;
+
+    cwAddUser(text);
+    input.value = "";
+    input.style.height = "auto";
+
+    cwHistory.push({ role: "user", content: text });
+    cwShowTyping();
+    cwBusy = true;
+    document.getElementById("cwSend").disabled = true;
+
+    try {
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                model: "claude-sonnet-4-6",
+                max_tokens: 600,
+                system: `You are a friendly and expert AI Interview Coach assistant embedded in the AI Interview Simulator dashboard.
+Help users with: interview preparation tips, resume advice, common interview questions, behavioral interview strategies, technical interview guidance, and career advice.
+Keep answers concise and practical (3-5 sentences max). Use simple language. Be encouraging and supportive.
+If asked to start a full interview, tell them to click "Interview Chat" in the navigation menu.`,
+                messages: cwHistory
+            })
+        });
+        const data = await res.json();
+        const reply = data.content[0].text;
+        cwHistory.push({ role: "assistant", content: reply });
+        cwAddAI(reply);
+    } catch (e) {
+        // Fallback to backend if Anthropic direct fails
+        try {
+            const res = await fetch(`${BACKEND}/chat`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: text, history: cwHistory, mode: "hr" })
+            });
+            const data = await res.json();
+            cwHistory = data.history || cwHistory;
+            cwAddAI(data.reply);
+        } catch (e2) {
+            cwAddAI("⚠️ Could not connect to the AI. Please check your internet connection.");
+        }
+    } finally {
+        cwBusy = false;
+        document.getElementById("cwSend").disabled = false;
+    }
+}
+
+// Auto-resize textarea
+document.getElementById("cwInput").addEventListener("input", function () {
+    this.style.height = "auto";
+    this.style.height = Math.min(this.scrollHeight, 100) + "px";
+});
+
+// Enter to send
+document.getElementById("cwInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        cwSendMsg();
+    }
+});
+
+// Show badge after 3 seconds to draw attention
+setTimeout(() => {
+    if (!chatOpened) {
+        document.getElementById("chatBadge").style.display = "block";
+    }
+}, 3000);
 
 </script>
 
