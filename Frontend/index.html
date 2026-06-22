@@ -107,15 +107,14 @@ href="style.css">
 
 .cw-avatar {
     width: 36px; height: 36px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1, #38bdf8);
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
     flex-shrink: 0;
 }
 
 .cw-title { color: white; font-weight: 700; font-size: 14px; }
 .cw-sub { color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 1px; }
+.cw-dot { display:inline-block; width:8px; height:8px; background:#22c55e; border-radius:50%; margin-right:5px; vertical-align:middle; animation:cwpulse 2s infinite; }
+@keyframes cwpulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
 
 .cw-close {
     background: rgba(255,255,255,0.08);
@@ -492,10 +491,10 @@ Logout
     <!-- Header -->
     <div class="cw-header">
         <div class="cw-header-left">
-            <div class="cw-avatar">🤖</div>
+            <div class="cw-avatar"><img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1782108251/cloud-computing_gpqeu0.png" style="width:22px;height:22px;"></div>
             <div>
                 <div class="cw-title">AI Assistant</div>
-                <div class="cw-sub">● Online — Ask me anything</div>
+                <div class="cw-sub"><span class="cw-dot"></span>Online — Ask me anything</div>
             </div>
         </div>
         <button class="cw-close" onclick="toggleChat()">✕</button>
