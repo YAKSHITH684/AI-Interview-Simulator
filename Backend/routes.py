@@ -17,6 +17,7 @@ GROQ_MODEL = "llama3-8b-8192"
 
 def ask_groq(system: str, messages: list, max_tokens: int = 800) -> str:
     if not GROQ_API_KEY:
+        print("GROQ: No API key found in environment")
         return None
     try:
         payload = {
@@ -30,9 +31,11 @@ def ask_groq(system: str, messages: list, max_tokens: int = 800) -> str:
             json=payload,
             timeout=15
         )
+        print(f"GROQ STATUS: {res.status_code} BODY: {res.text[:200]}")
         data = res.json()
         return data["choices"][0]["message"]["content"]
-    except Exception:
+    except Exception as e:
+        print(f"GROQ EXCEPTION: {e}")
         return None
 
 
