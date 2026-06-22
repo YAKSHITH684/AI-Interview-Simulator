@@ -1,439 +1,279 @@
-
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
 <meta charset="UTF-8">
-
 <title>Interview Progress</title>
-
 <style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Segoe UI', Arial;
+    background: url("https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781863161/5815532-3840x2160-desktop-hd-4k-wallpaper-image_vhguty.jpg");
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    padding: 20px;
+}
+.container {
+    width: 580px;
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(22px);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+.title { display:flex; align-items:center; gap:10px; font-size:20px; font-weight:bold; }
+.btn-row { display:flex; gap:8px; }
+button {
+    padding: 9px 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 13px;
+    transition: 0.2s;
+}
+.upload-btn { background: linear-gradient(90deg,#22c55e,#16a34a); color:white; }
+.back-btn { background: linear-gradient(90deg,#38bdf8,#0ea5e9); color:black; }
+button:hover { transform: scale(1.04); }
+input[type=file] { display:none; }
 
-body{
-margin:0;
-
-font-family:Arial;
-
-background:
-url("https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781863161/5815532-3840x2160-desktop-hd-4k-wallpaper-image_vhguty.jpg");
-
-background-size:cover;
-
-height:100vh;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-color:white;
+/* STATUS */
+.status {
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    font-size: 14px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.7);
+    text-align: center;
 }
 
-.container{
+/* BIG SCORE */
+.big-score {
+    text-align: center;
+    font-size: 52px;
+    font-weight: 800;
+    color: #38bdf8;
+    margin-bottom: 6px;
+    line-height: 1;
+}
+.big-label { text-align:center; font-size:13px; color:rgba(255,255,255,0.5); margin-bottom:16px; }
 
-width:550px;
-
-padding:30px;
-
-border-radius:20px;
-
-background:
-rgba(255,255,255,.08);
-
-backdrop-filter:
-blur(20px);
-
+/* PROGRESS BAR */
+.progress-bg {
+    height: 18px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 40px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg,#38bdf8,#6366f1);
+    transition: width 1s ease;
+    border-radius: 40px;
 }
 
-.header{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
+/* METRICS GRID */
+.metrics { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:18px; }
+.metric {
+    background: rgba(0,0,0,0.25);
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.08);
 }
+.metric .val { font-size:24px; font-weight:800; }
+.metric .lbl { font-size:11px; color:rgba(255,255,255,0.5); margin-top:3px; }
 
-.title{
-
-display:flex;
-
-gap:10px;
-
-font-size:24px;
-
-font-weight:bold;
-
+/* SECTIONS */
+.section {
+    background: rgba(0,0,0,0.25);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.07);
 }
+.section-title { font-size:11px; font-weight:700; color:#38bdf8; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:10px; }
+.badge { display:inline-block; padding:4px 10px; margin:3px; border-radius:999px; background:rgba(56,189,248,0.15); color:#38bdf8; font-size:12px; border:1px solid rgba(56,189,248,0.2); }
+.bar-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.bar-lbl { width:110px; font-size:12px; color:rgba(255,255,255,0.6); flex-shrink:0; }
+.bar-track { flex:1; height:8px; background:rgba(255,255,255,0.08); border-radius:999px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#38bdf8,#6366f1); transition:width 1s ease; }
+.bar-val { width:32px; text-align:right; font-size:12px; font-weight:700; color:#38bdf8; }
+.list-item { display:flex; gap:8px; align-items:flex-start; font-size:13px; margin-bottom:6px; color:rgba(255,255,255,0.8); }
 
-.title img{
-
-width:42px;
-
+/* PERFORMANCE BADGE */
+.perf {
+    text-align:center;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 14px;
 }
+.perf.excellent { background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.25); }
+.perf.good { background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.25); }
+.perf.improve { background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.25); }
+.perf.waiting { background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.4); border:1px solid rgba(255,255,255,0.08); }
 
-button{
+.spinner { width:24px; height:24px; border:3px solid rgba(255,255,255,0.15); border-top-color:#38bdf8; border-radius:50%; animation:spin 0.8s linear infinite; display:inline-block; vertical-align:middle; margin-right:8px; }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-padding:10px 15px;
-
-border:none;
-
-border-radius:10px;
-
-cursor:pointer;
-
-font-weight:bold;
-
-}
-
-.upload{
-
-background:
-linear-gradient(
-90deg,
-#22c55e,
-#16a34a
-);
-
-color:white;
-
-}
-
-.back{
-
-background:
-linear-gradient(
-90deg,
-#38bdf8,
-#0ea5e9
-);
-
-}
-
-.status{
-
-margin-top:20px;
-
-padding:15px;
-
-background:
-rgba(255,255,255,.05);
-
-border-radius:12px;
-
-}
-
-.progress-bg{
-
-margin-top:20px;
-
-height:20px;
-
-background:
-rgba(255,255,255,.1);
-
-border-radius:40px;
-
-overflow:hidden;
-
-}
-
-.progress{
-
-height:100%;
-
-width:0;
-
-background:
-linear-gradient(
-90deg,
-#38bdf8,
-#6366f1
-);
-
-transition:1s;
-
-}
-
-.score{
-
-font-size:40px;
-
-text-align:center;
-
-margin-top:20px;
-
-color:#38bdf8;
-
-}
-
-.info{
-
-margin-top:20px;
-
-line-height:2;
-
-}
-
-input{
-
-display:none;
-
-}
-
+.hidden { display:none; }
 </style>
-
 </head>
-
 <body>
-
 <div class="container">
 
-<div class="header">
+    <div class="header">
+        <div class="title">
+            <img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781763958/ai-image_a6hbir.png" width="40">
+            Interview Progress
+        </div>
+        <div class="btn-row">
+            <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" onchange="uploadResume()">
+            <button class="upload-btn" onclick="document.getElementById('resumeFile').click()">📄 Upload Resume</button>
+            <button class="back-btn" onclick="window.location.href='index.html'">← Back</button>
+        </div>
+    </div>
 
-<div class="title">
+    <div class="status" id="status">Upload your resume to see AI-powered progress analysis</div>
 
-<img
-src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781763958/ai-image_a6hbir.png">
+    <!-- BIG SCORE -->
+    <div class="big-score" id="bigScore">0%</div>
+    <div class="big-label">ATS Compatibility Score</div>
 
-Interview Progress
+    <!-- PROGRESS BAR -->
+    <div class="progress-bg">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
 
-</div>
+    <!-- PERFORMANCE -->
+    <div class="perf waiting" id="perfBadge">⏳ Waiting for resume upload...</div>
 
-<div>
+    <!-- METRICS -->
+    <div class="metrics">
+        <div class="metric"><div class="val" id="resumeScore" style="color:#a78bfa">0</div><div class="lbl">Resume Score</div></div>
+        <div class="metric"><div class="val" id="readiness" style="color:#22c55e">0</div><div class="lbl">Readiness</div></div>
+        <div class="metric"><div class="val" id="skillsCount" style="color:#38bdf8">0</div><div class="lbl">Skills Found</div></div>
+    </div>
 
-<input
-type="file"
-id="resumeFile">
+    <!-- DETAILS (hidden until analyzed) -->
+    <div id="details" class="hidden">
 
-<button
-class="upload"
-onclick="pickResume()">
+        <div class="section" id="summarySection">
+            <div class="section-title">AI Summary</div>
+            <p id="summaryText" style="font-size:13px;line-height:1.7;color:rgba(255,255,255,0.8);"></p>
+        </div>
 
-Upload Resume
+        <div class="section">
+            <div class="section-title">Skill Breakdown</div>
+            <div id="breakdown"></div>
+        </div>
 
-</button>
+        <div class="section">
+            <div class="section-title">Skills Detected</div>
+            <div id="skillsBadges"></div>
+        </div>
 
-<button
-class="back"
-onclick="goBack()">
+        <div class="section">
+            <div class="section-title">Suggestions to Improve</div>
+            <div id="suggestions"></div>
+        </div>
 
-← Back
-
-</button>
-
-</div>
-
-</div>
-
-<div
-class="status"
-id="status">
-
-Click Upload Resume
-
-</div>
-
-<div class="progress-bg">
-
-<div
-class="progress"
-id="bar">
-
-</div>
-
-</div>
-
-<div
-class="score"
-id="score">
-
-0%
-
-</div>
-
-<div class="info">
-
-Resume Score:
-<span id="resume">0</span>
-
-<br>
-
-Readiness:
-<span id="ready">0</span>
-
-<br>
-
-Skills:
-<span id="skills">0</span>
-
-<br>
-
-Performance:
-<span id="performance">
-
-Waiting
-
-</span>
-
-</div>
+    </div>
 
 </div>
 
 <script>
+const BACKEND = "https://ai-interview-simulator-316l.onrender.com";
 
-function goBack(){
+async function uploadResume() {
+    const file = document.getElementById("resumeFile").files[0];
+    if (!file) return;
 
-window.location.href=
-"index.html";
+    document.getElementById("status").innerHTML = `<span class="spinner"></span> Groq AI is analyzing your resume...`;
+    document.getElementById("details").classList.add("hidden");
 
+    try {
+        const formData = new FormData();
+        formData.append("resume", file);
+
+        const res = await fetch(`${BACKEND}/analyze-resume`, { method: "POST", body: formData });
+        const data = await res.json();
+
+        const ats = data.ats_score || 0;
+
+        // Big score + bar
+        document.getElementById("bigScore").textContent = ats + "%";
+        document.getElementById("progressFill").style.width = ats + "%";
+
+        // Metrics
+        document.getElementById("resumeScore").textContent = data.resume_score || 0;
+        document.getElementById("readiness").textContent = data.readiness || 0;
+        document.getElementById("skillsCount").textContent = data.skills || 0;
+
+        // Performance badge
+        const perfEl = document.getElementById("perfBadge");
+        if (ats >= 80) {
+            perfEl.className = "perf excellent";
+            perfEl.textContent = "🏆 Excellent — Strong resume ready for top companies!";
+        } else if (ats >= 60) {
+            perfEl.className = "perf good";
+            perfEl.textContent = "👍 Good — Your resume is competitive. Keep improving!";
+        } else {
+            perfEl.className = "perf improve";
+            perfEl.textContent = "📈 Needs Improvement — Follow the suggestions below.";
+        }
+
+        // Summary
+        if (data.summary) {
+            document.getElementById("summaryText").textContent = data.summary;
+        }
+
+        // Skill breakdown bars
+        const breakdown = data.skill_breakdown || {};
+        document.getElementById("breakdown").innerHTML = Object.entries(breakdown).map(([k,v]) => `
+            <div class="bar-row">
+                <span class="bar-lbl">${k}</span>
+                <div class="bar-track"><div class="bar-fill" style="width:${v}%"></div></div>
+                <span class="bar-val">${v}%</span>
+            </div>`).join('');
+
+        // Skills badges
+        const skills = data.ai_skills_found || [];
+        document.getElementById("skillsBadges").innerHTML = skills.length
+            ? skills.map(s => `<span class="badge">${s}</span>`).join('')
+            : '<p style="font-size:13px;color:rgba(255,255,255,0.4);">No skills detected</p>';
+
+        // Suggestions
+        const suggestions = data.suggestions || [];
+        document.getElementById("suggestions").innerHTML = suggestions.length
+            ? suggestions.map(s => `<div class="list-item"><span style="color:#fbbf24;flex-shrink:0;">→</span><span>${s}</span></div>`).join('')
+            : '<p style="font-size:13px;color:rgba(255,255,255,0.4);">No suggestions — great resume!</p>';
+
+        document.getElementById("status").textContent = "✅ AI Analysis Complete — " + file.name;
+        document.getElementById("details").classList.remove("hidden");
+
+    } catch(e) {
+        document.getElementById("status").textContent = "❌ Error analyzing resume. Please try again.";
+        console.error(e);
+    }
 }
-
-function pickResume(){
-
-document
-.getElementById(
-"resumeFile"
-)
-.click();
-
-}
-
-document
-.getElementById(
-"resumeFile"
-)
-
-.addEventListener(
-
-"change",
-
-uploadResume
-
-);
-
-async function uploadResume(){
-
-const file=
-
-document
-.getElementById(
-"resumeFile"
-)
-.files[0];
-
-if(!file)
-return;
-
-const formData=
-new FormData();
-
-formData.append(
-"resume",
-file
-);
-
-document
-.getElementById(
-"status"
-)
-.innerText=
-
-"Analyzing...";
-
-const res=
-
-await fetch(
-
-"https://ai-interview-simulator-316l.onrender.com/analyze-resume",
-
-{
-
-method:"POST",
-
-body:formData
-
-}
-
-);
-
-const data=
-await res.json();
-
-let ats=
-data.ats_score||0;
-
-document
-.getElementById(
-"bar"
-)
-.style.width=
-
-ats+"%";
-
-document
-.getElementById(
-"score"
-)
-.innerText=
-
-ats+"%";
-
-document
-.getElementById(
-"resume"
-)
-.innerText=
-
-data.resume_score;
-
-document
-.getElementById(
-"ready"
-)
-.innerText=
-
-data.readiness;
-
-document
-.getElementById(
-"skills"
-)
-.innerText=
-
-data.skills;
-
-let p=
-"Needs Improvement";
-
-if(ats>=60)
-p="Good";
-
-if(ats>=80)
-p="Excellent";
-
-document
-.getElementById(
-"performance"
-)
-.innerText=p;
-
-document
-.getElementById(
-"status"
-)
-.innerText=
-
-"Resume Uploaded Successfully";
-
-}
-
 </script>
-
 </body>
-
 </html>
-
