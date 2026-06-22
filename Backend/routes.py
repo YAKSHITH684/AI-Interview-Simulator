@@ -135,6 +135,40 @@ async def analyze_resume(resume: UploadFile = File(...)):
             "skill_breakdown": {"Technical Skills": 0, "Communication": 0, "Experience": 0, "Education": 0, "Projects": 0}
         }
 
+    # Try Groq AI for full analysis
+    import json as _json
+    groq_system = """You are a professional ATS resume analyst. Analyze the resume and respond ONLY with valid JSON, no markdown, no explanation.
+Schema:
+{
+  "ats_score": integer 0-100,
+  "resume_score": integer 0-100,
+  "readiness": integer 0-100,
+  "skills": integer,
+  "ai_skills_found": ["skill1", "skill2"],
+  "ai_verdict": "Strong Resume / Moderate Resume / Weak Resume",
+  "ai_feedback": "feedback string",
+  "summary": "2-3 sentence summary",
+  "strengths": ["s1","s2","s3"],
+  "suggestions": ["s1","s2","s3","s4"],
+  "skill_breakdown": {
+    "Technical Skills": integer,
+    "Communication": integer,
+    "Experience": integer,
+    "Education": integer,
+    "Projects": integer
+  }
+}"""
+
+    ai_reply = ask_groq(groq_system, [{"role": "user", "content": f"Analyze this resume:\n\n{text[:4000]}"}], max_tokens=1000)
+    if ai_reply:
+        try:
+            clean = ai_reply.replace("```json", "").replace("```", "").strip()
+            result = _json.loads(clean)
+            return result
+        except Exception as e:
+            print(f"Groq JSON parse error: {e}")
+
+    # Fallback keyword-based analysis
     text_lower = text.lower()
     ats = 30
     skill_map = {
@@ -513,3 +547,43 @@ def assistant(data: AssistantRequest):
 
     history.append({"role": "assistant", "content": reply})
     return {"reply": reply, "history": history}
+
+
+# ─────────────────────────────────────────
+# AI ANALYSIS ENDPOINT
+# ─────────────────────────────────────────
+class AIAnalysisRequest(BaseModel):
+    resume_text: str
+
+@router.post("/ai-analysis")
+def ai_analysis(data: AIAnalysisRequest):
+    import json as _json
+    system = """You are a professional resume analyst. Analyze the resume deeply.
+Respond ONLY with valid JSON, no markdown, no explanation.
+Schema:
+{
+  "ats_score": integer,
+  "readiness_score": integer,
+  "skills": ["skill1", "skill2"],
+  "suggestions": ["s1","s2","s3","s4"],
+  "summary": "string",
+  "skill_breakdown": {
+    "Technical Skills": integer,
+    "Communication": integer,
+    "Experience": integer,
+    "Education": integer,
+    "Projects": integer
+  },
+  "strengths": ["s1","s2","s3"],
+  "gaps": ["g1","g2"]
+}"""
+
+    ai_reply = ask_groq(system, [{"role": "user", "content": data.resume_text[:4000]}], max_tokens=1000)
+    if ai_reply:
+        try:
+            clean = ai_reply.replace("```json", "").replace("```", "").strip()
+            result = _json.loads(clean)
+            return {"success": True, **result}
+        except Exception as e:
+            return {"success": False, "error": f"Parse error: {e}"}
+    return {"success": False, "error": "Groq unavailable"}
