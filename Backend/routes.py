@@ -356,11 +356,6 @@ def chat(data: ChatRequest):
         return {"reply": reply, "history": history}
 
     # Try Groq AI for dynamic response
-    short_answer = len(msg) < 10
-    context = f"The candidate just answered question {answered_count}. Their answer: '{msg}'"
-    if short_answer:
-        context += " (Note: very short answer — give a gentle hint or ask them to elaborate)"
-
     ai_reply = ask_groq(SYSTEM_PROMPTS[mode], history[-6:])  # last 6 turns for context
 
     if ai_reply:
@@ -368,12 +363,10 @@ def chat(data: ChatRequest):
     else:
         # Fallback rule-based
         questions = FALLBACK_QUESTIONS[mode]
-        warning = "Your answer seems too short. Try to elaborate more.\n\n" if short_answer else ""
         fb = random.choice(FALLBACK_FEEDBACK)
         next_q_num = answered_count + 1
         next_question = questions[min(answered_count, len(questions) - 1)]
         reply = (
-            f"{warning}"
             f"Feedback: {fb}\n\n"
             f"---\n"
             f"Question {next_q_num} of 10:\n\n{next_question}"
