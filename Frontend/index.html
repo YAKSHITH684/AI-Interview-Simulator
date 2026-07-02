@@ -22,28 +22,96 @@ href="style.css">
 ═══════════════════════════════════════ */
 
 /* FAB BUTTON */
-#chatFab {
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1, #38bdf8);
-    border: none;
-    cursor: pointer;
-    font-size: 26px;
-    box-shadow: 0 8px 30px rgba(99,102,241,0.5);
-    z-index: 9999;
-    transition: transform 0.25s, box-shadow 0.25s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* Floating AI Button */
+#chatFab{
+    position:fixed;
+    bottom:28px;
+    right:28px;
+    width:72px;
+    height:72px;
+    border:none;
+    border-radius:50%;
+    cursor:pointer;
+    overflow:hidden;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:linear-gradient(
+        135deg,
+        #4f46e5,
+        #06b6d4,
+        #2563eb,
+        #4f46e5
+    );
+
+    background-size:300% 300%;
+    animation:gradientMove 6s ease infinite;
+
+    box-shadow:
+        0 10px 30px rgba(79,70,229,.45),
+        0 0 25px rgba(6,182,212,.35);
+
+    transition:.3s;
+    z-index:9999;
 }
 
-#chatFab:hover {
-    transform: scale(1.1);
-    box-shadow: 0 12px 40px rgba(99,102,241,0.7);
+/* Glowing Ring */
+#chatFab::before{
+    content:"";
+    position:absolute;
+    inset:-3px;
+    border-radius:50%;
+    background:linear-gradient(
+        45deg,
+        #06b6d4,
+        #4f46e5,
+        #3b82f6,
+        #06b6d4
+    );
+    z-index:-1;
+    filter:blur(8px);
+    opacity:.8;
+}
+
+/* White Circle */
+#chatFab::after{
+    content:"";
+    position:absolute;
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    background:#ffffff;
+}
+
+/* AI Image */
+#chatFab img{
+    position:relative;
+    z-index:2;
+    width:34px;
+    height:34px;
+    object-fit:contain;
+}
+
+/* Hover */
+#chatFab:hover{
+    transform:translateY(-5px) scale(1.08);
+    box-shadow:
+        0 16px 40px rgba(79,70,229,.6),
+        0 0 35px rgba(6,182,212,.5);
+}
+
+/* Click */
+#chatFab:active{
+    transform:scale(.95);
+}
+
+/* Floating Animation */
+@keyframes gradientMove{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
 }
 
 /* NOTIFICATION BADGE */
@@ -483,7 +551,9 @@ Logout
 <div id="chatBadge">1</div>
 
 <!-- FAB -->
-<button id="chatFab" onclick="toggleChat()" title="Chat with AI Assistant">🤖</button>
+<button id="chatFab" onclick="toggleChat()" aria-label="Open AI Assistant">
+    <img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1782108251/cloud-computing_gpqeu0.png" alt="AI Assistant">
+</button>
 
 <!-- Chat Window -->
 <div id="chatWindow">
@@ -491,7 +561,7 @@ Logout
     <!-- Header -->
     <div class="cw-header">
         <div class="cw-header-left">
-            <div class="cw-avatar"><img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1782108251/cloud-computing_gpqeu0.png" style="width:22px;height:22px;"></div>
+            <div class="cw-avatar"><img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1782985049/artificial-intelligence_lnaqit.png" style="width:40px;height:40px;"></div>
             <div>
                 <div class="cw-title">AI Assistant</div>
                 <div class="cw-sub"><span class="cw-dot"></span>Online — Ask me anything</div>
