@@ -1,579 +1,717 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Interview Simulator — Rehearse the room before you walk in</title>
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>
-AI Interview Simulator
-</title>
-
-<link
-rel="stylesheet"
-href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
 /* ═══════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════ */
+:root{
+    --bg:            #F4FAF8;
+    --bg-elevated:   #FFFFFF;
+    --surface:       #EAF5F1;
+    --surface-2:     #DCEEE7;
+    --border:        rgba(15,42,36,0.09);
+    --border-strong: rgba(15,42,36,0.16);
+
+    --text:          #122A24;
+    --text-muted:    #52746B;
+    --text-faint:    #86A69C;
+
+    --mint:          #1FAE85;
+    --mint-deep:     #0E8A66;
+    --mint-dim:      rgba(31,174,133,0.13);
+    --sky:           #3D8BE0;
+    --sky-deep:      #2569B4;
+    --sky-dim:       rgba(61,139,224,0.13);
+    --coral:         #E0654C;
+
+    --display: 'Fraunces', Georgia, serif;
+    --body:    'Inter', -apple-system, sans-serif;
+    --mono:    'JetBrains Mono', 'Courier New', monospace;
+
+    --radius: 18px;
+    --radius-sm: 10px;
+}
+
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+}
+
+/* ambient grain / spotlight backdrop, fixed behind everything */
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-2;
+    background:
+        radial-gradient(ellipse 900px 500px at 18% -5%, rgba(31,174,133,0.12), transparent 60%),
+        radial-gradient(ellipse 700px 500px at 100% 20%, rgba(61,139,224,0.12), transparent 60%),
+        var(--bg);
+}
+
+a{ color:inherit; text-decoration:none; }
+h1,h2,h3{ font-family:var(--display); margin:0; font-weight:600; letter-spacing:-0.01em; }
+p{ margin:0; }
+.eyebrow{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--mint-deep);
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+}
+.eyebrow::before{
+    content:"";
+    width:5px; height:5px;
+    border-radius:50%;
+    background:var(--mint);
+    box-shadow:0 0 8px rgba(31,174,133,0.5);
+}
+
+::selection{ background:var(--mint); color:#fff; }
+
+@media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+}
+
+/* focus visibility */
+a:focus-visible, button:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--sky-deep);
+    outline-offset:3px;
+}
+
+.container{ max-width:1180px; margin:0 auto; padding:0 32px; }
+
+/* ═══════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════ */
+.navbar{
+    position:sticky; top:0; z-index:500;
+    background:rgba(244,250,248,0.82);
+    backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid var(--border);
+}
+.navbar .container{
+    display:flex; align-items:center; justify-content:space-between;
+    height:76px;
+}
+.brand{ display:flex; align-items:center; gap:12px; }
+.brand img{
+    width:38px; height:38px; object-fit:contain;
+    filter:drop-shadow(0 0 10px rgba(31,174,133,0.3));
+}
+.brand-text{ font-family:var(--display); font-weight:700; font-size:19px; letter-spacing:-0.01em; }
+.brand-text span{ color:var(--mint-deep); }
+
+.nav-links{ display:flex; align-items:center; gap:6px; }
+.nav-links a{
+    font-size:13.5px; font-weight:500; color:var(--text-muted);
+    padding:9px 14px; border-radius:999px;
+    transition:color .2s ease, background .2s ease;
+}
+.nav-links a:hover{ color:var(--text); background:var(--surface); }
+.nav-links a:last-child{
+    margin-left:6px;
+    color:#fff;
+    background:var(--mint-deep);
+    font-weight:600;
+}
+.nav-links a:last-child:hover{ background:var(--sky-deep); color:#fff; }
+
+.toggle{
+    display:none; cursor:pointer; font-size:22px; color:var(--text);
+    background:var(--surface); border:1px solid var(--border);
+    width:42px; height:42px; border-radius:10px;
+    align-items:center; justify-content:center;
+}
+
+@media (max-width: 900px){
+    .toggle{ display:flex; }
+    .nav-links{
+        position:absolute; top:76px; left:0; right:0;
+        flex-direction:column; align-items:stretch;
+        background:var(--bg-elevated); border-bottom:1px solid var(--border);
+        padding:10px 20px 18px; gap:2px;
+        display:none;
+    }
+    .nav-links.show{ display:flex; }
+    .nav-links a{ padding:12px 10px; }
+}
+
+/* ═══════════════════════════════════════
+   HERO — the interview transcript
+═══════════════════════════════════════ */
+.hero{
+    padding:88px 0 96px;
+    position:relative;
+}
+.hero .container{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:56px;
+    align-items:center;
+}
+.hero-copy h1{
+    font-size:clamp(38px, 4.6vw, 60px);
+    line-height:1.06;
+    margin:18px 0 22px;
+    font-weight:600;
+}
+.hero-copy h1 em{
+    font-style:normal;
+    color:var(--mint-deep);
+}
+.hero-copy p.lede{
+    font-size:17px;
+    color:var(--text-muted);
+    max-width:46ch;
+    margin-bottom:34px;
+}
+.hero-actions{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+
+.btn-primary{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--mint-deep); color:#fff;
+    font-weight:700; font-size:14.5px;
+    padding:14px 26px; border-radius:999px;
+    box-shadow:0 8px 24px rgba(14,138,102,0.25);
+    transition:transform .2s ease, box-shadow .2s ease;
+}
+.btn-primary:hover{ transform:translateY(-2px); box-shadow:0 12px 30px rgba(14,138,102,0.35); }
+
+.btn-ghost{
+    display:inline-flex; align-items:center; gap:8px;
+    color:var(--text); font-weight:600; font-size:14.5px;
+    padding:14px 4px;
+    border-bottom:1px solid var(--border-strong);
+    transition:border-color .2s ease, color .2s ease;
+}
+.btn-ghost:hover{ border-color:var(--sky-deep); color:var(--sky-deep); }
+
+.hero-stats{
+    display:flex; gap:28px; margin-top:44px;
+    padding-top:28px; border-top:1px solid var(--border);
+}
+.hero-stats div{ font-family:var(--mono); }
+.hero-stats .num{ font-size:22px; color:var(--text); font-weight:600; }
+.hero-stats .label{ font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.08em; margin-top:2px; }
+
+/* transcript card — the signature element */
+.transcript-wrap{ position:relative; }
+.transcript-wrap::before{
+    content:"";
+    position:absolute; inset:-40px;
+    background:radial-gradient(circle at 50% 30%, rgba(31,174,133,0.16), transparent 65%);
+    filter:blur(10px);
+    pointer-events:none;
+}
+.transcript-card{
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--border-strong);
+    border-radius:var(--radius);
+    padding:0;
+    box-shadow:0 24px 56px rgba(15,42,36,0.14);
+    overflow:hidden;
+}
+.transcript-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 20px;
+    border-bottom:1px solid var(--border);
+    background:var(--bg-elevated);
+}
+.transcript-head .who{ display:flex; align-items:center; gap:9px; font-size:12.5px; color:var(--text-muted); font-family:var(--mono); }
+.rec-dot{ width:8px; height:8px; border-radius:50%; background:var(--coral); box-shadow:0 0 8px var(--coral); animation:recpulse 1.6s infinite; }
+@keyframes recpulse{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
+
+.transcript-body{ padding:22px 20px 26px; display:flex; flex-direction:column; gap:14px; min-height:260px; }
+.bubble{
+    max-width:86%; padding:12px 15px; border-radius:14px;
+    font-size:13.5px; line-height:1.55;
+    opacity:0; transform:translateY(8px);
+    animation:bubbleIn .5s ease forwards;
+}
+.bubble.q{
+    align-self:flex-start;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-bottom-left-radius:4px;
+    color:var(--text);
+}
+.bubble.a{
+    align-self:flex-end;
+    background:linear-gradient(135deg, rgba(61,139,224,0.14), rgba(61,139,224,0.05));
+    border:1px solid rgba(61,139,224,0.3);
+    border-bottom-right-radius:4px;
+    color:#123258;
+}
+.bubble .tag{ font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; opacity:.65; margin-bottom:5px; font-weight:600; }
+.bubble .msg{ margin:0; }
+@keyframes bubbleIn{ to{ opacity:1; transform:translateY(0); } }
+.bubble:nth-child(1){ animation-delay:.15s; }
+.bubble:nth-child(2){ animation-delay:.75s; }
+.bubble:nth-child(3){ animation-delay:1.35s; }
+.bubble:nth-child(4){ animation-delay:1.95s; }
+
+.transcript-foot{
+    padding:14px 20px; border-top:1px solid var(--border);
+    display:flex; align-items:center; gap:10px;
+    font-family:var(--mono); font-size:11.5px; color:var(--text-faint);
+}
+.transcript-foot .bar{ flex:1; height:4px; border-radius:2px; background:var(--surface-2); overflow:hidden; }
+.transcript-foot .bar span{ display:block; height:100%; width:72%; background:linear-gradient(90deg, var(--mint-deep), var(--sky-deep)); }
+
+@media (max-width: 900px){
+    .hero .container{ grid-template-columns:1fr; }
+    .hero-stats{ flex-wrap:wrap; row-gap:16px; }
+}
+
+/* ═══════════════════════════════════════
+   REVEAL ON SCROLL
+═══════════════════════════════════════ */
+.reveal{ opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease; }
+.reveal.in{ opacity:1; transform:translateY(0); }
+
+/* ═══════════════════════════════════════
+   ABOUT / FEATURE CARDS
+═══════════════════════════════════════ */
+.section{ padding:88px 0; }
+.section-title{ max-width:640px; margin-bottom:52px; }
+.section-title .eyebrow{ margin-bottom:14px; }
+.section-title h2{ font-size:clamp(28px,3vw,38px); margin-bottom:14px; }
+.section-title p{ color:var(--text-muted); font-size:15.5px; }
+
+.about-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:22px;
+}
+.about-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:30px 26px;
+    transition:transform .25s ease, border-color .25s ease, background .25s ease;
+    position:relative;
+    overflow:hidden;
+}
+.about-card::after{
+    content:"";
+    position:absolute; top:-40%; right:-40%;
+    width:160px; height:160px; border-radius:50%;
+    background:radial-gradient(circle, var(--card-glow, rgba(31,174,133,0.18)), transparent 70%);
+    opacity:0; transition:opacity .3s ease;
+}
+.about-card:hover{ transform:translateY(-4px); border-color:var(--border-strong); background:var(--surface-2); }
+.about-card:hover::after{ opacity:1; }
+.about-card .icon{
+    font-size:22px; width:46px; height:46px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:12px; margin-bottom:20px;
+    background:var(--mint-dim); border:1px solid rgba(31,174,133,0.28);
+}
+.about-card:nth-child(2) .icon{ background:var(--sky-dim); border-color:rgba(61,139,224,0.3); }
+.about-card:nth-child(3) .icon{ background:rgba(232,103,79,0.14); border-color:rgba(232,103,79,0.3); }
+.about-card h3{ font-size:18px; margin-bottom:10px; font-weight:600; }
+.about-card p{ color:var(--text-muted); font-size:14px; }
+
+/* ═══════════════════════════════════════
+   PROCESS — a real sequence, numbered honestly
+═══════════════════════════════════════ */
+.process-section{ padding:88px 0; background:var(--bg-elevated); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.process-container{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+    position:relative;
+}
+.process-container::before{
+    content:"";
+    position:absolute; top:26px; left:6%; right:6%; height:1px;
+    background:linear-gradient(90deg, transparent, var(--border-strong) 15%, var(--border-strong) 85%, transparent);
+}
+.process-box{ padding:0 20px; position:relative; }
+.process-box span{
+    display:flex; align-items:center; justify-content:center;
+    width:52px; height:52px; border-radius:50%;
+    background:var(--bg-elevated);
+    border:1px solid var(--border-strong);
+    font-family:var(--mono); font-size:15px; color:var(--mint-deep);
+    margin-bottom:22px; position:relative; z-index:2;
+}
+.process-box h3{ font-size:16px; margin-bottom:8px; font-weight:600; }
+.process-box p{ color:var(--text-muted); font-size:13.5px; }
+
+@media (max-width: 900px){
+    .about-grid, .process-container{ grid-template-columns:1fr; gap:26px; }
+    .process-container::before{ display:none; }
+}
+
+/* ═══════════════════════════════════════
+   WEBSITE INFO
+═══════════════════════════════════════ */
+.website-info .container{
+    display:grid; grid-template-columns:0.8fr 1.2fr; gap:60px; align-items:start;
+}
+.website-info h2{ font-size:clamp(26px,3vw,34px); line-height:1.2; }
+.website-container p{ color:var(--text-muted); font-size:15px; margin-bottom:18px; }
+.website-container p:last-child{ margin-bottom:0; }
+@media (max-width:900px){ .website-info .container{ grid-template-columns:1fr; gap:24px; } }
+
+/* ═══════════════════════════════════════
+   CTA
+═══════════════════════════════════════ */
+.cta-section{
+    margin:0 32px 90px; padding:70px 40px;
+    max-width:1116px; margin-left:auto; margin-right:auto;
+    border-radius:28px;
+    text-align:center;
+    background:
+        radial-gradient(ellipse 500px 260px at 50% 0%, rgba(31,174,133,0.16), transparent 70%),
+        var(--surface);
+    border:1px solid var(--border-strong);
+    position:relative;
+    overflow:hidden;
+}
+.cta-section h2{ font-size:clamp(28px,3.4vw,40px); margin-bottom:14px; }
+.cta-section p{ color:var(--text-muted); font-size:16px; margin-bottom:32px; }
+.cta-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--mint-deep); color:#ffffff; font-weight:700; font-size:15px;
+    padding:15px 32px; border-radius:999px;
+    box-shadow:0 10px 28px rgba(31,174,133,0.3);
+    transition:transform .2s ease;
+}
+.cta-btn:hover{ transform:translateY(-2px) scale(1.02); }
+
+/* ═══════════════════════════════════════
    FLOATING CHATBOT
 ═══════════════════════════════════════ */
-
-/* FAB BUTTON */
-/* Floating AI Button */
 #chatFab{
-    position:fixed;
-    bottom:28px;
-    right:28px;
-    width:72px;
-    height:72px;
-    border:none;
-    border-radius:50%;
-    cursor:pointer;
-    overflow:hidden;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    background:linear-gradient(
-        135deg,
-        #4f46e5,
-        #06b6d4,
-        #2563eb,
-        #4f46e5
-    );
-
-    background-size:300% 300%;
-    animation:gradientMove 6s ease infinite;
-
-    box-shadow:
-        0 10px 30px rgba(79,70,229,.45),
-        0 0 25px rgba(6,182,212,.35);
-
-    transition:.3s;
+    position:fixed; bottom:28px; right:28px;
+    width:64px; height:64px; border:none; border-radius:50%;
+    cursor:pointer; overflow:visible;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--mint-deep);
+    box-shadow:0 10px 30px rgba(14,138,102,0.35);
+    transition:transform .25s ease, box-shadow .25s ease;
     z-index:9999;
 }
-
-/* Glowing Ring */
 #chatFab::before{
     content:"";
-    position:absolute;
-    inset:-3px;
-    border-radius:50%;
-    background:linear-gradient(
-        45deg,
-        #06b6d4,
-        #4f46e5,
-        #3b82f6,
-        #06b6d4
-    );
-    z-index:-1;
-    filter:blur(8px);
-    opacity:.8;
+    position:absolute; inset:-6px; border-radius:50%;
+    border:1px solid rgba(31,174,133,0.35);
+    animation:fabring 2.4s ease-out infinite;
+}
+@keyframes fabring{
+    0%{ transform:scale(0.9); opacity:.8; }
+    100%{ transform:scale(1.35); opacity:0; }
+}
+#chatFab img{ width:28px; height:28px; object-fit:contain; filter:brightness(0) invert(1); opacity:.95; position:relative; z-index:2; }
+#chatFab:hover{ transform:translateY(-4px) scale(1.06); box-shadow:0 16px 38px rgba(14,138,102,0.45); }
+#chatFab:active{ transform:scale(.95); }
+
+#chatBadge{
+    position:fixed; bottom:74px; right:22px;
+    background:var(--coral); color:white;
+    font-family:var(--mono); font-size:11px; font-weight:700;
+    border-radius:999px; padding:2px 7px; z-index:10000; display:none;
+    box-shadow:0 0 0 3px var(--bg);
 }
 
-/* White Circle */
-#chatFab::after{
-    content:"";
-    position:absolute;
-    width:58px;
-    height:58px;
-    border-radius:50%;
-    background:#ffffff;
+#chatWindow{
+    position:fixed; bottom:104px; right:28px;
+    width:376px; height:530px;
+    background:var(--bg-elevated);
+    backdrop-filter:blur(20px);
+    border-radius:20px;
+    border:1px solid var(--border-strong);
+    box-shadow:0 20px 50px rgba(15,42,36,0.18);
+    display:none; flex-direction:column; z-index:9998; overflow:hidden;
+    font-family:var(--body);
+    animation:slideUp .3s ease;
+}
+@keyframes slideUp{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:translateY(0); } }
+#chatWindow.open{ display:flex; }
+
+.cw-header{
+    background:var(--surface); padding:15px 16px;
+    display:flex; align-items:center; justify-content:space-between;
+    border-bottom:1px solid var(--border); flex-shrink:0;
+}
+.cw-header-left{ display:flex; align-items:center; gap:10px; }
+.cw-avatar{
+    width:36px; height:36px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    background:var(--mint-dim); border:1px solid rgba(31,174,133,0.3);
+}
+.cw-title{ color:var(--text); font-weight:700; font-size:14px; }
+.cw-sub{ color:var(--text-faint); font-size:11px; margin-top:1px; font-family:var(--mono); }
+.cw-dot{ display:inline-block; width:7px; height:7px; background:var(--sky-deep); border-radius:50%; margin-right:5px; vertical-align:middle; animation:cwpulse 2s infinite; }
+@keyframes cwpulse{ 0%,100%{ opacity:1; } 50%{ opacity:.4; } }
+.cw-close{
+    background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+    width:28px; height:28px; border-radius:8px; cursor:pointer; font-size:13px;
+    display:flex; align-items:center; justify-content:center; transition:background .2s;
+}
+.cw-close:hover{ background:var(--border-strong); }
+
+.cw-messages{
+    flex:1; overflow-y:auto; padding:16px;
+    display:flex; flex-direction:column; gap:10px; scroll-behavior:smooth;
+}
+.cw-messages::-webkit-scrollbar{ width:3px; }
+.cw-messages::-webkit-scrollbar-thumb{ background:var(--border-strong); border-radius:3px; }
+
+.cw-msg-ai{
+    background:var(--surface); border:1px solid var(--border);
+    color:var(--text); padding:11px 14px;
+    border-radius:14px 14px 14px 3px; font-size:13px; line-height:1.6;
+    max-width:88%; width:fit-content; white-space:pre-wrap;
+}
+.cw-msg-user{
+    background:linear-gradient(135deg, var(--sky), var(--sky-deep));
+    color:#ffffff; padding:11px 14px; font-weight:500;
+    border-radius:14px 14px 3px 14px; font-size:13px; line-height:1.6;
+    max-width:88%; width:fit-content; margin-left:auto;
 }
 
-/* AI Image */
-#chatFab img{
-    position:relative;
-    z-index:2;
-    width:34px;
-    height:34px;
-    object-fit:contain;
+.cw-typing{
+    display:flex; gap:5px; align-items:center; padding:11px 14px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px 14px 14px 3px; width:fit-content;
+}
+.cw-typing span{ width:6px; height:6px; background:var(--text-muted); border-radius:50%; animation:cwbounce 1.2s infinite; opacity:.7; }
+.cw-typing span:nth-child(2){ animation-delay:.2s; }
+.cw-typing span:nth-child(3){ animation-delay:.4s; }
+@keyframes cwbounce{ 0%,60%,100%{ transform:translateY(0); } 30%{ transform:translateY(-5px); } }
+
+.cw-quick{ display:flex; gap:6px; padding:0 16px 12px; flex-wrap:wrap; flex-shrink:0; }
+.cw-quick button{
+    background:var(--mint-dim); border:1px solid rgba(31,174,133,0.3); color:var(--mint-deep);
+    border-radius:999px; font-size:11px; font-weight:500; padding:5px 11px; cursor:pointer;
+    transition:.2s; white-space:nowrap; font-family:var(--body);
+}
+.cw-quick button:hover{ background:rgba(31,174,133,0.22); color:#0E8A66; }
+
+.cw-input-row{
+    display:flex; padding:13px; gap:8px;
+    background:var(--surface); border-top:1px solid var(--border);
+    flex-shrink:0; align-items:flex-end;
+}
+.cw-input-row textarea{
+    flex:1; background:var(--surface-2); border:1px solid var(--border);
+    border-radius:12px; color:var(--text); font-size:13px; padding:9px 12px;
+    outline:none; resize:none; font-family:var(--body);
+    min-height:38px; max-height:100px; line-height:1.4;
+}
+.cw-input-row textarea::placeholder{ color:var(--text-faint); }
+.cw-input-row textarea:focus{ border-color:var(--sky-deep); }
+
+.cw-send{
+    width:38px; height:38px; border-radius:11px;
+    background:var(--mint-deep); border:none; color:#ffffff; font-size:15px;
+    cursor:pointer; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; transition:.2s;
+}
+.cw-send:hover{ transform:scale(1.08); }
+.cw-send:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
+
+@media (max-width: 420px){
+    #chatWindow{ width:calc(100vw - 20px); right:10px; bottom:92px; }
 }
 
-/* Hover */
-#chatFab:hover{
-    transform:translateY(-5px) scale(1.08);
-    box-shadow:
-        0 16px 40px rgba(79,70,229,.6),
-        0 0 35px rgba(6,182,212,.5);
-}
-
-/* Click */
-#chatFab:active{
-    transform:scale(.95);
-}
-
-/* Floating Animation */
-@keyframes gradientMove{
-    0%{background-position:0% 50%;}
-    50%{background-position:100% 50%;}
-    100%{background-position:0% 50%;}
-}
-
-/* NOTIFICATION BADGE */
-#chatBadge {
-    position: fixed;
-    bottom: 78px;
-    right: 24px;
-    background: #ef4444;
-    color: white;
-    font-size: 11px;
-    font-weight: 700;
-    border-radius: 999px;
-    padding: 2px 7px;
-    z-index: 10000;
-    display: none;
-}
-
-/* CHAT WINDOW */
-#chatWindow {
-    position: fixed;
-    bottom: 100px;
-    right: 28px;
-    width: 370px;
-    height: 520px;
-    background: rgba(10, 12, 30, 0.97);
-    backdrop-filter: blur(20px);
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
-    display: none;
-    flex-direction: column;
-    z-index: 9998;
-    overflow: hidden;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-#chatWindow.open { display: flex; }
-
-/* CHAT HEADER */
-.cw-header {
-    background: rgba(20, 25, 60, 0.95);
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    flex-shrink: 0;
-}
-
-.cw-header-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.cw-avatar {
-    width: 36px; height: 36px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-}
-
-.cw-title { color: white; font-weight: 700; font-size: 14px; }
-.cw-sub { color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 1px; }
-.cw-dot { display:inline-block; width:8px; height:8px; background:#22c55e; border-radius:50%; margin-right:5px; vertical-align:middle; animation:cwpulse 2s infinite; }
-@keyframes cwpulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
-
-.cw-close {
-    background: rgba(255,255,255,0.08);
-    border: none;
-    color: white;
-    width: 28px; height: 28px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s;
-}
-
-.cw-close:hover { background: rgba(255,255,255,0.18); }
-
-/* MESSAGES */
-.cw-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    scroll-behavior: smooth;
-}
-
-.cw-messages::-webkit-scrollbar { width: 3px; }
-.cw-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
-
-.cw-msg-ai {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: white;
-    padding: 10px 13px;
-    border-radius: 14px 14px 14px 3px;
-    font-size: 13px;
-    line-height: 1.6;
-    max-width: 88%;
-    width: fit-content;
-    white-space: pre-wrap;
-}
-
-.cw-msg-user {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: white;
-    padding: 10px 13px;
-    border-radius: 14px 14px 3px 14px;
-    font-size: 13px;
-    line-height: 1.6;
-    max-width: 88%;
-    width: fit-content;
-    margin-left: auto;
-}
-
-/* TYPING */
-.cw-typing {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-    padding: 10px 13px;
-    background: rgba(37,99,235,0.3);
-    border-radius: 14px 14px 14px 3px;
-    width: fit-content;
-}
-
-.cw-typing span {
-    width: 6px; height: 6px;
-    background: white;
-    border-radius: 50%;
-    animation: cwbounce 1.2s infinite;
-    opacity: 0.7;
-}
-
-.cw-typing span:nth-child(2) { animation-delay: 0.2s; }
-.cw-typing span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes cwbounce {
-    0%, 60%, 100% { transform: translateY(0); }
-    30% { transform: translateY(-5px); }
-}
-
-/* QUICK ACTIONS */
-.cw-quick {
-    display: flex;
-    gap: 6px;
-    padding: 0 14px 10px;
-    flex-wrap: wrap;
-    flex-shrink: 0;
-}
-
-.cw-quick button {
-    background: rgba(99,102,241,0.2);
-    border: 1px solid rgba(99,102,241,0.4);
-    color: #a5b4fc;
-    border-radius: 999px;
-    font-size: 11px;
-    padding: 4px 10px;
-    cursor: pointer;
-    transition: 0.2s;
-    white-space: nowrap;
-}
-
-.cw-quick button:hover { background: rgba(99,102,241,0.4); color: white; }
-
-/* INPUT */
-.cw-input-row {
-    display: flex;
-    padding: 12px;
-    gap: 8px;
-    background: rgba(15,20,45,0.95);
-    border-top: 1px solid rgba(255,255,255,0.07);
-    flex-shrink: 0;
-    align-items: flex-end;
-}
-
-.cw-input-row textarea {
-    flex: 1;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 12px;
-    color: white;
-    font-size: 13px;
-    padding: 9px 12px;
-    outline: none;
-    resize: none;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    min-height: 38px;
-    max-height: 100px;
-    line-height: 1.4;
-}
-
-.cw-input-row textarea::placeholder { color: rgba(255,255,255,0.35); }
-.cw-input-row textarea:focus { border-color: rgba(99,102,241,0.5); }
-
-.cw-send {
-    width: 38px; height: 38px;
-    border-radius: 11px;
-    background: linear-gradient(135deg, #6366f1, #38bdf8);
-    border: none;
-    color: white;
-    font-size: 15px;
-    cursor: pointer;
-    flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    transition: 0.2s;
-}
-
-.cw-send:hover { transform: scale(1.08); }
-.cw-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-@media (max-width: 420px) {
-    #chatWindow { width: calc(100vw - 20px); right: 10px; bottom: 90px; }
+/* ═══════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════ */
+.footer{
+    padding:36px 0 44px; text-align:center;
+    color:var(--text-faint); font-size:12.5px; font-family:var(--mono);
+    border-top:1px solid var(--border);
 }
 </style>
-
 </head>
-
 
 <body>
 
-
 <!-- NAVBAR -->
-
 <nav class="navbar">
-
 <div class="container">
+    <div class="brand" style="display:flex;align-items:center;gap:10px;">
+        <img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781800027/transformation_mtvkqb.png" width="50" height="50" alt="">
+        <div class="brand-text">AI <span>Interview</span></div>
+    </div>
 
-<div class="brand" style="display:flex;align-items:center;gap:10px;">
+    <div class="toggle" onclick="menu()">☰</div>
 
-    <img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781800027/transformation_mtvkqb.png"
-         width="50" height="50">
-
-    <div>AI Interview</div>
-
+    <div class="nav-links" id="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="resume.html">Upload Resume</a>
+        <a href="ai_analysis.html">AI Analysis</a>
+        <a href="interview.html">Interview Chat</a>
+        <a href="Practice.html">Practice</a>
+        <a href="progress.html">Progress</a>
+        <a href="resources.html">Resources</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
 </div>
-
-
-<div
-class="toggle"
-onclick="menu()">
-
-☰
-
-</div>
-
-
-<div
-class="nav-links"
-id="nav">
-
-<a href="index.html">
-Dashboard
-</a>
-
-<a href="resume.html">
-Upload Resume
-</a>
-
-<a href="ai_analysis.html">
-AI Analysis
-</a>
-
-<a href="interview.html">
-Interview Chat
-</a>
-
-<a href="Practice.html">
-Practice
-</a>
-
-<a href="progress.html">
-Progress
-</a>
-
-<a href="resources.html">
-Resources
-</a>
-
-<a
-href="#"
-onclick="logout()">
-
-Logout
-
-</a>
-
-</div>
-
-</div>
-
 </nav>
 
+<!-- ================= HERO ================= -->
+<section class="hero">
+<div class="container">
+
+    <div class="hero-copy">
+        <span class="eyebrow">Interview rehearsal, on demand</span>
+        <h1>Walk into the room<br>like you've <em>already</em><br>had this interview.</h1>
+        <p class="lede">Upload your resume, get matched with realistic AI-generated questions for your target role, and answer them out loud until the room stops feeling unfamiliar.</p>
+        <div class="hero-actions">
+            <a href="interview.html" class="btn-primary">Start a mock interview →</a>
+            <a href="resume.html" class="btn-ghost">Analyze my resume</a>
+        </div>
+
+        <div class="hero-stats">
+            <div><div class="num">10,000+</div><div class="label">Questions generated</div></div>
+            <div><div class="num">ATS</div><div class="label">Resume scoring</div></div>
+            <div><div class="num">24/7</div><div class="label">Practice availability</div></div>
+        </div>
+    </div>
+
+    <div class="transcript-wrap reveal">
+        <div class="transcript-card">
+            <div class="transcript-head">
+                <div class="who"><span class="rec-dot"></span>LIVE MOCK SESSION</div>
+                <div style="font-family:var(--mono);font-size:11px;color:var(--text-faint);">Company Fit Round</div>
+            </div>
+            <div class="transcript-body">
+                <div class="bubble q"><div class="tag">Interviewer</div><p class="msg">What made you apply here specifically?</p></div>
+                <div class="bubble a"><div class="tag">You</div><p class="msg">Your engineering blog post on moving to event-driven billing — I want to work on that class of problem.</p></div>
+                <div class="bubble q"><div class="tag">Interviewer</div><p class="msg">How does your degree connect to that?</p></div>
+                <div class="bubble a"><div class="tag">You</div><p class="msg">My thesis was on distributed consistency, so I've already debugged bugs like the ones you're describing.</p></div>
+            </div>
+            <div class="transcript-foot">
+                <span>Readiness</span>
+                <div class="bar"><span></span></div>
+                <span>72%</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+</section>
+
 <!-- ================= ABOUT ================= -->
+<section class="section">
+<div class="container">
 
-<section class="about-fold">
-
-    <div class="section-title">
-        <h2>Why AI Interview Simulator?</h2>
-        <p>
-            Transform your interview preparation using Artificial Intelligence.
-            Analyze resumes, practice interviews, and track your growth in one platform.
-        </p>
+    <div class="section-title reveal">
+        <span class="eyebrow">What's inside</span>
+        <h2>Three tools, one goal: less surprise on interview day.</h2>
+        <p>Prepare the way you'd want a mentor to push you — honest feedback on your resume, questions that actually match the job, and a record of where you're improving.</p>
     </div>
 
     <div class="about-grid">
-
-        <div class="about-card">
-            <h3>📄 Resume Intelligence</h3>
-            <p>
-                Upload your resume and receive ATS scores,
-                skill extraction, and personalized suggestions.
-            </p>
+        <div class="about-card reveal">
+            <div class="icon">📄</div>
+            <h3>Resume Intelligence</h3>
+            <p>Upload your resume and get an ATS score, extracted skills, and specific edits — not generic "add more keywords" advice.</p>
         </div>
-
-        <div class="about-card">
-            <h3>🤖 AI Interviewer</h3>
-            <p>
-                Experience realistic technical and HR interviews
-                generated dynamically using AI.
-            </p>
+        <div class="about-card reveal">
+            <div class="icon">🎙️</div>
+            <h3>AI Interviewer</h3>
+            <p>Answer technical and HR questions generated for your role in real time, and get pushed on your answers the way a real panel would.</p>
         </div>
-
-        <div class="about-card">
-            <h3>📊 Progress Tracking</h3>
-            <p>
-                Monitor performance, readiness scores,
-                and improvement over time.
-            </p>
+        <div class="about-card reveal">
+            <div class="icon">📈</div>
+            <h3>Progress Tracking</h3>
+            <p>Every session updates a readiness score, so you can see exactly which round — behavioral, system design, HR — still needs work.</p>
         </div>
-
     </div>
 
+</div>
 </section>
-
 
 <!-- ================= PROCESS ================= -->
-
 <section class="process-section">
+<div class="container">
 
-    <h2>How It Works</h2>
+    <div class="section-title reveal">
+        <span class="eyebrow">The four rounds</span>
+        <h2>How it works</h2>
+    </div>
 
     <div class="process-container">
-
-        <div class="process-box">
-            <span>01</span>
-            <h3>Upload Resume</h3>
-            <p>Submit your resume for AI-based analysis.</p>
-        </div>
-
-        <div class="process-box">
-            <span>02</span>
-            <h3>Get Insights</h3>
-            <p>Receive ATS score and skill evaluation.</p>
-        </div>
-
-        <div class="process-box">
-            <span>03</span>
-            <h3>Practice Interviews</h3>
-            <p>Answer AI-generated interview questions.</p>
-        </div>
-
-        <div class="process-box">
-            <span>04</span>
-            <h3>Track Progress</h3>
-            <p>Measure growth and improve continuously.</p>
-        </div>
-
+        <div class="process-box reveal"><span>01</span><h3>Upload resume</h3><p>Submit your resume so the AI understands your background before it starts asking questions.</p></div>
+        <div class="process-box reveal"><span>02</span><h3>Get insights</h3><p>Receive your ATS score, extracted skills, and a readiness snapshot in under a minute.</p></div>
+        <div class="process-box reveal"><span>03</span><h3>Practice interviews</h3><p>Work through AI-generated questions matched to your target role, out loud or typed.</p></div>
+        <div class="process-box reveal"><span>04</span><h3>Track progress</h3><p>Watch your readiness score move as you close the gaps round by round.</p></div>
     </div>
 
+</div>
 </section>
-
 
 <!-- ================= ABOUT WEBSITE ================= -->
+<section class="section website-info">
+<div class="container">
 
-<section class="website-info">
+    <h2 class="reveal">Built to close the gap between<br>classroom and interview room.</h2>
 
-    <div class="website-container">
-
-        <h2>About AI Interview Simulator</h2>
-
-        <p>
-            AI Interview Simulator is an intelligent interview preparation platform
-            designed to help students and professionals improve their interview skills.
-            The system combines Artificial Intelligence, Resume Analysis, and
-            Interactive Mock Interviews to provide a complete preparation experience.
-        </p>
-
-        <p>
-            Users can upload their resumes, receive AI-powered feedback,
-            analyze technical skills, practice HR and technical interviews,
-            and track their overall readiness through a personalized dashboard.
-        </p>
-
-        <p>
-            The platform aims to bridge the gap between academic learning and
-            industry expectations by offering real-world interview experiences
-            in a safe and interactive environment.
-        </p>
-
+    <div class="website-container reveal">
+        <p>AI Interview Simulator is an interview preparation platform for students and professionals who want to practice before it counts. It combines resume analysis, AI-generated mock interviews, and progress tracking in one place.</p>
+        <p>Upload a resume for feedback, work through HR and technical rounds generated for your target role, and track your overall readiness from a single dashboard.</p>
+        <p>The goal is simple: give you a real rehearsal, in a low-stakes setting, before the interview that actually matters.</p>
     </div>
 
+</div>
 </section>
-
 
 <!-- ================= CTA ================= -->
-
-<section class="cta-section">
-
-    <h2>Ready To Crack Your Next Interview?</h2>
-
-    <p>
-        Start practicing with AI and build confidence before your dream interview.
-    </p>
-
-    <a href="interview.html" class="cta-btn">
-        Start Now
-    </a>
-
+<section class="cta-section reveal">
+    <h2>Ready to crack your next interview?</h2>
+    <p>Start practicing with AI and build real confidence before your dream interview.</p>
+    <a href="interview.html" class="cta-btn">Start now →</a>
 </section>
 
+<footer class="footer">AI INTERVIEW SIMULATOR</footer>
 
 <!-- ═══════════════════════════════════════
      FLOATING CHATBOT
 ═══════════════════════════════════════ -->
-
-<!-- Badge -->
 <div id="chatBadge">1</div>
 
-<!-- FAB -->
 <button id="chatFab" onclick="toggleChat()" aria-label="Open AI Assistant">
     <img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1782108251/cloud-computing_gpqeu0.png" alt="AI Assistant">
 </button>
 
-<!-- Chat Window -->
 <div id="chatWindow">
-
-    <!-- Header -->
     <div class="cw-header">
         <div class="cw-header-left">
-            <div class="cw-avatar"><img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1782985049/artificial-intelligence_lnaqit.png" style="width:40px;height:40px;"></div>
+            <div class="cw-avatar"><img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1782985049/artificial-intelligence_lnaqit.png" style="width:22px;height:22px;" alt=""></div>
             <div>
                 <div class="cw-title">AI Assistant</div>
                 <div class="cw-sub"><span class="cw-dot"></span>Online — Ask me anything</div>
             </div>
         </div>
-        <button class="cw-close" onclick="toggleChat()">✕</button>
+        <button class="cw-close" onclick="toggleChat()" aria-label="Close chat">✕</button>
     </div>
 
-    <!-- Messages -->
     <div class="cw-messages" id="cwMessages"></div>
 
-    <!-- Quick actions -->
     <div class="cw-quick" id="cwQuick">
         <button onclick="quickSend('How do I prepare for a technical interview?')">💡 Tech prep tips</button>
         <button onclick="quickSend('What is ATS score?')">📄 ATS score</button>
@@ -581,18 +719,15 @@ Logout
         <button onclick="quickSend('How to answer Tell me about yourself?')">🗣️ Tell me about yourself</button>
     </div>
 
-    <!-- Input -->
     <div class="cw-input-row">
         <textarea id="cwInput" placeholder="Ask anything about interviews..." rows="1"></textarea>
-        <button class="cw-send" id="cwSend" onclick="cwSendMsg()">➤</button>
+        <button class="cw-send" id="cwSend" onclick="cwSendMsg()" aria-label="Send message">➤</button>
     </div>
-
 </div>
 
 
 <script>
-
-// ── ORIGINAL SCRIPTS ──
+// ── ORIGINAL SCRIPTS (unchanged behavior) ──
 async function uploadResume() {
     let file = document.getElementById("fileInput").files[0];
     if (!file) { alert("Upload Resume First"); return; }
@@ -659,7 +794,6 @@ function cwAddUser(text) {
     div.textContent = text;
     document.getElementById("cwMessages").appendChild(div);
     cwScroll();
-    // Hide quick actions after first message
     document.getElementById("cwQuick").style.display = "none";
 }
 
@@ -719,13 +853,11 @@ async function cwSendMsg() {
     }
 }
 
-// Auto-resize textarea
 document.getElementById("cwInput").addEventListener("input", function () {
     this.style.height = "auto";
     this.style.height = Math.min(this.scrollHeight, 100) + "px";
 });
 
-// Enter to send
 document.getElementById("cwInput").addEventListener("keydown", function (e) {
     if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
@@ -733,16 +865,28 @@ document.getElementById("cwInput").addEventListener("keydown", function (e) {
     }
 });
 
-// Show badge after 3 seconds to draw attention
 setTimeout(() => {
     if (!chatOpened) {
         document.getElementById("chatBadge").style.display = "block";
     }
 }, 3000);
 
+// ── SCROLL REVEAL ──
+const revealEls = document.querySelectorAll('.reveal');
+if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                io.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => io.observe(el));
+} else {
+    revealEls.forEach(el => el.classList.add('in'));
+}
 </script>
 
-
 </body>
-
 </html>

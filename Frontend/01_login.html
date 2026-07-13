@@ -1,175 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
-<title>AI Interview Simulator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log In — AI Interview Simulator</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
+:root{
+    --bg:            #F4FAF8;
+    --bg-elevated:   #FFFFFF;
+    --surface:       #EAF5F1;
+    --surface-2:     #DCEEE7;
+    --border:        rgba(15,42,36,0.09);
+    --border-strong: rgba(15,42,36,0.16);
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial;
+    --text:          #122A24;
+    --text-muted:    #52746B;
+    --text-faint:    #86A69C;
+
+    --mint:          #1FAE85;
+    --mint-deep:     #0E8A66;
+    --mint-dim:      rgba(31,174,133,0.13);
+    --sky:           #3D8BE0;
+    --sky-deep:      #2569B4;
+    --sky-dim:       rgba(61,139,224,0.13);
+    --coral:         #E0654C;
+    --coral-dim:     rgba(224,101,76,0.12);
+
+    --display: 'Fraunces', Georgia, serif;
+    --body:    'Inter', -apple-system, sans-serif;
+    --mono:    'JetBrains Mono', 'Courier New', monospace;
 }
+
+*{ margin:0; padding:0; box-sizing:border-box; }
 
 body{
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-
-  background: url("https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781495940/Data-unification-platform-Clouds-On-Mars-Success-Story-Hero-Graphic_jnmzkr.webp")
-  no-repeat center center/cover;
-
-  overflow:hidden;
+    font-family: var(--body);
+    min-height: 100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: var(--bg);
+    color: var(--text);
+    padding: 24px;
+    -webkit-font-smoothing:antialiased;
 }
+body::before{
+    content:"";
+    position:fixed; inset:0; z-index:-1;
+    background:
+        radial-gradient(ellipse 900px 500px at 15% -5%, rgba(31,174,133,0.14), transparent 60%),
+        radial-gradient(ellipse 700px 500px at 100% 100%, rgba(61,139,224,0.14), transparent 60%),
+        var(--bg);
+}
+::selection{ background:var(--mint); color:#fff; }
+a:focus-visible, button:focus-visible, input:focus-visible{ outline:2px solid var(--sky-deep); outline-offset:2px; }
 
-/* LOGIN BOX */
+/* LOGIN CARD */
 .login{
-  width: 650px;
-  padding: 25px 40px;
-  border-radius: 20px;
+  width: 420px;
+  max-width: 100%;
+  padding: 38px 36px;
+  border-radius: 22px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 24px 60px rgba(15,42,36,0.14);
+  transition: box-shadow .3s ease;
+}
+.login:hover{ box-shadow: 0 28px 70px rgba(15,42,36,0.18); }
 
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  border: 1px solid rgba(255,255,255,0.2);
-
-  color: white;
-  position: relative;
-
-  box-shadow: 0 0 20px rgba(53, 92, 255, 0.4);
-  animation: glow 3s infinite alternate;
-
-  transition: 0.3s;
+.logo{
+  width:56px; height:56px; border-radius:16px;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 18px;
+  background: linear-gradient(135deg, var(--mint-dim), var(--sky-dim));
+  border: 1px solid rgba(31,174,133,0.28);
+  font-size: 26px;
 }
 
-.login:hover{
-  transform: scale(1.02);
-  box-shadow: 0 0 35px rgba(53,92,255,0.9),
-              0 0 60px rgba(38,201,111,0.6);
-}
-
-/* LOGO */
-.logo img{
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-  display: block;
-  margin: 0 auto;
-}
-
-/* TITLE */
 .title{
   text-align:center;
-  margin-top:10px;
-  font-size:34px;
-  font-weight:bold;
-  color:white;
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
 }
 
-/* SUBTITLE */
 .subtitle{
   text-align:center;
-  color:#e0f7fa;
-  font-size:18px;
-  margin-top:10px;
-  margin-bottom:30px;
-  text-shadow: 0 0 8px rgba(0,255,255,0.3);
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 8px;
+  margin-bottom: 30px;
 }
 
-/* INPUT */
-.input{
-  margin-bottom:20px;
-}
+.input{ margin-bottom: 18px; }
 
 .input label{
-  font-size:14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .05em;
 }
 
 .input input{
   width:100%;
-  padding:16px;
-  margin-top:8px;
-  border-radius:14px;
-  border:1px solid #ddd;
+  padding: 13px 14px;
+  margin-top: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 14.5px;
+  transition: border-color .2s ease, background .2s ease;
 }
-
+.input input::placeholder{ color: var(--text-faint); }
 .input input:focus{
   outline:none;
-  border-color:#355cff;
+  border-color: var(--sky-deep);
+  background: var(--bg-elevated);
 }
 
-/* OPTIONS */
 .options{
   display:flex;
   justify-content:space-between;
-  margin-bottom:25px;
+  align-items:center;
+  margin-bottom: 26px;
+  font-size: 13px;
+  color: var(--text-muted);
 }
+.options label{ display:flex; align-items:center; gap:7px; cursor:pointer; }
+.options input[type=checkbox]{ accent-color: var(--mint-deep); width:15px; height:15px; cursor:pointer; }
+.options a{ color: var(--sky-deep); font-weight:600; }
+.options a:hover{ text-decoration: underline; }
 
-/* BUTTON */
 .login-btn{
   width:100%;
-  padding:16px;
+  padding: 14px;
   border:none;
-  border-radius:14px;
-  font-size:18px;
-
-  background: linear-gradient(90deg,#355cff,#26c96f);
-  color:white;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--body);
+  background: linear-gradient(135deg, var(--mint-deep), var(--sky-deep));
+  color:#fff;
   cursor:pointer;
+  box-shadow: 0 10px 26px rgba(14,138,102,0.28);
+  transition: transform .2s ease, box-shadow .2s ease;
 }
+.login-btn:hover{ transform:translateY(-2px); box-shadow: 0 14px 32px rgba(14,138,102,0.36); }
+.login-btn:active{ transform:translateY(0); }
 
-.login-btn:hover{
-  transform:scale(1.02);
-}
-
-/* GOOGLE BUTTON */
-.google{
-  width:100%;
-  padding:16px;
-  margin-top:15px;
-  background:white;
-  border:1px solid #ddd;
-  border-radius:14px;
-  cursor:pointer;
-}
-
-/* FOOTER */
 .footer{
   text-align:center;
-  margin-top:20px;
+  margin-top: 22px;
+  font-size: 13.5px;
+  color: var(--text-muted);
 }
 
-/* LINKS */
-a{
-  color:white;
-  text-decoration:none;
-}
+a{ color: var(--sky-deep); text-decoration:none; font-weight:600; }
+a:hover{ text-decoration: underline; }
 
-/* ERROR */
 #error{
-  margin-top:10px;
-  color:red;
+  margin-top: 14px;
+  min-height: 18px;
+  color: var(--coral);
   text-align:center;
-  font-size:15px;
+  font-size: 13.5px;
+  font-weight:500;
 }
-
-/* GLOW ANIMATION */
-@keyframes glow {
-  0% {
-    box-shadow: 0 0 10px rgba(53,92,255,0.4),
-                0 0 20px rgba(38,201,111,0.2);
-  }
-  100% {
-    box-shadow: 0 0 25px rgba(53,92,255,0.8),
-                0 0 40px rgba(38,201,111,0.5);
-  }
-}
-
 </style>
 </head>
 
@@ -177,13 +183,10 @@ a{
 
 <div class="login">
 
-  <div class="logo">
-    <img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781496318/7185ea6e6f375aa1ab00f1561d874177_kggruw.png">
-  </div>
+  <div class="logo">🎙️</div>
 
   <div class="title">AI Interview Simulator</div>
-
-  <div class="subtitle">AI-Powered Practice. Real Interview Success</div>
+  <div class="subtitle">AI-powered practice. Real interview success.</div>
 
   <div class="input">
     <label>Email</label>
@@ -196,18 +199,16 @@ a{
   </div>
 
   <div class="options">
-    <label><input type="checkbox"> Remember</label>
-    <a href="03_forgot_password.html">Forgot Password?</a>
+    <label><input type="checkbox"> Remember me</label>
+    <a href="03_forgot_password.html">Forgot password?</a>
   </div>
 
-  <button class="login-btn" onclick="login()">LOGIN</button>
-
-  
+  <button class="login-btn" onclick="login()">Log In</button>
 
   <div id="error"></div>
 
   <div class="footer">
-    No account? <a href="02_register.html">Create Account</a>
+    No account? <a href="02_register.html">Create account</a>
   </div>
 
 </div>

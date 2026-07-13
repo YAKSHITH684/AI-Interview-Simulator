@@ -1,280 +1,228 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
-<title>Resources</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resources — AI Interview Simulator</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
+:root{
+    --bg:            #F4FAF8;
+    --bg-elevated:   #FFFFFF;
+    --surface:       #EAF5F1;
+    --surface-2:     #DCEEE7;
+    --border:        rgba(15,42,36,0.09);
+    --border-strong: rgba(15,42,36,0.16);
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial;
+    --text:          #122A24;
+    --text-muted:    #52746B;
+    --text-faint:    #86A69C;
+
+    --mint:          #1FAE85;
+    --mint-deep:     #0E8A66;
+    --mint-dim:      rgba(31,174,133,0.13);
+    --sky:           #3D8BE0;
+    --sky-deep:      #2569B4;
+    --sky-dim:       rgba(61,139,224,0.13);
+    --coral:         #E0654C;
+
+    --display: 'Fraunces', Georgia, serif;
+    --body:    'Inter', -apple-system, sans-serif;
+    --mono:    'JetBrains Mono', 'Courier New', monospace;
 }
+
+*{ margin:0; padding:0; box-sizing:border-box; }
 
 body{
-
-background:
-
-url("https://res.cloudinary.com/dfzdsdoa5/image/upload/v1782986305/download_pemxkn.webp");
-
-background-size:cover;
-
-background-position:center;
-
-background-repeat:no-repeat;
-
-background-attachment:fixed;
-
-color:white;
-
-min-height:100vh;
-
-padding:40px;
-
+    font-family: var(--body);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 56px 20px;
+    background: var(--bg);
+    -webkit-font-smoothing:antialiased;
 }
-
+body::before{
+    content:"";
+    position:fixed; inset:0; z-index:-1;
+    background:
+        radial-gradient(ellipse 900px 500px at 18% -5%, rgba(31,174,133,0.12), transparent 60%),
+        radial-gradient(ellipse 700px 500px at 100% 20%, rgba(61,139,224,0.12), transparent 60%),
+        var(--bg);
+}
+::selection{ background:var(--mint); color:#fff; }
+a:focus-visible, button:focus-visible{ outline:2px solid var(--sky-deep); outline-offset:3px; }
 
 .container{
-
-max-width:1000px;
-
-margin:auto;
-
-background:
-rgba(255,255,255,.06);
-
-backdrop-filter:
-blur(20px);
-
-padding:30px;
-
-border-radius:20px;
-
-border:
-1px solid rgba(255,255,255,.1);
-
+    max-width: 860px;
+    margin: auto;
+    background: var(--bg-elevated);
+    padding: 40px;
+    border-radius: 22px;
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 24px 56px rgba(15,42,36,0.12);
 }
+
+.eyebrow{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--mint-deep); display:flex; align-items:center; justify-content:center; gap:8px;
+    margin-bottom:10px;
+}
+.eyebrow::before{ content:""; width:5px; height:5px; border-radius:50%; background:var(--mint); box-shadow:0 0 8px rgba(31,174,133,0.5); }
 
 h1{
-
-text-align:center;
-
-margin-bottom:35px;
-
-font-size:34px;
-
+    text-align: center;
+    margin-bottom: 6px;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 32px;
+}
+.page-sub{
+    text-align:center;
+    color:var(--text-muted);
+    font-size:14px;
+    margin-bottom:36px;
 }
 
-.section{
-
-margin-top:30px;
-
-}
+.section{ margin-top: 32px; }
+.section:first-of-type{ margin-top: 0; }
 
 .section h2{
-
-margin-bottom:18px;
-
-color:#7dd3fc;
-
+    margin-bottom: 16px;
+    color: var(--sky-deep);
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 19px;
+    display:flex; align-items:center; gap:9px;
 }
 
 .card{
-
-background:
-rgba(255,255,255,.05);
-
-padding:20px;
-
-border-radius:15px;
-
-margin-bottom:20px;
-
+    background: var(--surface);
+    padding: 20px 22px;
+    border-radius: 15px;
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    transition: border-color .2s ease, background .2s ease;
 }
-
+.card:hover{ border-color: var(--border-strong); background: var(--surface-2); }
 .card h3{
-
-margin-bottom:12px;
-
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+}
+.card p{
+    font-size: 12.5px;
+    color: var(--text-faint);
+    margin-top: 4px;
 }
 
 .btn{
-
-display:inline-block;
-
-padding:12px 20px;
-
-border-radius:10px;
-
-background:
-linear-gradient(
-90deg,
-#38bdf8,
-#0ea5e9
-);
-
-color:black;
-
-text-decoration:none;
-
-font-weight:bold;
-
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--mint-deep), var(--sky-deep));
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13.5px;
+    white-space: nowrap;
+    box-shadow: 0 8px 20px rgba(14,138,102,0.25);
+    transition: transform .2s ease, box-shadow .2s ease;
 }
-
-.btn:hover{
-
-transform:scale(1.03);
-
-}
+.btn:hover{ transform: scale(1.04); box-shadow: 0 10px 24px rgba(14,138,102,0.32); }
 
 .back{
-
-margin-top:30px;
-
-width:100%;
-
-padding:12px;
-
-border:none;
-
-border-radius:10px;
-
-cursor:pointer;
-
-font-weight:bold;
-
-background:
-linear-gradient(
-90deg,
-#38bdf8,
-#0ea5e9
-);
-
-color:black;
-
+    margin-top: 34px;
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    font-family: var(--body);
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    transition: .2s ease;
 }
+.back:hover{ background: var(--surface); color: var(--text); }
 
+@media (max-width:600px){
+    .container{ padding: 26px; }
+    .card{ flex-direction: column; align-items: flex-start; }
+    .btn{ width: 100%; justify-content: center; }
+}
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>
-📚 Learning Resources
-</h1>
+    <span class="eyebrow">Keep learning</span>
+    <h1>📚 Learning Resources</h1>
+    <p class="page-sub">Curated reading and videos to round out what the mock interviews cover.</p>
 
-<div class="section">
+    <div class="section">
+        <h2>📄 PDF Resources</h2>
 
-<h2>
-📄 PDF Resources
-</h2>
+        <div class="card">
+            <div>
+                <h3>Resume Building Guide</h3>
+                <p>A structured walkthrough of resume formatting and content.</p>
+            </div>
+            <a class="btn" href="https://www.overleaf.com/learn/latex/How_to_Write_a_Resume" target="_blank">Open PDF</a>
+        </div>
 
-<div class="card">
+        <div class="card">
+            <div>
+                <h3>Interview Preparation</h3>
+                <p>A question bank spanning technical and behavioral rounds.</p>
+            </div>
+            <a class="btn" href="https://www.interviewbit.com/interview-questions/" target="_blank">Open PDF</a>
+        </div>
+    </div>
 
-<h3>
-Resume Building Guide
-</h3>
+    <div class="section">
+        <h2>🎥 YouTube Resources</h2>
 
-<a
-class="btn"
-href="https://www.overleaf.com/learn/latex/How_to_Write_a_Resume"
-target="_blank">
+        <div class="card">
+            <div>
+                <h3>AI Interview Preparation</h3>
+                <p>What to expect and how to practice for AI-driven interviews.</p>
+            </div>
+            <a class="btn" href="https://www.youtube.com/watch?v=70heaIgcxr4" target="_blank">▶ Watch Video</a>
+        </div>
 
-Open PDF
+        <div class="card">
+            <div>
+                <h3>Resume Tips</h3>
+                <p>Quick, practical edits that raise your ATS score.</p>
+            </div>
+            <a class="btn" href="https://www.youtube.com/watch?v=_mFbMJ7yGfM" target="_blank">▶ Watch Video</a>
+        </div>
+    </div>
 
-</a>
-
-</div>
-
-<div class="card">
-
-<h3>
-Interview Preparation
-</h3>
-
-<a
-class="btn"
-href="https://www.interviewbit.com/interview-questions/"
-target="_blank">
-
-Open PDF
-
-</a>
-
-</div>
-
-</div>
-
-<div class="section">
-
-<h2>
-🎥 YouTube Resources
-</h2>
-
-<div class="card">
-
-<h3>
-AI Interview Preparation
-</h3>
-
-<a
-class="btn"
-href="https://www.youtube.com/watch?v=70heaIgcxr4"
-target="_blank">
-
-▶ Watch Video
-
-</a>
-
-</div>
-
-<div class="card">
-
-<h3>
-Resume Tips
-</h3>
-
-<a
-class="btn"
-href="https://www.youtube.com/watch?v=_mFbMJ7yGfM"
-target="_blank">
-
-▶ Watch Video
-
-</a>
-
-</div>
-
-</div>
-
-<button
-class="back"
-onclick="goBack()">
-
-⬅ Back To Dashboard
-
-</button>
+    <button class="back" onclick="goBack()">⬅ Back to Dashboard</button>
 
 </div>
 
 <script>
-
 function goBack(){
-
-window.location.href=
-"index.html";
-
+    window.location.href = "index.html";
 }
-
 </script>
 
 </body>
-
 </html>

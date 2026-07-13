@@ -1,140 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
-<title>Create Account</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account — AI Interview Simulator</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
+:root{
+    --bg:            #F4FAF8;
+    --bg-elevated:   #FFFFFF;
+    --surface:       #EAF5F1;
+    --surface-2:     #DCEEE7;
+    --border:        rgba(15,42,36,0.09);
+    --border-strong: rgba(15,42,36,0.16);
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial;
+    --text:          #122A24;
+    --text-muted:    #52746B;
+    --text-faint:    #86A69C;
+
+    --mint:          #1FAE85;
+    --mint-deep:     #0E8A66;
+    --mint-dim:      rgba(31,174,133,0.13);
+    --sky:           #3D8BE0;
+    --sky-deep:      #2569B4;
+    --sky-dim:       rgba(61,139,224,0.13);
+    --coral:         #E0654C;
+    --coral-dim:     rgba(224,101,76,0.12);
+
+    --display: 'Fraunces', Georgia, serif;
+    --body:    'Inter', -apple-system, sans-serif;
+    --mono:    'JetBrains Mono', 'Courier New', monospace;
 }
+
+*{ margin:0; padding:0; box-sizing:border-box; }
 
 body{
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+    font-family: var(--body);
+    min-height: 100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: var(--bg);
+    color: var(--text);
+    padding: 24px;
+    -webkit-font-smoothing:antialiased;
+}
+body::before{
+    content:"";
+    position:fixed; inset:0; z-index:-1;
+    background:
+        radial-gradient(ellipse 900px 500px at 15% -5%, rgba(31,174,133,0.14), transparent 60%),
+        radial-gradient(ellipse 700px 500px at 100% 100%, rgba(61,139,224,0.14), transparent 60%),
+        var(--bg);
+}
+::selection{ background:var(--mint); color:#fff; }
+a:focus-visible, button:focus-visible, input:focus-visible{ outline:2px solid var(--sky-deep); outline-offset:2px; }
 
-  background: url("https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5")
-  no-repeat center center/cover;
+/* REGISTER CARD */
+.register{
+  width: 420px;
+  max-width: 100%;
+  padding: 38px 36px;
+  border-radius: 22px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 24px 60px rgba(15,42,36,0.14);
+  transition: box-shadow .3s ease;
+}
+.register:hover{ box-shadow: 0 28px 70px rgba(15,42,36,0.18); }
 
-  overflow:hidden;
+.logo{
+  width:56px; height:56px; border-radius:16px;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 18px;
+  background: linear-gradient(135deg, var(--mint-dim), var(--sky-dim));
+  border: 1px solid rgba(31,174,133,0.28);
+  font-size: 26px;
 }
 
-/* GLASS BOX */
-.box{
-  width:400px;
-  padding:30px;
-
-  background: rgba(0, 255, 120, 0.08);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-
-  border: 1px solid rgba(0, 255, 120, 0.3);
-  border-radius: 20px;
-
-  color: white;
-
-  box-shadow: 0 0 15px rgba(0,255,120,0.4),
-              0 0 35px rgba(0,255,120,0.2);
-
-  transition:0.3s;
-}
-
-.box:hover{
-  transform:scale(1.02);
-  box-shadow: 0 0 25px rgba(0,255,120,0.6),
-              0 0 60px rgba(0,255,120,0.4);
-}
-
-/* TITLE */
-h2{
+.title{
   text-align:center;
-  margin-bottom:20px;
-  font-size:28px;
-  color:#00ff99;
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
 }
 
-/* INPUT */
-input{
+.subtitle{
+  text-align:center;
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 8px;
+  margin-bottom: 30px;
+}
+
+.input{ margin-bottom: 18px; }
+
+.input label{
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.input input{
   width:100%;
-  padding:14px;
-  margin:10px 0;
-  border-radius:12px;
-  border:1px solid rgba(0,255,120,0.4);
+  padding: 13px 14px;
+  margin-top: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 14.5px;
+  transition: border-color .2s ease, background .2s ease;
+}
+.input input::placeholder{ color: var(--text-faint); }
+.input input:focus{
   outline:none;
-  background: rgba(0,0,0,0.2);
-  color:white;
+  border-color: var(--sky-deep);
+  background: var(--bg-elevated);
 }
 
-input::placeholder{
-  color:#bfffe0;
-}
-
-/* MESSAGE */
 #passMsg{
-  font-size:13px;
-  margin-top:5px;
-  color:red;
+  margin-top: 9px;
+  font-size: 12.5px;
+  font-family: var(--mono);
+  line-height: 1.7;
+  color: var(--text-muted);
 }
 
-/* BUTTON */
-button{
+.register-btn{
   width:100%;
-  padding:14px;
+  padding: 14px;
   border:none;
-  border-radius:12px;
-
-  background: linear-gradient(90deg,#00ff99,#00cc66);
-  color:black;
-  font-size:16px;
-  font-weight:bold;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--body);
+  background: linear-gradient(135deg, var(--mint-deep), var(--sky-deep));
+  color:#fff;
   cursor:pointer;
-  margin-top:10px;
-  transition:0.3s;
+  margin-top: 8px;
+  box-shadow: 0 10px 26px rgba(14,138,102,0.28);
+  transition: transform .2s ease, box-shadow .2s ease;
 }
+.register-btn:hover{ transform:translateY(-2px); box-shadow: 0 14px 32px rgba(14,138,102,0.36); }
+.register-btn:active{ transform:translateY(0); }
 
-button:hover{
-  box-shadow:0 0 20px #00ff99;
-  transform:scale(1.03);
-}
-
-/* LINK */
-a{
-  display:block;
+.footer{
   text-align:center;
-  margin-top:15px;
-  color:#00ff99;
-  text-decoration:none;
+  margin-top: 22px;
+  font-size: 13.5px;
+  color: var(--text-muted);
 }
 
+a{ color: var(--sky-deep); text-decoration:none; font-weight:600; }
+a:hover{ text-decoration: underline; }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="register">
 
-<h2>Create Account</h2>
+  <div class="logo">🎙️</div>
 
-<input id="name" placeholder="Full Name">
-<input id="email" placeholder="Email">
+  <div class="title">Create Account</div>
+  <div class="subtitle">Start practicing smarter, not harder.</div>
 
-<input type="password" id="password" placeholder="Password" onkeyup="checkPassword()">
+  <div class="input">
+    <label>Full Name</label>
+    <input id="name" placeholder="Enter full name">
+  </div>
 
-<div id="passMsg">Password is required</div>
+  <div class="input">
+    <label>Email</label>
+    <input id="email" placeholder="Enter email">
+  </div>
 
-<button onclick="register()">Register</button>
+  <div class="input">
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Enter password" onkeyup="checkPassword()">
+    <div id="passMsg">Password is required</div>
+  </div>
 
-<a href="01_login.html">Back to Login</a>
+  <button class="register-btn" onclick="register()">Register</button>
+
+  <div class="footer">
+    Already have an account? <a href="01_login.html">Log in</a>
+  </div>
 
 </div>
-
 
 <script>
 
@@ -165,7 +228,7 @@ password.length >= 8;
 
 if(password===""){
 
-msg.style.color="red";
+msg.style.color="var(--text-muted)";
 
 msg.innerHTML=
 "Password is required";
@@ -183,7 +246,7 @@ special &&
 length
 ){
 
-msg.style.color="lime";
+msg.style.color="var(--mint-deep)";
 
 msg.innerHTML=
 "Strong Password ✔";
@@ -192,7 +255,7 @@ msg.innerHTML=
 
 else{
 
-msg.style.color="red";
+msg.style.color="var(--coral)";
 
 msg.innerHTML=
 
@@ -366,9 +429,6 @@ register();
 );
 
 </script>
-
-
-
 
 </body>
 </html>

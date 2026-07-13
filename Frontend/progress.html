@@ -2,146 +2,232 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Interview Progress</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Progress — AI Interview Simulator</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
+:root{
+    --bg:            #F4FAF8;
+    --bg-elevated:   #FFFFFF;
+    --surface:       #EAF5F1;
+    --surface-2:     #DCEEE7;
+    --border:        rgba(15,42,36,0.09);
+    --border-strong: rgba(15,42,36,0.16);
+
+    --text:          #122A24;
+    --text-muted:    #52746B;
+    --text-faint:    #86A69C;
+
+    --mint:          #1FAE85;
+    --mint-deep:     #0E8A66;
+    --mint-dim:      rgba(31,174,133,0.13);
+    --sky:           #3D8BE0;
+    --sky-deep:      #2569B4;
+    --sky-dim:       rgba(61,139,224,0.13);
+    --coral:         #E0654C;
+    --coral-dim:     rgba(224,101,76,0.13);
+    --amber:         #D69A1F;
+    --amber-dim:     rgba(214,154,31,0.13);
+
+    --display: 'Fraunces', Georgia, serif;
+    --body:    'Inter', -apple-system, sans-serif;
+    --mono:    'JetBrains Mono', 'Courier New', monospace;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-    font-family: 'Segoe UI', Arial;
-    background: url("https://res.cloudinary.com/dfzdsdoa5/image/upload/v1782986189/1325192_jyfmgp.jpg");
-    background-size: cover;
-    background-position: center;
+    font-family: var(--body);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
-    padding: 20px;
+    color: var(--text);
+    background: var(--bg);
+    padding: 40px 20px;
 }
+body::before{
+    content:"";
+    position:fixed; inset:0; z-index:-1;
+    background:
+        radial-gradient(ellipse 900px 500px at 18% -5%, rgba(31,174,133,0.12), transparent 60%),
+        radial-gradient(ellipse 700px 500px at 100% 20%, rgba(61,139,224,0.12), transparent 60%),
+        var(--bg);
+}
+::selection{ background:var(--mint); color:#fff; }
+a:focus-visible, button:focus-visible, input:focus-visible{ outline:2px solid var(--sky-deep); outline-offset:2px; }
+
+.page{ width:100%; max-width:600px; }
+
 .container {
-    width: 580px;
-    background: rgba(255,255,255,0.07);
-    backdrop-filter: blur(22px);
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.12);
-    padding: 28px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    background: var(--bg-elevated);
+    border-radius: 22px;
+    border: 1px solid var(--border-strong);
+    padding: 32px;
+    box-shadow: 0 24px 56px rgba(15,42,36,0.12);
 }
+
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 24px;
 }
-.title { display:flex; align-items:center; gap:10px; font-size:20px; font-weight:bold; }
-.btn-row { display:flex; gap:8px; }
+.title {
+    display:flex; align-items:center; gap:12px;
+    font-family:var(--display); font-size:21px; font-weight:600;
+}
+.icon-badge{
+    width:40px; height:40px; border-radius:11px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--sky-dim); border:1px solid rgba(61,139,224,0.3);
+    font-size:18px;
+}
+
+.btn-row { display:flex; gap:8px; flex-wrap:wrap; }
 button {
-    padding: 9px 16px;
+    padding: 10px 16px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 13px;
+    font-family: var(--body);
     transition: 0.2s;
 }
-.upload-btn { background: linear-gradient(90deg,#22c55e,#16a34a); color:white; }
-.back-btn { background: linear-gradient(90deg,#38bdf8,#0ea5e9); color:black; }
-button:hover { transform: scale(1.04); }
+.upload-btn {
+    background: linear-gradient(135deg, var(--mint-deep), var(--sky-deep));
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(14,138,102,0.25);
+}
+.back-btn {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    color: var(--text-muted);
+}
+.back-btn:hover{ background:var(--surface); color:var(--text); }
+.upload-btn:hover, .back-btn:hover { transform: scale(1.03); }
 input[type=file] { display:none; }
 
 /* STATUS */
 .status {
     padding: 12px 16px;
-    background: rgba(255,255,255,0.05);
+    background: var(--surface);
     border-radius: 12px;
-    font-size: 14px;
-    margin-bottom: 18px;
-    border: 1px solid rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.7);
+    font-size: 13.5px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
     text-align: center;
 }
 
 /* BIG SCORE */
 .big-score {
     text-align: center;
-    font-size: 52px;
-    font-weight: 800;
-    color: #38bdf8;
-    margin-bottom: 6px;
+    font-family: var(--display);
+    font-size: 54px;
+    font-weight: 700;
+    color: var(--sky-deep);
+    margin-bottom: 4px;
     line-height: 1;
 }
-.big-label { text-align:center; font-size:13px; color:rgba(255,255,255,0.5); margin-bottom:16px; }
+.big-label {
+    text-align:center; font-family:var(--mono); font-size:11px;
+    text-transform:uppercase; letter-spacing:.06em;
+    color:var(--text-faint); margin-bottom:18px;
+}
 
 /* PROGRESS BAR */
 .progress-bg {
-    height: 18px;
-    background: rgba(255,255,255,0.08);
+    height: 16px;
+    background: var(--surface-2);
     border-radius: 40px;
     overflow: hidden;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 .progress-fill {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg,#38bdf8,#6366f1);
+    background: linear-gradient(90deg, var(--mint), var(--sky));
     transition: width 1s ease;
     border-radius: 40px;
 }
 
 /* METRICS GRID */
-.metrics { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:18px; }
+.metrics { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:20px; }
 .metric {
-    background: rgba(0,0,0,0.25);
-    border-radius: 12px;
-    padding: 14px 10px;
+    background: var(--surface);
+    border-radius: 13px;
+    padding: 16px 10px;
     text-align: center;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
 }
-.metric .val { font-size:24px; font-weight:800; }
-.metric .lbl { font-size:11px; color:rgba(255,255,255,0.5); margin-top:3px; }
+.metric .val { font-family:var(--display); font-size:24px; font-weight:700; }
+.metric .lbl { font-family:var(--mono); font-size:10.5px; color:var(--text-faint); margin-top:4px; text-transform:uppercase; letter-spacing:.05em; }
 
 /* SECTIONS */
 .section {
-    background: rgba(0,0,0,0.25);
-    border-radius: 12px;
-    padding: 14px;
+    background: var(--surface);
+    border-radius: 13px;
+    padding: 16px;
     margin-bottom: 12px;
-    border: 1px solid rgba(255,255,255,0.07);
+    border: 1px solid var(--border);
 }
-.section-title { font-size:11px; font-weight:700; color:#38bdf8; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:10px; }
-.badge { display:inline-block; padding:4px 10px; margin:3px; border-radius:999px; background:rgba(56,189,248,0.15); color:#38bdf8; font-size:12px; border:1px solid rgba(56,189,248,0.2); }
-.bar-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
-.bar-lbl { width:110px; font-size:12px; color:rgba(255,255,255,0.6); flex-shrink:0; }
-.bar-track { flex:1; height:8px; background:rgba(255,255,255,0.08); border-radius:999px; overflow:hidden; }
-.bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#38bdf8,#6366f1); transition:width 1s ease; }
-.bar-val { width:32px; text-align:right; font-size:12px; font-weight:700; color:#38bdf8; }
-.list-item { display:flex; gap:8px; align-items:flex-start; font-size:13px; margin-bottom:6px; color:rgba(255,255,255,0.8); }
+.section-title {
+    font-family:var(--mono); font-size:11px; font-weight:600; color:var(--sky-deep);
+    text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px;
+}
+.badge { display:inline-block; padding:5px 12px; margin:3px; border-radius:999px; background:var(--sky-dim); color:var(--sky-deep); font-size:12px; font-weight:500; border:1px solid rgba(61,139,224,0.28); }
+.bar-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.bar-row:last-child{ margin-bottom:0; }
+.bar-lbl { width:112px; font-size:12px; color:var(--text-muted); flex-shrink:0; }
+.bar-track { flex:1; height:8px; background:var(--surface-2); border-radius:999px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg, var(--mint), var(--sky)); transition:width 1s ease; }
+.bar-val { width:36px; text-align:right; font-family:var(--mono); font-size:12px; font-weight:600; color:var(--sky-deep); }
+.list-item { display:flex; gap:9px; align-items:flex-start; font-size:13px; margin-bottom:8px; color:var(--text); line-height:1.5; }
+.list-item:last-child{ margin-bottom:0; }
 
 /* PERFORMANCE BADGE */
 .perf {
     text-align:center;
-    padding: 12px;
+    padding: 13px;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
-.perf.excellent { background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.25); }
-.perf.good { background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.25); }
-.perf.improve { background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.25); }
-.perf.waiting { background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.4); border:1px solid rgba(255,255,255,0.08); }
+.perf.excellent { background:var(--mint-dim);  color:var(--mint-deep); border:1px solid rgba(31,174,133,0.3); }
+.perf.good       { background:var(--sky-dim);   color:var(--sky-deep);  border:1px solid rgba(61,139,224,0.3); }
+.perf.improve    { background:var(--amber-dim); color:var(--amber);     border:1px solid rgba(214,154,31,0.3); }
+.perf.waiting    { background:var(--surface);   color:var(--text-faint); border:1px solid var(--border); }
 
-.spinner { width:24px; height:24px; border:3px solid rgba(255,255,255,0.15); border-top-color:#38bdf8; border-radius:50%; animation:spin 0.8s linear infinite; display:inline-block; vertical-align:middle; margin-right:8px; }
+.spinner { width:20px; height:20px; border:3px solid var(--border-strong); border-top-color:var(--sky-deep); border-radius:50%; animation:spin 0.8s linear infinite; display:inline-block; vertical-align:middle; margin-right:8px; }
 @keyframes spin { to { transform:rotate(360deg); } }
 
+.summary-text{ font-size:13px; line-height:1.7; color:var(--text-muted); }
+.no-data-text{ font-size:13px; color:var(--text-faint); }
+
 .hidden { display:none; }
+
+@media (max-width:600px){
+    .container{ padding:22px; }
+    .metrics{ gap:8px; }
+}
 </style>
 </head>
 <body>
+<div class="page">
 <div class="container">
 
     <div class="header">
         <div class="title">
-            <img src="https://res.cloudinary.com/dfzdsdoa5/image/upload/v1781763958/ai-image_a6hbir.png" width="40">
+            <span class="icon-badge">📈</span>
             Interview Progress
         </div>
         <div class="btn-row">
@@ -167,9 +253,9 @@ input[type=file] { display:none; }
 
     <!-- METRICS -->
     <div class="metrics">
-        <div class="metric"><div class="val" id="resumeScore" style="color:#a78bfa">0</div><div class="lbl">Resume Score</div></div>
-        <div class="metric"><div class="val" id="readiness" style="color:#22c55e">0</div><div class="lbl">Readiness</div></div>
-        <div class="metric"><div class="val" id="skillsCount" style="color:#38bdf8">0</div><div class="lbl">Skills Found</div></div>
+        <div class="metric"><div class="val" id="resumeScore" style="color:var(--mint-deep)">0</div><div class="lbl">Resume Score</div></div>
+        <div class="metric"><div class="val" id="readiness" style="color:var(--coral)">0</div><div class="lbl">Readiness</div></div>
+        <div class="metric"><div class="val" id="skillsCount" style="color:var(--sky-deep)">0</div><div class="lbl">Skills Found</div></div>
     </div>
 
     <!-- DETAILS (hidden until analyzed) -->
@@ -177,7 +263,7 @@ input[type=file] { display:none; }
 
         <div class="section" id="summarySection">
             <div class="section-title">AI Summary</div>
-            <p id="summaryText" style="font-size:13px;line-height:1.7;color:rgba(255,255,255,0.8);"></p>
+            <p id="summaryText" class="summary-text"></p>
         </div>
 
         <div class="section">
@@ -197,6 +283,7 @@ input[type=file] { display:none; }
 
     </div>
 
+</div>
 </div>
 
 <script>
@@ -258,13 +345,13 @@ async function uploadResume() {
         const skills = data.ai_skills_found || [];
         document.getElementById("skillsBadges").innerHTML = skills.length
             ? skills.map(s => `<span class="badge">${s}</span>`).join('')
-            : '<p style="font-size:13px;color:rgba(255,255,255,0.4);">No skills detected</p>';
+            : '<p class="no-data-text">No skills detected</p>';
 
         // Suggestions
         const suggestions = data.suggestions || [];
         document.getElementById("suggestions").innerHTML = suggestions.length
-            ? suggestions.map(s => `<div class="list-item"><span style="color:#fbbf24;flex-shrink:0;">→</span><span>${s}</span></div>`).join('')
-            : '<p style="font-size:13px;color:rgba(255,255,255,0.4);">No suggestions — great resume!</p>';
+            ? suggestions.map(s => `<div class="list-item"><span style="color:var(--amber);flex-shrink:0;font-weight:700;">→</span><span>${s}</span></div>`).join('')
+            : '<p class="no-data-text">No suggestions — great resume!</p>';
 
         document.getElementById("status").textContent = "✅ AI Analysis Complete — " + file.name;
         document.getElementById("details").classList.remove("hidden");
