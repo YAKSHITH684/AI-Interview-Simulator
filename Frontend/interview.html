@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Interview Chat — AI Interview Simulator</title>
+<title>AI Interview Practice — AI Interview Simulator</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -59,23 +59,28 @@ body::before{
 a:focus-visible, button:focus-visible, textarea:focus-visible, select:focus-visible{ outline:2px solid var(--sky-deep); outline-offset:2px; }
 
 .container {
-    width: 720px; height: 780px;
+    width: 720px;
+    height: 780px;
     max-height: calc(100vh - 40px);
     background: var(--bg-elevated);
     border-radius: 22px;
     border: 1px solid var(--border-strong);
-    display: flex; flex-direction: column;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     box-shadow: 0 24px 60px rgba(15,42,36,0.14);
 }
 .header {
     padding: 13px 16px;
     background: var(--surface);
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     flex-shrink: 0;
+    gap: 10px;
     border-bottom: 1px solid var(--border);
 }
-.header-left { display:flex; align-items:center; gap:10px; font-size:14px; flex-wrap:wrap; }
+.header-left { display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:14px; }
 .icon-badge{
     width:30px; height:30px; border-radius:9px; flex-shrink:0;
     display:flex; align-items:center; justify-content:center;
@@ -86,34 +91,60 @@ a:focus-visible, button:focus-visible, textarea:focus-visible, select:focus-visi
 .status-dot { width:8px; height:8px; background:var(--mint); border-radius:50%; animation:pulse 2s infinite; box-shadow:0 0 6px rgba(31,174,133,0.5); }
 @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
 
-select#modeSelect {
-    background: var(--bg-elevated); color: var(--text);
-    border: 1px solid var(--border-strong); border-radius: 8px;
-    padding: 6px 9px; font-size: 12px; font-family:var(--body); outline: none; cursor: pointer;
+.mode-select {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 12px;
+    font-family: var(--body);
+    padding: 6px 9px;
+    cursor: pointer;
+    outline: none;
 }
-select#modeSelect option { background: #fff; color: var(--text); }
+.mode-select option { background: #fff; color: var(--text); }
 
-.new-btn {
-    padding: 6px 12px; border: 1px solid var(--border-strong);
-    border-radius: 8px; background: var(--bg-elevated);
-    color: var(--text-muted); font-size: 12px; font-weight:600; cursor: pointer; transition: 0.2s;
+.header-actions{ display:flex; gap:8px; }
+
+.icon-btn{
+    padding: 6px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 12px;
+    transition: 0.2s;
 }
-.new-btn:hover { background: var(--surface-2); color:var(--text); }
+.icon-btn:hover{ background:var(--surface-2); color:var(--text); }
 
 .back-btn {
-    padding: 8px 16px; border: none; border-radius: 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 10px;
     background: linear-gradient(135deg, var(--mint-deep), var(--sky-deep));
-    color: #fff; font-weight: 700; cursor: pointer; font-size: 13px; transition: 0.2s;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
     box-shadow:0 6px 16px rgba(14,138,102,0.25);
 }
-.back-btn:hover { transform: scale(1.05); }
+.back-btn:hover{ transform:scale(1.05); }
 
 .progress { height: 4px; background: var(--surface-2); flex-shrink:0; }
-.progress-bar { height:4px; width:0%; background:linear-gradient(90deg, var(--mint), var(--sky)); transition:0.4s; }
+.progress-bar { height: 4px; width: 0%; background: linear-gradient(90deg, var(--mint), var(--sky)); transition: 0.5s; }
 
 .chat {
-    flex: 1; padding: 18px; overflow-y: auto; background:var(--bg);
-    display: flex; flex-direction: column; gap: 11px; scroll-behavior: smooth;
+    flex: 1;
+    padding: 18px;
+    overflow-y: auto;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    scroll-behavior: smooth;
 }
 .chat::-webkit-scrollbar { width: 4px; }
 .chat::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
@@ -121,157 +152,236 @@ select#modeSelect option { background: #fff; color: var(--text); }
 .ai {
     background: var(--bg-elevated);
     border: 1px solid var(--border);
-    padding: 12px 16px; border-radius: 14px 14px 14px 3px;
-    max-width: 78%; width: fit-content; white-space: pre-wrap;
-    font-size: 14px; line-height: 1.6; color:var(--text);
+    padding: 12px 16px;
+    border-radius: 14px 14px 14px 3px;
+    max-width: 78%;
+    width: fit-content;
+    white-space: pre-wrap;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
     box-shadow: 0 3px 10px rgba(15,42,36,0.06);
 }
 .user {
     background: linear-gradient(135deg, var(--mint), var(--mint-deep));
     color: #fff;
-    padding: 12px 16px; border-radius: 14px 14px 3px 14px;
-    margin-left: auto; max-width: 78%; white-space: pre-wrap;
-    font-size: 14px; line-height: 1.6;
+    padding: 12px 16px;
+    border-radius: 14px 14px 3px 14px;
+    margin-left: auto;
+    max-width: 78%;
+    white-space: pre-wrap;
+    font-size: 14px;
+    line-height: 1.6;
     box-shadow: 0 6px 16px rgba(14,138,102,0.22);
 }
 
-.typing-dots {
-    display: flex; gap: 5px; align-items: center;
-    padding: 12px 16px; background: var(--sky-dim);
-    border: 1px solid rgba(61,139,224,0.2);
-    border-radius: 14px 14px 14px 3px; width: fit-content;
-}
+.typing-dots { display:flex; gap:5px; align-items:center; padding:12px 16px; background:var(--sky-dim); border:1px solid rgba(61,139,224,0.2); border-radius:14px 14px 14px 3px; width:fit-content; }
 .typing-dots span {
-    width:7px; height:7px; background:var(--sky-deep);
-    border-radius:50%; animation:bounce 1.2s infinite; opacity:.7;
+    width:7px; height:7px;
+    background: var(--sky-deep);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+    opacity:.7;
 }
-.typing-dots span:nth-child(2){animation-delay:0.2s;}
-.typing-dots span:nth-child(3){animation-delay:0.4s;}
-@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+.typing-dots span:nth-child(2) { animation-delay:0.2s; }
+.typing-dots span:nth-child(3) { animation-delay:0.4s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0);} 30%{transform:translateY(-6px);} }
 
 .input-box {
-    display: flex; padding: 14px;
-    background: var(--surface); gap: 10px;
-    align-items: flex-end; flex-shrink: 0;
+    display: flex;
+    padding: 14px;
+    background: var(--surface);
+    gap: 10px;
+    align-items: flex-end;
+    flex-shrink: 0;
     border-top: 1px solid var(--border);
 }
 textarea {
-    flex: 1; padding: 12px 15px; border: 1px solid var(--border-strong);
-    outline: none; border-radius: 12px;
-    background: var(--bg-elevated); color: var(--text);
-    font-family: var(--body); font-size: 14px;
-    resize: none; min-height: 44px; max-height: 120px; line-height: 1.5;
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid var(--border-strong);
+    outline: none;
+    border-radius: 12px;
+    background: var(--bg-elevated);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 14px;
+    resize: none;
+    min-height: 44px;
+    max-height: 120px;
+    line-height: 1.5;
     transition: border-color 0.2s;
 }
-textarea:focus { border-color: var(--sky-deep); }
+textarea:focus{ border-color:var(--sky-deep); }
 textarea::placeholder { color: var(--text-faint); }
 
 .send-btn {
-    width:44px; height:44px; border:none; border-radius:12px;
-    background:linear-gradient(135deg, var(--mint-deep), var(--sky-deep));
-    color:#fff; font-size:16px; cursor:pointer; flex-shrink:0;
-    transition:0.2s; display:flex; align-items:center; justify-content:center;
+    width: 44px; height: 44px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--mint-deep), var(--sky-deep));
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: 0.2s;
+    display:flex; align-items:center; justify-content:center;
     box-shadow:0 6px 16px rgba(14,138,102,0.25);
 }
-.send-btn:hover{ transform:scale(1.08); }
-.send-btn:disabled{ opacity:0.4; cursor:not-allowed; transform:none; box-shadow:none; }
+.send-btn:hover { transform: scale(1.08); }
+.send-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; box-shadow:none; }
 
-@media(max-width:740px){ .container{ width:98vw; height:96vh; border-radius:14px; } }
+@media(max-width:740px){ .container{width:98vw;height:96vh;border-radius:14px;} }
 </style>
 </head>
 <body>
 <div class="container">
+
     <div class="header">
         <div class="header-left">
             <div class="icon-badge">🎙️</div>
-            <div class="title">AI Interview Chat</div>
+            <span class="title">AI Interview Practice</span>
             <div class="status-dot"></div>
-            <select id="modeSelect" onchange="changeMode()">
+            <select class="mode-select" id="modeSelect" onchange="newSession()">
                 <option value="technical">🛠️ Technical</option>
                 <option value="hr">🤝 HR / Behavioral</option>
                 <option value="system">🏗️ System Design</option>
                 <option value="dsa">🧮 DSA</option>
             </select>
-            <button class="new-btn" onclick="startInterview()">🔄 New</button>
         </div>
-        <button class="back-btn" onclick="window.location.href='index.html'">← Back</button>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="newSession()">🔄 New</button>
+            <button class="back-btn" onclick="window.location.href='index.html'">← Back</button>
+        </div>
     </div>
 
     <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
     <div class="chat" id="chat"></div>
 
     <div class="input-box">
         <textarea id="input" placeholder="Type your answer... (Enter to send, Shift+Enter for new line)" rows="1"></textarea>
         <button class="send-btn" id="sendBtn" onclick="send()">➤</button>
     </div>
+
 </div>
 
 <script>
 const BACKEND = "https://ai-interview-simulator-316l.onrender.com";
-const TOTAL_QUESTIONS = 10;
-let history = [], mode = "technical", busy = false;
-
-function changeMode() { mode = document.getElementById("modeSelect").value; startInterview(); }
-
-function updateProgress() {
-    const pct = Math.min((history.filter(h=>h.role==="assistant").length / TOTAL_QUESTIONS) * 100, 100);
-    document.getElementById("progressBar").style.width = pct + "%";
-}
+const TOTAL = 10;
+let history = [];
+let busy = false;
 
 function addAI(text) {
     removeTyping();
-    const d = document.createElement("div"); d.className="ai"; d.textContent="🤖 "+text;
-    document.getElementById("chat").appendChild(d); scrollBottom(); updateProgress();
+    const div = document.createElement("div");
+    div.className = "ai";
+    div.textContent = "🤖 " + text;
+    document.getElementById("chat").appendChild(div);
+    scrollBottom();
+    updateProgress();
 }
+
 function addUser(text) {
-    const d = document.createElement("div"); d.className="user"; d.textContent="👤 "+text;
-    document.getElementById("chat").appendChild(d); scrollBottom();
+    const div = document.createElement("div");
+    div.className = "user";
+    div.textContent = "👤 " + text;
+    document.getElementById("chat").appendChild(div);
+    scrollBottom();
 }
+
 function showTyping() {
     removeTyping();
-    const d = document.createElement("div"); d.className="typing-dots"; d.id="typingEl";
-    d.innerHTML="<span></span><span></span><span></span>";
-    document.getElementById("chat").appendChild(d); scrollBottom();
+    const div = document.createElement("div");
+    div.className = "typing-dots";
+    div.id = "typingEl";
+    div.innerHTML = "<span></span><span></span><span></span>";
+    document.getElementById("chat").appendChild(div);
+    scrollBottom();
 }
-function removeTyping() { document.getElementById("typingEl")?.remove(); }
-function scrollBottom() { const c=document.getElementById("chat"); c.scrollTop=c.scrollHeight; }
+
+function removeTyping() {
+    document.getElementById("typingEl")?.remove();
+}
+
+function scrollBottom() {
+    const c = document.getElementById("chat");
+    c.scrollTop = c.scrollHeight;
+}
+
+function updateProgress() {
+    const aiTurns = history.filter(h => h.role === "assistant").length;
+    const pct = Math.min((aiTurns / TOTAL) * 100, 100);
+    document.getElementById("progressBar").style.width = pct + "%";
+}
 
 async function callChat(message) {
+    const mode = document.getElementById("modeSelect").value;
     const res = await fetch(`${BACKEND}/chat`, {
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({message, history, mode})
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, history, mode })
     });
-    if (!res.ok) throw new Error("Error "+res.status);
+    if (!res.ok) throw new Error("Backend error " + res.status);
     const data = await res.json();
     history = data.history || history;
     return data.reply;
 }
 
-async function startInterview() {
-    history=[]; document.getElementById("chat").innerHTML=""; document.getElementById("progressBar").style.width="0%";
-    busy=true; document.getElementById("sendBtn").disabled=true; showTyping();
-    try { addAI(await callChat("")); }
-    catch(e) { addAI("Could not connect to the server. Please try again."); }
-    finally { busy=false; document.getElementById("sendBtn").disabled=false; }
+async function newSession() {
+    history = [];
+    document.getElementById("chat").innerHTML = "";
+    document.getElementById("progressBar").style.width = "0%";
+    busy = true;
+    document.getElementById("sendBtn").disabled = true;
+    showTyping();
+    try {
+        const reply = await callChat("");
+        addAI(reply);
+    } catch(e) {
+        addAI("Could not connect to the server. Please try again.");
+    } finally {
+        busy = false;
+        document.getElementById("sendBtn").disabled = false;
+    }
 }
 
 async function send() {
-    const input=document.getElementById("input"), text=input.value.trim();
-    if (!text||busy) return;
-    addUser(text); input.value=""; input.style.height="auto";
-    busy=true; document.getElementById("sendBtn").disabled=true; showTyping();
-    try { addAI(await callChat(text)); }
-    catch(e) { addAI("Could not reach the server. Please try again."); }
-    finally { busy=false; document.getElementById("sendBtn").disabled=false; }
+    const input = document.getElementById("input");
+    const text = input.value.trim();
+    if (!text || busy) return;
+
+    addUser(text);
+    input.value = "";
+    input.style.height = "auto";
+    busy = true;
+    document.getElementById("sendBtn").disabled = true;
+    showTyping();
+
+    try {
+        const reply = await callChat(text);
+        addAI(reply);
+    } catch(e) {
+        addAI("Could not reach the server. Please try again.");
+    } finally {
+        busy = false;
+        document.getElementById("sendBtn").disabled = false;
+    }
 }
 
+// Auto resize textarea
 document.getElementById("input").addEventListener("input", function() {
-    this.style.height="auto"; this.style.height=Math.min(this.scrollHeight,120)+"px";
+    this.style.height = "auto";
+    this.style.height = Math.min(this.scrollHeight, 120) + "px";
 });
+
+// Enter to send
 document.getElementById("input").addEventListener("keydown", function(e) {
-    if (e.key==="Enter"&&!e.shiftKey){e.preventDefault();send();}
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
 });
-window.onload = startInterview;
+
+// Start
+window.onload = () => newSession();
 </script>
 </body>
 </html>

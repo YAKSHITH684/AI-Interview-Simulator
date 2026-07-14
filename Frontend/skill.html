@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Skill Gap Detection — AI Interview Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+    --bg:#F4FAF8; --bg-elevated:#FFFFFF; --surface:#EAF5F1; --surface-2:#DCEEE7;
+    --border:rgba(15,42,36,0.09); --border-strong:rgba(15,42,36,0.16);
+    --text:#122A24; --text-muted:#52746B; --text-faint:#86A69C;
+    --mint:#1FAE85; --mint-deep:#0E8A66; --mint-dim:rgba(31,174,133,0.13);
+    --sky:#3D8BE0; --sky-deep:#2569B4; --sky-dim:rgba(61,139,224,0.13);
+    --coral:#E0654C; --warn:#D97706;
+    --display:'Fraunces',Georgia,serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono','Courier New',monospace;
+    --radius:18px; --radius-sm:10px;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; }
+body{ font-family:var(--body); background:var(--bg); color:var(--text); line-height:1.6; -webkit-font-smoothing:antialiased; min-height:100vh; }
+body::before{
+    content:""; position:fixed; inset:0; z-index:-2;
+    background: radial-gradient(ellipse 900px 500px at 18% -5%, rgba(31,174,133,0.12), transparent 60%),
+                radial-gradient(ellipse 700px 500px at 100% 20%, rgba(61,139,224,0.12), transparent 60%), var(--bg);
+}
+a{ color:inherit; text-decoration:none; }
+h1,h2,h3,h4{ font-family:var(--display); margin:0; font-weight:600; }
+
+/* NAVBAR */
+.navbar{ position:sticky; top:0; z-index:500; background:rgba(244,250,248,0.82); backdrop-filter:blur(14px) saturate(140%); border-bottom:1px solid var(--border); }
+.navbar .inner{ max-width:1180px; margin:0 auto; padding:0 32px; display:flex; align-items:center; justify-content:space-between; height:68px; }
+.brand{ display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:700; font-size:18px; }
+.brand span{ color:var(--mint-deep); }
+.brand img{ width:34px; height:34px; object-fit:contain; }
+.nav-back{ display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:600; color:var(--text-muted); padding:8px 16px; border-radius:999px; background:var(--surface); border:1px solid var(--border); transition:.2s; }
+.nav-back:hover{ color:var(--text); border-color:var(--border-strong); }
+
+/* PAGE */
+.page{ max-width:700px; margin:0 auto; padding:52px 24px 80px; }
+.eyebrow{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--mint-deep); display:inline-flex; align-items:center; gap:7px; margin-bottom:14px; }
+.eyebrow::before{ content:""; width:5px; height:5px; border-radius:50%; background:var(--mint); box-shadow:0 0 8px rgba(31,174,133,0.5); }
+.page h1{ font-size:clamp(28px,4vw,42px); line-height:1.1; margin-bottom:8px; }
+.page h1 em{ font-style:normal; color:var(--mint-deep); }
+.page .sub{ color:var(--text-muted); font-size:15px; margin-bottom:36px; max-width:52ch; }
+
+/* FORM CARD */
+.form-card{ background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius); padding:28px; margin-bottom:20px; }
+.form-group{ margin-bottom:18px; }
+.form-group:last-child{ margin-bottom:0; }
+label{ display:block; font-family:var(--mono); font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:.12em; color:var(--mint-deep); margin-bottom:7px; }
+input[type=text], textarea, select{
+    width:100%; padding:11px 14px; background:var(--surface);
+    border:1px solid var(--border); border-radius:var(--radius-sm);
+    color:var(--text); font-family:var(--body); font-size:14px; outline:none; transition:border-color .2s;
+}
+input[type=text]:focus, textarea:focus, select:focus{ border-color:var(--mint); }
+input::placeholder, textarea::placeholder{ color:var(--text-faint); }
+select option{ background:#fff; color:var(--text); }
+textarea{ resize:vertical; min-height:90px; }
+
+.or-divider{ text-align:center; font-family:var(--mono); font-size:11px; color:var(--text-faint); margin:18px 0; display:flex; align-items:center; gap:12px; letter-spacing:.08em; text-transform:uppercase; }
+.or-divider::before, .or-divider::after{ content:''; flex:1; height:1px; background:var(--border); }
+
+.upload-area{ border:2px dashed var(--border-strong); border-radius:var(--radius-sm); padding:20px; text-align:center; cursor:pointer; transition:.3s; background:var(--surface); }
+.upload-area:hover{ border-color:var(--mint); background:var(--mint-dim); }
+.upload-area input{ display:none; }
+.upload-icon{ font-size:1.8rem; margin-bottom:6px; }
+.upload-area p{ font-size:13px; color:var(--text-faint); }
+.file-name{ text-align:center; font-family:var(--mono); font-size:12px; color:var(--mint-deep); margin-top:8px; min-height:16px; }
+
+/* BUTTONS */
+.btn-primary{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px; border:none; border-radius:999px; background:var(--mint-deep); color:#fff; font-weight:700; font-size:15px; cursor:pointer; transition:.25s; margin-bottom:10px; box-shadow:0 6px 20px rgba(14,138,102,0.2); }
+.btn-primary:hover{ background:#0a7558; transform:translateY(-1px); box-shadow:0 10px 28px rgba(14,138,102,0.3); }
+.btn-primary:disabled{ opacity:.5; cursor:not-allowed; transform:none; box-shadow:none; }
+.btn-outline{ display:flex; align-items:center; justify-content:center; width:100%; padding:13px; border:1px solid var(--border-strong); border-radius:999px; background:transparent; color:var(--text-muted); font-weight:600; font-size:14px; cursor:pointer; transition:.2s; }
+.btn-outline:hover{ border-color:var(--mint); color:var(--mint-deep); }
+
+/* RESULT */
+.result{ display:none; margin-top:28px; }
+
+.match-ring-wrap{ text-align:center; margin-bottom:24px; }
+.match-ring{
+    width:130px; height:130px; border-radius:50%;
+    border:6px solid var(--mint); display:inline-flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    background:var(--mint-dim);
+}
+.match-ring .pct{ font-family:var(--display); font-size:34px; font-weight:700; }
+.match-ring .lbl{ font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--text-faint); margin-top:2px; }
+
+.section{ background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:14px; }
+.section-label{ font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--mint-deep); font-weight:600; margin-bottom:12px; }
+
+.badge{ display:inline-flex; align-items:center; gap:4px; padding:4px 11px; margin:3px; border-radius:999px; font-size:12px; font-weight:500; font-family:var(--mono); border:1px solid; }
+.badge-have{ background:rgba(31,174,133,0.12); color:var(--mint-deep); border-color:rgba(31,174,133,0.3); }
+.badge-miss{ background:rgba(224,101,76,0.1); color:var(--coral); border-color:rgba(224,101,76,0.3); }
+.badge-learn{ background:rgba(217,119,6,0.1); color:var(--warn); border-color:rgba(217,119,6,0.3); }
+.badge-detected{ background:rgba(61,139,224,0.1); color:var(--sky-deep); border-color:rgba(61,139,224,0.3); }
+.upload-area.busy{ opacity:.7; pointer-events:none; }
+.extract-status{ text-align:center; font-family:var(--mono); font-size:12px; color:var(--text-faint); margin-top:8px; }
+
+.bar-row{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.bar-lbl{ width:130px; font-size:13px; color:var(--text-muted); flex-shrink:0; }
+.bar-track{ flex:1; height:7px; background:var(--surface-2); border-radius:999px; overflow:hidden; }
+.bar-fill{ height:100%; border-radius:999px; transition:width 1s ease; }
+.bar-fill.green{ background:linear-gradient(90deg,var(--mint),var(--mint-deep)); }
+.bar-fill.blue{ background:linear-gradient(90deg,var(--sky),var(--sky-deep)); }
+.bar-fill.red{ background:linear-gradient(90deg,var(--coral),#c0392b); }
+.bar-val{ width:34px; text-align:right; font-size:12px; font-weight:700; font-family:var(--mono); }
+
+.roadmap-item{ display:flex; gap:14px; align-items:flex-start; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+.roadmap-item:last-child{ border-bottom:none; margin-bottom:0; padding-bottom:0; }
+.step-num{ width:30px; height:30px; border-radius:50%; background:var(--mint-deep); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:12px; font-weight:700; flex-shrink:0; }
+.step-content h4{ font-size:14px; font-weight:600; margin-bottom:3px; color:var(--text); }
+.step-content p{ font-size:13px; color:var(--text-muted); line-height:1.5; }
+.step-resource{ font-family:var(--mono); font-size:11px; color:var(--mint-deep); margin-top:4px; }
+
+.action-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px; }
+.action-link{ display:block; text-align:center; padding:12px; border-radius:var(--radius-sm); font-weight:600; font-size:13px; border:1px solid var(--border); transition:.2s; color:var(--text-muted); }
+.action-link:hover{ border-color:var(--mint); color:var(--mint-deep); background:var(--mint-dim); }
+
+.spinner{ width:24px; height:24px; border:3px solid var(--surface-2); border-top-color:var(--mint); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.loading{ text-align:center; padding:32px; }
+.loading p{ margin-top:12px; font-size:13px; color:var(--text-faint); font-family:var(--mono); }
+</style>
+</head>
+<body>
+
+<div class="page">
+    <span class="eyebrow">Skill Gap Detection</span>
+    <h1>Find exactly what's<br>holding you <em>back</em></h1>
+    <p class="sub">Just upload your resume and pick a target role — AI reads your skills automatically and compares them against real job requirements.</p>
+
+    <div class="form-card">
+        <div class="form-group">
+            <label>Target Job Role</label>
+            <input type="text" id="jobRole" placeholder="e.g. Data Scientist, Frontend Developer, DevOps Engineer...">
+        </div>
+        <div class="form-group">
+            <label>Experience Level</label>
+            <select id="expLevel">
+                <option value="fresher">Fresher / Entry Level</option>
+                <option value="junior">Junior (1–2 years)</option>
+                <option value="mid">Mid Level (3–5 years)</option>
+                <option value="senior">Senior (5+ years)</option>
+            </select>
+        </div>
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('resumeFile').click()">
+            <div class="upload-icon">📄</div>
+            <p>Click to upload PDF or DOCX — AI extracts your skills automatically</p>
+            <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" onchange="handleFile(this)">
+        </div>
+        <div class="file-name" id="fileName"></div>
+        <div id="extractedWrap" style="display:none;margin-top:14px;">
+            <label>Skills Detected From Resume — <span id="extractedCount">0</span> found</label>
+            <div id="extractedSkillsBox"></div>
+        </div>
+
+        <div class="or-divider">or type skills manually</div>
+
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Your Current Skills</label>
+            <textarea id="skills" placeholder="e.g. Python, HTML, CSS, JavaScript, MySQL, Git..."></textarea>
+        </div>
+    </div>
+
+    <button class="btn-primary" id="analyzeBtn" onclick="analyzeGap()">🔍 Detect Skill Gaps with AI</button>
+    <button class="btn-outline" onclick="window.location.href='index.html'">← Back to Dashboard</button>
+
+    <div class="result" id="result">
+        <div id="resultContent"></div>
+    </div>
+</div>
+
+<script>
+const BACKEND = "https://ai-interview-simulator-316l.onrender.com";
+let extractedSkills = []; // populated immediately once a resume is uploaded
+
+async function handleFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    document.getElementById('fileName').textContent = '📎 ' + file.name;
+
+    const uploadArea = document.getElementById('uploadArea');
+    const extractedWrap = document.getElementById('extractedWrap');
+    const extractedBox = document.getElementById('extractedSkillsBox');
+    const extractedCount = document.getElementById('extractedCount');
+
+    uploadArea.classList.add('busy');
+    extractedWrap.style.display = 'block';
+    extractedBox.innerHTML = `<div class="extract-status">🔎 Reading resume and extracting skills…</div>`;
+
+    try {
+        const formData = new FormData();
+        formData.append("resume", file);
+        const res = await fetch(`${BACKEND}/analyze-resume`, { method:"POST", body:formData });
+        const data = await res.json();
+
+        extractedSkills = data.ai_skills_found || [];
+
+        if (extractedSkills.length > 0) {
+            extractedCount.textContent = extractedSkills.length;
+            extractedBox.innerHTML = extractedSkills.map(s=>`<span class="badge badge-detected">📎 ${s}</span>`).join('');
+            // Keep the manual textarea in sync as a visible/editable fallback,
+            // but the user never has to type it themselves.
+            document.getElementById("skills").value = extractedSkills.join(", ");
+        } else {
+            extractedBox.innerHTML = `<div class="extract-status">No clear skills detected — you can add them manually below.</div>`;
+        }
+    } catch (e) {
+        extractedBox.innerHTML = `<div class="extract-status" style="color:var(--coral);">Couldn't read resume automatically. Add skills manually below.</div>`;
+    } finally {
+        uploadArea.classList.remove('busy');
+    }
+}
+
+async function analyzeGap() {
+    const jobRole = document.getElementById("jobRole").value.trim();
+    const expLevel = document.getElementById("expLevel").value;
+    const manualSkills = document.getElementById("skills").value.trim();
+    const file = document.getElementById("resumeFile").files[0];
+
+    // Prefer skills auto-extracted from the resume; fall back to manual entry.
+    const resumeText = (file && extractedSkills.length > 0)
+        ? extractedSkills.join(", ")
+        : manualSkills;
+
+    if (!jobRole) { alert("Please enter your target job role"); return; }
+    if (!resumeText) { alert("Upload your resume or enter your skills"); return; }
+
+    const btn = document.getElementById("analyzeBtn");
+    const result = document.getElementById("result");
+    const content = document.getElementById("resultContent");
+
+    btn.disabled = true; btn.textContent = "Analyzing...";
+    result.style.display = "block";
+    content.innerHTML = `<div class="loading"><div class="spinner"></div><p>Groq AI is detecting skill gaps for ${jobRole}...</p></div>`;
+
+    try {
+        const prompt = `You are an expert career counselor and technical recruiter.
+Analyze the skill gap for:
+- Target Job Role: ${jobRole}
+- Experience Level: ${expLevel}
+- Current Skills: ${resumeText}
+
+Respond ONLY with valid JSON, no markdown:
+{
+  "match_percentage": integer 0-100,
+  "skills_you_have": ["skill1","skill2"],
+  "skills_you_miss": ["skill1","skill2"],
+  "priority_skills_to_learn": ["skill1","skill2","skill3"],
+  "category_scores": {"Technical Skills": integer, "Tools & Frameworks": integer, "Domain Knowledge": integer, "Soft Skills": integer},
+  "learning_roadmap": [
+    {"step":1,"skill":"name","reason":"why","resource":"where to learn"},
+    {"step":2,"skill":"name","reason":"why","resource":"where to learn"},
+    {"step":3,"skill":"name","reason":"why","resource":"where to learn"}
+  ],
+  "summary": "2-3 sentence assessment"
+}`;
+
+        const res = await fetch(`${BACKEND}/assistant`, {
+            method:"POST", headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({ message: prompt, history: [] })
+        });
+        const data = await res.json();
+
+        let analysis;
+        try {
+            const clean = data.reply.replace(/```json/g,"").replace(/```/g,"").trim();
+            analysis = JSON.parse(clean);
+        } catch(e) {
+            content.innerHTML = `<div style="padding:20px;color:var(--coral);text-align:center;">AI response could not be parsed. Please try again.</div>`;
+            return;
+        }
+
+        const pct = analysis.match_percentage || 0;
+        const ringColor = pct >= 70 ? 'var(--mint-deep)' : pct >= 40 ? 'var(--warn)' : 'var(--coral)';
+        const ringBg = pct >= 70 ? 'var(--mint-dim)' : pct >= 40 ? 'rgba(217,119,6,0.1)' : 'rgba(224,101,76,0.1)';
+
+        const cats = analysis.category_scores || {};
+        const barsHTML = Object.entries(cats).map(([k,v]) => {
+            const cls = v >= 70 ? 'green' : v >= 40 ? 'blue' : 'red';
+            const col = cls==='green'?'var(--mint-deep)':cls==='blue'?'var(--sky-deep)':'var(--coral)';
+            return `<div class="bar-row"><span class="bar-lbl">${k}</span><div class="bar-track"><div class="bar-fill ${cls}" style="width:${v}%"></div></div><span class="bar-val" style="color:${col}">${v}%</span></div>`;
+        }).join('');
+
+        const roadmapHTML = (analysis.learning_roadmap||[]).map(item=>`
+            <div class="roadmap-item">
+                <div class="step-num">${item.step}</div>
+                <div class="step-content">
+                    <h4>${item.skill}</h4>
+                    <p>${item.reason}</p>
+                    <p class="step-resource">📚 ${item.resource}</p>
+                </div>
+            </div>`).join('');
+
+        content.innerHTML = `
+            <div class="match-ring-wrap">
+                <div class="match-ring" style="border-color:${ringColor};background:${ringBg};">
+                    <div class="pct" style="color:${ringColor}">${pct}%</div>
+                    <div class="lbl">Match</div>
+                </div>
+            </div>
+
+            ${analysis.summary?`<div class="section"><div class="section-label">AI Assessment</div><p style="font-size:14px;line-height:1.7;color:var(--text-muted);">${analysis.summary}</p></div>`:''}
+
+            ${barsHTML?`<div class="section"><div class="section-label">Category Scores</div>${barsHTML}</div>`:''}
+
+            <div class="section">
+                <div class="section-label">Skills You Have — ${(analysis.skills_you_have||[]).length}</div>
+                ${(analysis.skills_you_have||[]).map(s=>`<span class="badge badge-have">✓ ${s}</span>`).join('')||'<p style="font-size:13px;color:var(--text-faint);">None detected</p>'}
+            </div>
+
+            <div class="section">
+                <div class="section-label">Skills Missing — ${(analysis.skills_you_miss||[]).length}</div>
+                ${(analysis.skills_you_miss||[]).map(s=>`<span class="badge badge-miss">✗ ${s}</span>`).join('')||'<p style="font-size:13px;color:var(--mint-deep);">You have all required skills!</p>'}
+            </div>
+
+            ${(analysis.priority_skills_to_learn||[]).length?`
+            <div class="section">
+                <div class="section-label">Priority Skills to Learn</div>
+                ${analysis.priority_skills_to_learn.map(s=>`<span class="badge badge-learn">→ ${s}</span>`).join('')}
+            </div>`:''}
+
+            ${roadmapHTML?`<div class="section"><div class="section-label">Learning Roadmap</div>${roadmapHTML}</div>`:''}
+
+            <div class="action-row">
+                <a href="interview.html" class="action-link">🎙️ Practice Interview</a>
+                <a href="resume.html" class="action-link">📄 Analyze Resume</a>
+            </div>`;
+
+    } catch(e) {
+        content.innerHTML = `<div style="padding:20px;color:var(--coral);text-align:center;">Error connecting to AI. Please try again.</div>`;
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "🔍 Detect Skill Gaps with AI";
+    }
+}
+</script>
+</body>
+</html>
