@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Career Roadmap — AI Interview Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+    --bg:#F4FAF8; --bg-elevated:#FFFFFF; --surface:#EAF5F1; --surface-2:#DCEEE7;
+    --border:rgba(15,42,36,0.09); --border-strong:rgba(15,42,36,0.16);
+    --text:#122A24; --text-muted:#52746B; --text-faint:#86A69C;
+    --mint:#1FAE85; --mint-deep:#0E8A66; --mint-dim:rgba(31,174,133,0.13);
+    --sky:#3D8BE0; --sky-deep:#2569B4; --sky-dim:rgba(61,139,224,0.13);
+    --coral:#E0654C; --warn:#D97706; --purple:#8B5CF6; --purple-dim:rgba(139,92,246,0.12);
+    --display:'Fraunces',Georgia,serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono','Courier New',monospace;
+    --radius:18px; --radius-sm:10px;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; }
+body{ font-family:var(--body); background:var(--bg); color:var(--text); line-height:1.6; -webkit-font-smoothing:antialiased; min-height:100vh; }
+body::before{
+    content:""; position:fixed; inset:0; z-index:-2;
+    background: radial-gradient(ellipse 900px 500px at 18% -5%, rgba(31,174,133,0.12), transparent 60%),
+                radial-gradient(ellipse 700px 500px at 100% 20%, rgba(61,139,224,0.12), transparent 60%), var(--bg);
+}
+a{ color:inherit; text-decoration:none; }
+h1,h2,h3,h4{ font-family:var(--display); margin:0; font-weight:600; }
+
+/* PAGE */
+.page{ max-width:760px; margin:0 auto; padding:52px 24px 80px; }
+.eyebrow{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--mint-deep); display:inline-flex; align-items:center; gap:7px; margin-bottom:14px; }
+.eyebrow::before{ content:""; width:5px; height:5px; border-radius:50%; background:var(--mint); box-shadow:0 0 8px rgba(31,174,133,0.5); }
+.page h1{ font-size:clamp(28px,4vw,42px); line-height:1.1; margin-bottom:8px; }
+.page h1 em{ font-style:normal; color:var(--mint-deep); }
+.page .sub{ color:var(--text-muted); font-size:15px; margin-bottom:36px; max-width:56ch; }
+
+/* FORM CARD */
+.form-card{ background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius); padding:28px; margin-bottom:20px; }
+.form-group{ margin-bottom:18px; }
+.form-group:last-child{ margin-bottom:0; }
+label{ display:block; font-family:var(--mono); font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:.12em; color:var(--mint-deep); margin-bottom:7px; }
+input[type=text], select{
+    width:100%; padding:11px 14px; background:var(--surface);
+    border:1px solid var(--border); border-radius:var(--radius-sm);
+    color:var(--text); font-family:var(--body); font-size:14px; outline:none; transition:border-color .2s;
+}
+input[type=text]:focus, select:focus{ border-color:var(--mint); }
+input::placeholder{ color:var(--text-faint); }
+select option{ background:#fff; color:var(--text); }
+
+.chip-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.chip{ padding:7px 14px; border-radius:999px; font-size:12.5px; font-weight:600; border:1px solid var(--border-strong); background:var(--surface); color:var(--text-muted); cursor:pointer; transition:.2s; font-family:var(--body); }
+.chip:hover{ border-color:var(--mint); color:var(--mint-deep); background:var(--mint-dim); }
+.chip-group-label{ font-family:var(--mono); font-size:9.5px; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:var(--text-faint); margin:14px 0 6px; }
+.chip-group-label:first-child{ margin-top:10px; }
+
+/* BUTTONS */
+.btn-primary{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px; border:none; border-radius:999px; background:var(--mint-deep); color:#fff; font-weight:700; font-size:15px; cursor:pointer; transition:.25s; margin-bottom:10px; box-shadow:0 6px 20px rgba(14,138,102,0.2); }
+.btn-primary:hover{ background:#0a7558; transform:translateY(-1px); box-shadow:0 10px 28px rgba(14,138,102,0.3); }
+.btn-primary:disabled{ opacity:.5; cursor:not-allowed; transform:none; box-shadow:none; }
+.btn-outline{ display:flex; align-items:center; justify-content:center; width:100%; padding:13px; border:1px solid var(--border-strong); border-radius:999px; background:transparent; color:var(--text-muted); font-weight:600; font-size:14px; cursor:pointer; transition:.2s; }
+.btn-outline:hover{ border-color:var(--mint); color:var(--mint-deep); }
+
+/* RESULT */
+.result{ display:none; margin-top:28px; }
+
+.hero-card{ background:linear-gradient(135deg, var(--mint-deep), var(--sky-deep)); border-radius:var(--radius); padding:26px 24px; color:#fff; margin-bottom:20px; box-shadow:0 12px 30px rgba(14,138,102,0.22); }
+.hero-card h2{ font-size:22px; margin-bottom:8px; color:#fff; }
+.hero-card p{ font-size:13.5px; opacity:.92; line-height:1.7; }
+
+.section{ background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:14px; }
+.section-label{ font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--mint-deep); font-weight:600; margin-bottom:12px; }
+
+.badge{ display:inline-flex; align-items:center; gap:4px; padding:4px 11px; margin:3px; border-radius:999px; font-size:12px; font-weight:500; font-family:var(--mono); border:1px solid; }
+.badge-skill{ background:rgba(31,174,133,0.12); color:var(--mint-deep); border-color:rgba(31,174,133,0.3); }
+.badge-tool{ background:rgba(61,139,224,0.1); color:var(--sky-deep); border-color:rgba(61,139,224,0.3); }
+.badge-cert{ background:rgba(139,92,246,0.1); color:var(--purple); border-color:rgba(139,92,246,0.3); }
+.badge-have{ background:rgba(31,174,133,0.22); color:var(--mint-deep); border-color:var(--mint); font-weight:700; }
+.badge-company{ background:var(--surface-2); color:var(--text-muted); border-color:var(--border-strong); }
+.badge-role{ background:var(--sky-dim); color:var(--sky-deep); border-color:rgba(61,139,224,0.3); cursor:pointer; transition:.2s; }
+.badge-role:hover{ background:var(--sky-deep); color:#fff; }
+
+.demand-pill{ display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; font-family:var(--mono); font-size:12px; font-weight:700; margin-bottom:10px; }
+.demand-high{ background:rgba(31,174,133,0.15); color:var(--mint-deep); }
+.demand-medium{ background:rgba(217,119,6,0.13); color:var(--warn); }
+.demand-low{ background:rgba(224,101,76,0.13); color:var(--coral); }
+
+.action-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px; }
+.action-link{ display:block; text-align:center; padding:12px; border-radius:var(--radius-sm); font-weight:600; font-size:13px; border:1px solid var(--border); transition:.2s; color:var(--text-muted); background:var(--bg-elevated); }
+.action-link:hover{ border-color:var(--mint); color:var(--mint-deep); background:var(--mint-dim); }
+
+/* TIMELINE */
+.timeline{ position:relative; padding-left:8px; }
+.stage{ position:relative; padding:0 0 28px 34px; border-left:2px solid var(--border-strong); }
+.stage:last-child{ border-left:2px solid transparent; padding-bottom:0; }
+.stage-dot{ position:absolute; left:-11px; top:0; width:20px; height:20px; border-radius:50%; background:var(--mint-deep); border:3px solid var(--bg-elevated); box-shadow:0 0 0 2px var(--mint-deep); display:flex; align-items:center; justify-content:center; }
+.stage-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px 18px; }
+.stage-head{ display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px; margin-bottom:6px; }
+.stage-title{ font-family:var(--display); font-size:17px; font-weight:600; }
+.stage-time{ font-family:var(--mono); font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.06em; }
+.stage-salary{ font-family:var(--mono); font-size:12px; color:var(--mint-deep); font-weight:600; margin-bottom:10px; }
+.stage-sub{ font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--text-faint); font-family:var(--mono); margin:10px 0 4px; }
+.stage-sub:first-of-type{ margin-top:2px; }
+.stage-milestone{ font-size:13px; color:var(--text-muted); line-height:1.6; margin-top:8px; }
+
+.res-item{ display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--border); }
+.res-item:last-child{ border-bottom:none; padding-bottom:0; }
+.res-item .dot{ width:6px; height:6px; border-radius:50%; background:var(--sky-deep); margin-top:7px; flex-shrink:0; }
+.res-item h4{ font-size:13.5px; font-weight:600; margin-bottom:2px; }
+.res-item p{ font-size:12.5px; color:var(--text-muted); }
+
+.spinner{ width:24px; height:24px; border:3px solid var(--surface-2); border-top-color:var(--mint); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.loading{ text-align:center; padding:32px; }
+.loading p{ margin-top:12px; font-size:13px; color:var(--text-faint); font-family:var(--mono); }
+</style>
+</head>
+<body>
+
+<div class="page">
+    <span class="eyebrow">Career Roadmap</span>
+    <h1>Your path to <em>any</em> role</h1>
+    <p class="sub">Enter any job role — Data Scientist, DevOps Engineer, Product Manager, whatever you're aiming for — and AI builds a stage-by-stage roadmap from entry level to senior, with the skills, tools, and certifications you need at each step.</p>
+
+    <div class="form-card">
+        <div class="form-group">
+            <label>Target Job Role</label>
+            <input type="text" id="jobRole" placeholder="e.g. Data Scientist, Frontend Developer, Cloud Architect...">
+
+            <div class="chip-group-label">Tech</div>
+            <div class="chip-row">
+                <button class="chip" onclick="quickFill('Data Scientist')">Data Scientist</button>
+                <button class="chip" onclick="quickFill('Frontend Developer')">Frontend Developer</button>
+                <button class="chip" onclick="quickFill('Backend Developer')">Backend Developer</button>
+                <button class="chip" onclick="quickFill('Full Stack Developer')">Full Stack Developer</button>
+                <button class="chip" onclick="quickFill('DevOps Engineer')">DevOps Engineer</button>
+                <button class="chip" onclick="quickFill('Site Reliability Engineer')">Site Reliability Engineer</button>
+                <button class="chip" onclick="quickFill('Cloud Architect')">Cloud Architect</button>
+                <button class="chip" onclick="quickFill('Solutions Architect')">Solutions Architect</button>
+                <button class="chip" onclick="quickFill('Cybersecurity Analyst')">Cybersecurity Analyst</button>
+                <button class="chip" onclick="quickFill('Penetration Tester')">Penetration Tester</button>
+                <button class="chip" onclick="quickFill('AI/ML Engineer')">AI/ML Engineer</button>
+                <button class="chip" onclick="quickFill('Computer Vision Engineer')">Computer Vision Engineer</button>
+                <button class="chip" onclick="quickFill('Data Analyst')">Data Analyst</button>
+                <button class="chip" onclick="quickFill('Data Engineer')">Data Engineer</button>
+                <button class="chip" onclick="quickFill('Database Administrator')">Database Administrator</button>
+                <button class="chip" onclick="quickFill('QA Engineer')">QA Engineer</button>
+                <button class="chip" onclick="quickFill('Mobile App Developer')">Mobile App Developer</button>
+                <button class="chip" onclick="quickFill('Game Developer')">Game Developer</button>
+                <button class="chip" onclick="quickFill('UX/UI Designer')">UX/UI Designer</button>
+                <button class="chip" onclick="quickFill('Network Engineer')">Network Engineer</button>
+                <button class="chip" onclick="quickFill('System Administrator')">System Administrator</button>
+                <button class="chip" onclick="quickFill('Embedded Systems Engineer')">Embedded Systems Engineer</button>
+                <button class="chip" onclick="quickFill('Robotics Engineer')">Robotics Engineer</button>
+                <button class="chip" onclick="quickFill('Blockchain Developer')">Blockchain Developer</button>
+                <button class="chip" onclick="quickFill('Technical Writer')">Technical Writer</button>
+            </div>
+
+            <div class="chip-group-label">Business &amp; Beyond</div>
+            <div class="chip-row">
+                <button class="chip" onclick="quickFill('Product Manager')">Product Manager</button>
+                <button class="chip" onclick="quickFill('Project Manager')">Project Manager</button>
+                <button class="chip" onclick="quickFill('Business Analyst')">Business Analyst</button>
+                <button class="chip" onclick="quickFill('Digital Marketing Manager')">Digital Marketing</button>
+                <button class="chip" onclick="quickFill('Financial Analyst')">Financial Analyst</button>
+                <button class="chip" onclick="quickFill('Human Resources Manager')">HR Manager</button>
+                <button class="chip" onclick="quickFill('Graphic Designer')">Graphic Designer</button>
+                <button class="chip" onclick="quickFill('Content Writer')">Content Writer</button>
+                <button class="chip" onclick="quickFill('Sales Executive')">Sales Executive</button>
+                <button class="chip" onclick="quickFill('Registered Nurse')">Registered Nurse</button>
+            </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Starting Point</label>
+            <select id="startLevel">
+                <option value="complete beginner with no experience">Complete Beginner</option>
+                <option value="student currently studying relevant fundamentals">Student</option>
+                <option value="career switcher from a different field">Career Switcher</option>
+                <option value="already working junior in a related role">Junior in Related Role</option>
+            </select>
+        </div>
+    </div>
+
+    <button class="btn-primary" id="generateBtn" onclick="generateRoadmap()">🧭 Generate AI Career Roadmap</button>
+    <button class="btn-outline" onclick="window.location.href='index.html'">← Back to Dashboard</button>
+
+    <div class="result" id="result">
+        <div id="resultContent"></div>
+    </div>
+</div>
+
+<script>
+const BACKEND = "https://ai-interview-simulator-316l.onrender.com";
+let lastRoadmap = null;
+
+function quickFill(role) {
+    document.getElementById("jobRole").value = role;
+    generateRoadmap();
+}
+
+// ---------- Robust JSON parsing ----------
+function parseRoadmapJSON(raw) {
+    if (!raw || typeof raw !== "string") return null;
+
+    // 1) Strip markdown code fences and surrounding whitespace
+    let clean = raw.replace(/```json/gi, "").replace(/```/g, "").trim();
+
+    // 2) Isolate the outermost {...} block in case the model added any preamble/trailing text
+    const start = clean.indexOf("{");
+    const end = clean.lastIndexOf("}");
+    if (start !== -1 && end !== -1 && end > start) {
+        clean = clean.slice(start, end + 1);
+    }
+
+    // 3) Try a straight parse first
+    try {
+        return JSON.parse(clean);
+    } catch (e1) {
+        // 4) Attempt light repairs for common model formatting slips, then retry
+        let repaired = clean
+            .replace(/,\s*([}\]])/g, "$1")   // trailing commas before } or ]
+            .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, ""); // stray control chars
+
+        try {
+            return JSON.parse(repaired);
+        } catch (e2) {
+            // 5) Last resort: the response may have been cut off mid-object
+            // (e.g. a backend token/length limit). Try to close it out.
+            const closed = closeTruncatedJSON(repaired);
+            try {
+                return JSON.parse(closed);
+            } catch (e3) {
+                return null;
+            }
+        }
+    }
+}
+
+// Closes a JSON string that was cut off partway through: finishes any open
+// string, drops a dangling trailing comma, then closes open [ and { in the
+// correct (reverse) order.
+function closeTruncatedJSON(str) {
+    let inString = false, escape = false;
+    const stack = [];
+
+    for (let i = 0; i < str.length; i++) {
+        const ch = str[i];
+        if (inString) {
+            if (escape) { escape = false; }
+            else if (ch === "\\") { escape = true; }
+            else if (ch === '"') { inString = false; }
+            continue;
+        }
+        if (ch === '"') { inString = true; }
+        else if (ch === "{" || ch === "[") { stack.push(ch); }
+        else if (ch === "}" || ch === "]") { stack.pop(); }
+    }
+
+    let result = str;
+    if (inString) result += '"';           // finish an unterminated string
+    result = result.replace(/,\s*$/, "");  // drop a trailing comma left dangling
+    for (let i = stack.length - 1; i >= 0; i--) {
+        result += stack[i] === "{" ? "}" : "]";
+    }
+    return result;
+}
+
+function matchSkills(list, haveArr) {
+    return (list||[]).map(skill => {
+        const isHave = haveArr.some(h => skill.toLowerCase().includes(h) || h.includes(skill.toLowerCase()));
+        return isHave
+            ? `<span class="badge badge-have">✓ ${skill}</span>`
+            : `<span class="badge badge-skill">${skill}</span>`;
+    }).join('');
+}
+
+async function generateRoadmap() {
+    const jobRole = document.getElementById("jobRole").value.trim();
+    const startLevel = document.getElementById("startLevel").value;
+
+    if (!jobRole) { alert("Please enter a target job role"); return; }
+
+    const btn = document.getElementById("generateBtn");
+    const result = document.getElementById("result");
+    const content = document.getElementById("resultContent");
+
+    btn.disabled = true; btn.textContent = "Generating...";
+    result.style.display = "block";
+    content.innerHTML = `<div class="loading"><div class="spinner"></div><p>Building your roadmap for ${jobRole}...</p></div>`;
+
+    // If the free-tier backend is asleep, cold start can take a while —
+    // let the user know instead of leaving a bare spinner.
+    const coldStartTimer = setTimeout(() => {
+        content.innerHTML = `<div class="loading"><div class="spinner"></div><p>Still working — the server may be waking up, this can take up to a minute...</p></div>`;
+    }, 7000);
+
+    try {
+        const prompt = `You are an expert career counselor who has mapped career paths for thousands of professionals across every tech and non-tech job role.
+
+Build a concise career roadmap for:
+- Target Job Role: ${jobRole}
+- Starting Point: ${startLevel}
+
+The roadmap must work for ANY job role given (technical, creative, business, healthcare, etc.), not just software jobs.
+
+Keep every text field SHORT (see word limits below) so the full response stays compact, EXCEPT core_skills — for each stage, list up to 10 core_skills (fewer only if the role genuinely doesn't need that many), ordered most-important first, using short skill names (1-3 words each). Output ONLY the JSON object below, with no markdown fences, no preamble, and no text after it. The JSON must be complete and syntactically valid — do not stop partway through.
+
+{
+  "role": "${jobRole}",
+  "overview": "max 2 sentences: what this path looks like and realistic total time to senior/expert level",
+  "job_outlook": {
+    "demand_level": "High, Medium, or Low",
+    "growth_trend": "max 1 sentence",
+    "top_hiring_companies": ["company1","company2","company3"]
+  },
+  "stages": [
+    {
+      "stage": "Entry Level",
+      "timeframe": "e.g. 0-1 years",
+      "avg_salary": "short approximate range for the given region, or global estimate if none given",
+      "core_skills": ["skill1","skill2","skill3","skill4","skill5","skill6","skill7","skill8","skill9","skill10"],
+      "tools": ["tool1","tool2"],
+      "certifications": ["cert1"],
+      "milestone": "max 1 sentence: how to know you're ready for the next stage"
+    },
+    {"stage":"Junior / Associate","timeframe":"...","avg_salary":"...","core_skills":["..."],"tools":["..."],"certifications":["..."],"milestone":"..."},
+    {"stage":"Mid Level","timeframe":"...","avg_salary":"...","core_skills":["..."],"tools":["..."],"certifications":["..."],"milestone":"..."},
+    {"stage":"Senior Level","timeframe":"...","avg_salary":"...","core_skills":["..."],"tools":["..."],"certifications":["..."],"milestone":"..."},
+    {"stage":"Lead / Principal / Expert","timeframe":"...","avg_salary":"...","core_skills":["..."],"tools":["..."],"certifications":["..."],"milestone":"..."}
+  ],
+  "learning_resources": [
+    {"name":"resource name","type":"course/book/platform/community","note":"max 1 short sentence"}
+  ],
+  "alternative_roles": ["related role 1","related role 2","related role 3"],
+  "closing_advice": "max 2 sentences of practical advice"
+}
+
+Limit "learning_resources" to at most 3 items total. Do not add any keys beyond what's shown above.`;
+
+        const res = await fetch(`${BACKEND}/assistant`, {
+            method:"POST", headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({ message: prompt, history: [] })
+        });
+
+        if (!res.ok) {
+            throw new Error(`Server responded with status ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        const roadmap = parseRoadmapJSON(data.reply);
+        if (!roadmap) {
+            console.error("Raw AI reply that failed to parse:", data.reply);
+            content.innerHTML = `
+                <div style="padding:24px;color:var(--coral);text-align:center;">
+                    <p style="margin-bottom:14px;">The AI response couldn't be read this time. This usually clears up on a retry.</p>
+                    <button class="btn-primary" style="width:auto;padding:10px 20px;" onclick="generateRoadmap()">↻ Try Again</button>
+                </div>`;
+            return;
+        }
+
+        lastRoadmap = roadmap;
+        const haveArr = [];
+
+        const outlook = roadmap.job_outlook || {};
+        const demandClass = (outlook.demand_level||'').toLowerCase().includes('high') ? 'demand-high'
+                           : (outlook.demand_level||'').toLowerCase().includes('medium') ? 'demand-medium' : 'demand-low';
+        const outlookHTML = outlook.demand_level ? `
+            <div class="section">
+                <div class="section-label">Job Outlook & Demand</div>
+                <div class="demand-pill ${demandClass}">📈 ${outlook.demand_level} Demand</div>
+                <p style="font-size:13.5px;color:var(--text-muted);line-height:1.6;margin-bottom:${(outlook.top_hiring_companies||[]).length?'12px':'0'};">${outlook.growth_trend||''}</p>
+                ${(outlook.top_hiring_companies||[]).length?`<div class="stage-sub">Top Hiring Companies</div>${outlook.top_hiring_companies.map(c=>`<span class="badge badge-company">${c}</span>`).join('')}`:''}
+            </div>` : '';
+
+        const stagesHTML = (roadmap.stages||[]).map(s => `
+            <div class="stage">
+                <div class="stage-dot"></div>
+                <div class="stage-card">
+                    <div class="stage-head">
+                        <span class="stage-title">${s.stage}</span>
+                        <span class="stage-time">${s.timeframe||''}</span>
+                    </div>
+                    ${s.avg_salary?`<div class="stage-salary">💰 ${s.avg_salary}</div>`:''}
+                    ${(s.core_skills||[]).length?`<div class="stage-sub">Core Skills</div>${matchSkills(s.core_skills, haveArr)}`:''}
+                    ${(s.tools||[]).length?`<div class="stage-sub">Tools</div>${s.tools.map(x=>`<span class="badge badge-tool">${x}</span>`).join('')}`:''}
+                    ${(s.certifications||[]).length?`<div class="stage-sub">Certifications</div>${s.certifications.map(x=>`<span class="badge badge-cert">${x}</span>`).join('')}`:''}
+                    ${s.milestone?`<p class="stage-milestone">🎯 ${s.milestone}</p>`:''}
+                </div>
+            </div>`).join('');
+
+        const resourcesHTML = (roadmap.learning_resources||[]).map(r => `
+            <div class="res-item">
+                <div class="dot"></div>
+                <div>
+                    <h4>${r.name} <span style="color:var(--text-faint);font-weight:400;">— ${r.type||''}</span></h4>
+                    <p>${r.note||''}</p>
+                </div>
+            </div>`).join('');
+
+        const altRolesHTML = (roadmap.alternative_roles||[]).length ? `
+            <div class="section">
+                <div class="section-label">Related Roles Worth Exploring</div>
+                ${roadmap.alternative_roles.map(r=>`<span class="badge badge-role" onclick="quickFill('${r.replace(/'/g,"\\'")}')">↗ ${r}</span>`).join('')}
+            </div>` : '';
+
+        content.innerHTML = `
+            <div class="hero-card">
+                <h2>${roadmap.role || jobRole}</h2>
+                <p>${roadmap.overview||''}</p>
+            </div>
+
+            ${outlookHTML}
+
+            <div class="section">
+                <div class="section-label">Career Path Timeline</div>
+                <div class="timeline">${stagesHTML}</div>
+            </div>
+
+            ${resourcesHTML?`<div class="section"><div class="section-label">Recommended Learning Resources</div>${resourcesHTML}</div>`:''}
+
+            ${altRolesHTML}
+
+            ${roadmap.closing_advice?`<div class="section"><div class="section-label">Advice For You</div><p style="font-size:14px;line-height:1.7;color:var(--text-muted);">${roadmap.closing_advice}</p></div>`:''}
+
+            <div class="action-row">
+                <a href="skill.html" class="action-link">🔍 Check Skill Gaps</a>
+                <a href="interview.html" class="action-link">🎙️ Practice Interview</a>
+            </div>
+        `;
+
+    } catch(e) {
+        console.error("Roadmap generation failed:", e);
+        content.innerHTML = `
+            <div style="padding:24px;color:var(--coral);text-align:center;">
+                <p style="margin-bottom:14px;">Error connecting to AI. Please try again.</p>
+                <button class="btn-primary" style="width:auto;padding:10px 20px;" onclick="generateRoadmap()">↻ Try Again</button>
+            </div>`;
+    } finally {
+        clearTimeout(coldStartTimer);
+        btn.disabled = false;
+        btn.textContent = "🧭 Generate AI Career Roadmap";
+    }
+}
+</script>
+</body>
+</html>

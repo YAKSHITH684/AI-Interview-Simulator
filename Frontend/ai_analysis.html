@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Analysis — AI Interview Simulator</title>
+<title>AI Resume Analysis — AI Interview Simulator</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,6 +65,15 @@ a:focus-visible, button:focus-visible, input:focus-visible{ outline:2px solid va
 
 .page{ width:100%; max-width:600px; }
 
+.eyebrow{
+    font-family:var(--mono);
+    font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--mint-deep);
+    display:inline-flex; align-items:center; gap:8px;
+    margin-bottom:10px;
+}
+.eyebrow::before{ content:""; width:5px; height:5px; border-radius:50%; background:var(--mint); box-shadow:0 0 8px rgba(31,174,133,0.5); }
+
 .container {
   background: var(--bg-elevated);
   border-radius: 22px;
@@ -80,7 +89,7 @@ h2 {
 h2 .icon-badge{
     width:42px; height:42px; border-radius:12px; flex-shrink:0;
     display:flex; align-items:center; justify-content:center;
-    background:var(--sky-dim); border:1px solid rgba(61,139,224,0.3);
+    background:var(--mint-dim); border:1px solid rgba(31,174,133,0.3);
     font-size:19px;
 }
 .subtext{ color:var(--text-muted); font-size:13.5px; margin-bottom:24px; }
@@ -88,7 +97,7 @@ h2 .icon-badge{
 .upload-area {
   border: 2px dashed var(--border-strong);
   border-radius: 14px;
-  padding: 26px 20px;
+  padding: 28px 20px;
   text-align: center;
   cursor: pointer;
   transition: .25s ease;
@@ -119,11 +128,11 @@ button {
   font-family:var(--body);
 }
 #analyzeBtn{
-  background: linear-gradient(135deg, var(--sky-deep), var(--mint-deep));
+  background: linear-gradient(135deg, var(--mint-deep), var(--sky-deep));
   color: #fff;
-  box-shadow: 0 10px 26px rgba(37,105,180,0.28);
+  box-shadow: 0 10px 26px rgba(14,138,102,0.28);
 }
-#analyzeBtn:hover { transform: translateY(-2px); box-shadow:0 14px 32px rgba(37,105,180,0.36); }
+#analyzeBtn:hover { transform: translateY(-2px); box-shadow:0 14px 32px rgba(14,138,102,0.36); }
 #analyzeBtn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow:none; }
 
 .back-btn {
@@ -135,16 +144,21 @@ button {
 
 .result { display:none; margin-top:22px; }
 
-.metrics { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
-.metric {
+.score-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.score-box {
   background: var(--surface);
   border-radius: 14px;
-  padding: 18px 14px;
+  padding: 16px 10px;
   text-align: center;
   border: 1px solid var(--border);
 }
-.metric .val { font-family:var(--display); font-size:30px; font-weight:700; }
-.metric .lbl { font-family:var(--mono); font-size:10.5px; color:var(--text-faint); margin-top:4px; text-transform:uppercase; letter-spacing:.05em; }
+.score-box .val { font-family:var(--display); font-size: 26px; font-weight: 700; }
+.score-box .lbl { font-family:var(--mono); font-size: 10.5px; color: var(--text-faint); margin-top: 4px; text-transform:uppercase; letter-spacing:.05em; }
 
 .section {
   background: var(--surface);
@@ -154,30 +168,48 @@ button {
   border: 1px solid var(--border);
 }
 .section-title {
-    font-family:var(--mono); font-size:11px; font-weight:600; color:var(--sky-deep);
-    text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px;
+    font-family:var(--mono); font-size: 11px; font-weight: 600; color: var(--mint-deep);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px;
 }
 
 .badge {
-  display:inline-block; padding:5px 12px; margin:3px; border-radius:999px;
-  background:var(--sky-dim); color:var(--sky-deep); font-size:12px; font-weight:500;
-  border:1px solid rgba(61,139,224,0.28);
+  display: inline-block;
+  padding: 5px 12px;
+  margin: 3px;
+  border-radius: 999px;
+  background: var(--sky-dim);
+  color: var(--sky-deep);
+  font-size: 12px;
+  font-weight:500;
+  border: 1px solid rgba(61,139,224,0.28);
 }
 
-.bar-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-.bar-row:last-child{ margin-bottom:0; }
-.bar-lbl { width:112px; font-size:12px; color:var(--text-muted); flex-shrink:0; }
-.bar-track { flex:1; height:8px; background:var(--surface-2); border-radius:999px; overflow:hidden; }
-.bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg, var(--mint), var(--sky)); transition:width 1s ease; }
-.bar-val { width:36px; text-align:right; font-family:var(--mono); font-size:12px; font-weight:600; color:var(--sky-deep); }
+.verdict {
+  padding: 11px 14px;
+  border-radius: 11px;
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.verdict.strong   { background: var(--mint-dim);  color: var(--mint-deep);  border: 1px solid rgba(31,174,133,0.3); }
+.verdict.moderate { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(214,154,31,0.3); }
+.verdict.weak      { background: var(--coral-dim); color: var(--coral); border: 1px solid rgba(224,101,76,0.3); }
 
 .list-item { display:flex; gap:9px; align-items:flex-start; font-size:13px; margin-bottom:8px; color:var(--text); line-height:1.5; }
 .list-item:last-child{ margin-bottom:0; }
 .list-item .icon { flex-shrink:0; font-weight:700; }
 
+.bar-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.bar-row:last-child{ margin-bottom:0; }
+.bar-lbl { width: 112px; font-size: 12px; color: var(--text-muted); flex-shrink:0; }
+.bar-track { flex:1; height:8px; background:var(--surface-2); border-radius:999px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg, var(--mint), var(--sky)); transition:width 1s ease; }
+.bar-val { width:36px; text-align:right; font-family:var(--mono); font-size:12px; font-weight:600; color:var(--sky-deep); }
+
 .spinner {
     width:28px; height:28px; border:3px solid var(--border-strong);
-    border-top-color:var(--sky-deep); border-radius:50%;
+    border-top-color: var(--mint-deep); border-radius:50%;
     animation:spin 0.8s linear infinite; margin:0 auto;
 }
 @keyframes spin { to { transform:rotate(360deg); } }
@@ -185,7 +217,6 @@ button {
 .loading p { margin-top:12px; color:var(--text-muted); font-size:13px; font-family:var(--mono); }
 
 .summary-text{ font-size:13px; line-height:1.7; color:var(--text-muted); }
-.verdict-text{ font-size:14px; font-weight:700; color:var(--mint-deep); }
 .feedback-text{ font-size:13px; color:var(--text-muted); margin-top:6px; line-height:1.6; }
 
 .cta-link{
@@ -202,29 +233,31 @@ button {
 
 @media (max-width:600px){
     .container{ padding:24px; }
-    .metrics{ gap:8px; }
+    .score-row{ gap:8px; }
 }
 </style>
 </head>
 <body>
 <div class="page">
+
   <div class="container">
+    <span class="eyebrow">AI-Powered</span>
     <h2>
       <span class="icon-badge">🤖</span>
-      AI Resume Analyzer
+      AI Resume Analysis
     </h2>
-    <p class="subtext">A deeper pass than the quick check — strengths, gaps, and a plain-language verdict.</p>
+    <p class="subtext">Upload your resume for a full AI pass — ATS score, skills, strengths, gaps, and a plain-language verdict.</p>
 
-    <div class="upload-area" onclick="document.getElementById('resumeFile').click()">
+    <div class="upload-area" id="dropZone" onclick="document.getElementById('resumeFile').click()">
       <div class="emoji">📄</div>
-      <p>Click to upload your resume for deep AI analysis</p>
-      <p class="hint">PDF, DOCX, TXT supported</p>
+      <p>Click to upload your resume</p>
+      <p class="hint">Supports PDF, DOCX, TXT</p>
       <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" onchange="handleFile(this)">
     </div>
 
     <div id="fileName"></div>
 
-    <button id="analyzeBtn" onclick="analyzeResume()">🤖 Run Full AI Analysis</button>
+    <button id="analyzeBtn" onclick="analyzeResume()">⚡ Run Full AI Analysis</button>
 
     <div class="result" id="result">
       <div id="resultContent"></div>
@@ -232,6 +265,7 @@ button {
 
     <button class="back-btn" onclick="window.location.href='index.html'">← Back</button>
   </div>
+
 </div>
 
 <script>
@@ -244,7 +278,7 @@ function handleFile(input) {
 
 async function analyzeResume() {
   const file = document.getElementById("resumeFile").files[0];
-  if (!file) { alert("Please select a resume file"); return; }
+  if (!file) { alert("Please select a resume file first"); return; }
 
   const btn = document.getElementById("analyzeBtn");
   const result = document.getElementById("result");
@@ -253,14 +287,20 @@ async function analyzeResume() {
   btn.disabled = true;
   btn.textContent = "Analyzing...";
   result.style.display = "block";
-  content.innerHTML = `<div class="loading"><div class="spinner"></div><p>Groq AI is performing deep analysis...</p></div>`;
+  content.innerHTML = `<div class="loading"><div class="spinner"></div><p>AI is performing deep analysis...</p></div>`;
 
   try {
     const formData = new FormData();
     formData.append("resume", file);
+
     const res = await fetch(`${BACKEND}/analyze-resume`, { method: "POST", body: formData });
     const data = await res.json();
 
+    // Verdict styling
+    const verdictClass = data.ai_verdict?.toLowerCase().includes("strong") ? "strong"
+                       : data.ai_verdict?.toLowerCase().includes("moderate") ? "moderate" : "weak";
+
+    // Skill breakdown bars
     const breakdown = data.skill_breakdown || {};
     const barsHTML = Object.entries(breakdown).map(([k,v]) => `
       <div class="bar-row">
@@ -269,15 +309,18 @@ async function analyzeResume() {
         <span class="bar-val">${v}%</span>
       </div>`).join('');
 
+    const skills = data.ai_skills_found || [];
     const strengths = data.strengths || [];
     const suggestions = data.suggestions || [];
-    const skills = data.ai_skills_found || [];
 
     content.innerHTML = `
-      <div class="metrics">
-        <div class="metric"><div class="val" style="color:var(--sky-deep)">${data.ats_score}%</div><div class="lbl">ATS Score</div></div>
-        <div class="metric"><div class="val" style="color:var(--mint-deep)">${data.readiness}%</div><div class="lbl">Readiness</div></div>
+      <div class="score-row">
+        <div class="score-box"><div class="val" style="color:var(--sky-deep)">${data.ats_score}%</div><div class="lbl">ATS Score</div></div>
+        <div class="score-box"><div class="val" style="color:var(--mint-deep)">${data.resume_score ?? data.readiness}%</div><div class="lbl">Resume Score</div></div>
+        <div class="score-box"><div class="val" style="color:var(--coral)">${data.readiness}%</div><div class="lbl">Readiness</div></div>
       </div>
+
+      <div class="verdict ${verdictClass}">${data.ai_verdict}</div>
 
       ${data.summary ? `
       <div class="section">
@@ -286,7 +329,7 @@ async function analyzeResume() {
       </div>` : ''}
 
       <div class="section">
-        <div class="section-title">Skills Found (${data.skills})</div>
+        <div class="section-title">Skills Detected (${data.skills})</div>
         ${skills.map(s => `<span class="badge">${s}</span>`).join('') || '<p style="font-size:13px;color:var(--text-faint);">No skills detected</p>'}
       </div>
 
@@ -304,19 +347,19 @@ async function analyzeResume() {
         ${suggestions.map(s => `<div class="list-item"><span class="icon" style="color:var(--amber)">→</span><span>${s}</span></div>`).join('')}
       </div>` : ''}
 
+      ${data.ai_feedback ? `
       <div class="section">
-        <div class="section-title">AI Verdict</div>
-        <p class="verdict-text">${data.ai_verdict}</p>
-        ${data.ai_feedback ? `<p class="feedback-text">${data.ai_feedback}</p>` : ''}
-      </div>
+        <div class="section-title">AI Feedback</div>
+        <p class="feedback-text">${data.ai_feedback}</p>
+      </div>` : ''}
 
       <a href="interview.html" class="cta-link">🎙️ Start Interview Now</a>
     `;
-  } catch(e) {
+  } catch (e) {
     content.innerHTML = `<div class="error-msg">Error running analysis. Please try again.</div>`;
   } finally {
     btn.disabled = false;
-    btn.textContent = "🤖 Run Full AI Analysis";
+    btn.textContent = "⚡ Run Full AI Analysis";
   }
 }
 </script>

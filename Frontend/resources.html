@@ -4,225 +4,317 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Resources — AI Interview Simulator</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-    --bg:            #F4FAF8;
-    --bg-elevated:   #FFFFFF;
-    --surface:       #EAF5F1;
-    --surface-2:     #DCEEE7;
-    --border:        rgba(15,42,36,0.09);
-    --border-strong: rgba(15,42,36,0.16);
-
-    --text:          #122A24;
-    --text-muted:    #52746B;
-    --text-faint:    #86A69C;
-
-    --mint:          #1FAE85;
-    --mint-deep:     #0E8A66;
-    --mint-dim:      rgba(31,174,133,0.13);
-    --sky:           #3D8BE0;
-    --sky-deep:      #2569B4;
-    --sky-dim:       rgba(61,139,224,0.13);
-    --coral:         #E0654C;
-
-    --display: 'Fraunces', Georgia, serif;
-    --body:    'Inter', -apple-system, sans-serif;
-    --mono:    'JetBrains Mono', 'Courier New', monospace;
+    --bg:#F4FAF8; --bg-elevated:#FFFFFF; --surface:#EAF5F1; --surface-2:#DCEEE7;
+    --border:rgba(15,42,36,0.09); --border-strong:rgba(15,42,36,0.16);
+    --text:#122A24; --text-muted:#52746B; --text-faint:#86A69C;
+    --mint:#1FAE85; --mint-deep:#0E8A66; --mint-dim:rgba(31,174,133,0.13);
+    --sky:#3D8BE0; --sky-deep:#2569B4; --sky-dim:rgba(61,139,224,0.13);
+    --coral:#E0654C; --warn:#D97706; --purple:#8B5CF6;
+    --display:'Fraunces',Georgia,serif; --body:'Inter',-apple-system,sans-serif; --mono:'JetBrains Mono','Courier New',monospace;
+    --radius:18px; --radius-sm:10px;
 }
-
-*{ margin:0; padding:0; box-sizing:border-box; }
-
-body{
-    font-family: var(--body);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 56px 20px;
-    background: var(--bg);
-    -webkit-font-smoothing:antialiased;
-}
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; }
+body{ font-family:var(--body); background:var(--bg); color:var(--text); line-height:1.6; -webkit-font-smoothing:antialiased; min-height:100vh; }
 body::before{
-    content:"";
-    position:fixed; inset:0; z-index:-1;
-    background:
-        radial-gradient(ellipse 900px 500px at 18% -5%, rgba(31,174,133,0.12), transparent 60%),
-        radial-gradient(ellipse 700px 500px at 100% 20%, rgba(61,139,224,0.12), transparent 60%),
-        var(--bg);
+    content:""; position:fixed; inset:0; z-index:-2;
+    background: radial-gradient(ellipse 900px 500px at 18% -5%, rgba(31,174,133,0.12), transparent 60%),
+                radial-gradient(ellipse 700px 500px at 100% 20%, rgba(61,139,224,0.12), transparent 60%), var(--bg);
 }
-::selection{ background:var(--mint); color:#fff; }
-a:focus-visible, button:focus-visible{ outline:2px solid var(--sky-deep); outline-offset:3px; }
+a{ color:inherit; text-decoration:none; }
+h1,h2,h3,h4{ font-family:var(--display); margin:0; font-weight:600; }
 
-.container{
-    max-width: 860px;
-    margin: auto;
-    background: var(--bg-elevated);
-    padding: 40px;
-    border-radius: 22px;
-    border: 1px solid var(--border-strong);
-    box-shadow: 0 24px 56px rgba(15,42,36,0.12);
-}
-
-.eyebrow{
-    font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
-    color:var(--mint-deep); display:flex; align-items:center; justify-content:center; gap:8px;
-    margin-bottom:10px;
-}
+/* PAGE */
+.page{ max-width:760px; margin:0 auto; padding:52px 24px 80px; }
+.eyebrow{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--mint-deep); display:inline-flex; align-items:center; gap:7px; margin-bottom:14px; }
 .eyebrow::before{ content:""; width:5px; height:5px; border-radius:50%; background:var(--mint); box-shadow:0 0 8px rgba(31,174,133,0.5); }
+.page h1{ font-size:clamp(28px,4vw,42px); line-height:1.1; margin-bottom:8px; }
+.page h1 em{ font-style:normal; color:var(--mint-deep); }
+.page .sub{ color:var(--text-muted); font-size:15px; margin-bottom:24px; max-width:56ch; }
 
-h1{
-    text-align: center;
-    margin-bottom: 6px;
-    font-family: var(--display);
-    font-weight: 600;
-    font-size: 32px;
-}
-.page-sub{
-    text-align:center;
-    color:var(--text-muted);
-    font-size:14px;
-    margin-bottom:36px;
-}
+.btn-outline{ display:flex; align-items:center; justify-content:center; width:100%; padding:13px; border:1px solid var(--border-strong); border-radius:999px; background:transparent; color:var(--text-muted); font-weight:600; font-size:14px; cursor:pointer; transition:.2s; margin-bottom:28px; }
+.btn-outline:hover{ border-color:var(--mint); color:var(--mint-deep); }
 
-.section{ margin-top: 32px; }
-.section:first-of-type{ margin-top: 0; }
+/* SEARCH + FILTERS */
+.search-box{ position:relative; margin-bottom:14px; }
+.search-box input{
+    width:100%; padding:12px 14px 12px 40px; background:var(--bg-elevated);
+    border:1px solid var(--border); border-radius:var(--radius-sm);
+    color:var(--text); font-family:var(--body); font-size:14px; outline:none; transition:border-color .2s;
+}
+.search-box input:focus{ border-color:var(--mint); }
+.search-box input::placeholder{ color:var(--text-faint); }
+.search-box .icon{ position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:14px; color:var(--text-faint); pointer-events:none; }
 
-.section h2{
-    margin-bottom: 16px;
-    color: var(--sky-deep);
-    font-family: var(--display);
-    font-weight: 600;
-    font-size: 19px;
-    display:flex; align-items:center; gap:9px;
-}
+.filter-row{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px; }
+.filter-chip{ padding:7px 14px; border-radius:999px; font-size:12.5px; font-weight:600; border:1px solid var(--border-strong); background:var(--bg-elevated); color:var(--text-muted); cursor:pointer; transition:.2s; font-family:var(--body); }
+.filter-chip:hover{ border-color:var(--mint); color:var(--mint-deep); }
+.filter-chip.active{ background:var(--mint-deep); border-color:var(--mint-deep); color:#fff; }
 
-.card{
-    background: var(--surface);
-    padding: 20px 22px;
-    border-radius: 15px;
-    margin-bottom: 14px;
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-    transition: border-color .2s ease, background .2s ease;
-}
-.card:hover{ border-color: var(--border-strong); background: var(--surface-2); }
-.card h3{
-    font-family: var(--body);
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--text);
-}
-.card p{
-    font-size: 12.5px;
-    color: var(--text-faint);
-    margin-top: 4px;
-}
+/* RESOURCE SECTIONS */
+.section{ background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius); padding:10px; margin-bottom:14px; }
+.section-label{ font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--mint-deep); font-weight:600; padding:10px 12px 6px; }
+.resource-list{ display:flex; flex-direction:column; }
+.resource-item{ display:flex; flex-direction:column; gap:3px; padding:11px 12px; border-radius:var(--radius-sm); transition:.15s; }
+.resource-item:hover{ background:var(--surface); }
+.resource-name{ font-weight:600; font-size:14px; color:var(--text); display:inline-flex; align-items:center; gap:6px; }
+.resource-name::after{ content:"↗"; font-size:11px; color:var(--text-faint); transition:.15s; }
+.resource-item:hover .resource-name::after{ color:var(--mint-deep); transform:translate(1px,-1px); }
+.resource-note{ font-size:12.5px; color:var(--text-muted); line-height:1.5; }
+.resource-tag{ display:inline-block; font-family:var(--mono); font-size:9.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--sky-deep); background:var(--sky-dim); padding:2px 7px; border-radius:999px; margin-top:2px; width:fit-content; }
 
-.btn{
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 20px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, var(--mint-deep), var(--sky-deep));
-    color: #fff;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 13.5px;
-    white-space: nowrap;
-    box-shadow: 0 8px 20px rgba(14,138,102,0.25);
-    transition: transform .2s ease, box-shadow .2s ease;
-}
-.btn:hover{ transform: scale(1.04); box-shadow: 0 10px 24px rgba(14,138,102,0.32); }
+.no-results{ display:none; text-align:center; padding:32px 20px; color:var(--text-faint); font-family:var(--mono); font-size:13px; }
+.no-results.show{ display:block; }
 
-.back{
-    margin-top: 34px;
-    width: 100%;
-    padding: 14px;
-    border: 1px solid var(--border-strong);
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 14px;
-    font-family: var(--body);
-    background: var(--bg-elevated);
-    color: var(--text-muted);
-    transition: .2s ease;
-}
-.back:hover{ background: var(--surface); color: var(--text); }
+/* CROSS-LINKS */
+.action-row{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:24px; }
+.action-link{ display:block; text-align:center; padding:12px 8px; border-radius:var(--radius-sm); font-weight:600; font-size:12.5px; border:1px solid var(--border); transition:.2s; color:var(--text-muted); background:var(--bg-elevated); }
+.action-link:hover{ border-color:var(--mint); color:var(--mint-deep); background:var(--mint-dim); }
 
-@media (max-width:600px){
-    .container{ padding: 26px; }
-    .card{ flex-direction: column; align-items: flex-start; }
-    .btn{ width: 100%; justify-content: center; }
-}
+@media(max-width:520px){ .action-row{ grid-template-columns:1fr; } }
 </style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="page">
+    <span class="eyebrow">Resources</span>
+    <h1>Everything you need,<br>in <em>one</em> place</h1>
+    <p class="sub">Hand-picked practice platforms, guides, books, and communities to back up your roadmap — organized by what you're working on right now.</p>
 
-    <span class="eyebrow">Keep learning</span>
-    <h1>📚 Learning Resources</h1>
-    <p class="page-sub">Curated reading and videos to round out what the mock interviews cover.</p>
+    <button class="btn-outline" onclick="window.location.href='index.html'">← Back to Dashboard</button>
 
-    <div class="section">
-        <h2>📄 PDF Resources</h2>
+    <div class="search-box">
+        <span class="icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search resources — e.g. system design, resume, salary...">
+    </div>
 
-        <div class="card">
-            <div>
-                <h3>Resume Building Guide</h3>
-                <p>A structured walkthrough of resume formatting and content.</p>
-            </div>
-            <a class="btn" href="https://www.overleaf.com/learn/latex/How_to_Write_a_Resume" target="_blank">Open PDF</a>
-        </div>
+    <div class="filter-row" id="filterRow">
+        <button class="filter-chip active" data-category="all">All</button>
+        <button class="filter-chip" data-category="coding">💻 Coding &amp; DSA</button>
+        <button class="filter-chip" data-category="system">🏗️ System Design</button>
+        <button class="filter-chip" data-category="behavioral">🤝 Behavioral &amp; HR</button>
+        <button class="filter-chip" data-category="resume">📄 Resume &amp; LinkedIn</button>
+        <button class="filter-chip" data-category="salary">💰 Salary &amp; Offers</button>
+        <button class="filter-chip" data-category="books">📚 Books</button>
+        <button class="filter-chip" data-category="community">👥 Communities</button>
+    </div>
 
-        <div class="card">
-            <div>
-                <h3>Interview Preparation</h3>
-                <p>A question bank spanning technical and behavioral rounds.</p>
-            </div>
-            <a class="btn" href="https://www.interviewbit.com/interview-questions/" target="_blank">Open PDF</a>
+    <!-- Coding & DSA -->
+    <div class="section" data-category="coding">
+        <div class="section-label">💻 Coding &amp; DSA Practice</div>
+        <div class="resource-list">
+            <a class="resource-item" href="https://leetcode.com" target="_blank" rel="noopener">
+                <span class="resource-name">LeetCode</span>
+                <span class="resource-note">The most widely used coding interview practice platform — thousands of problems, many tagged by company.</span>
+            </a>
+            <a class="resource-item" href="https://neetcode.io" target="_blank" rel="noopener">
+                <span class="resource-name">NeetCode</span>
+                <span class="resource-note">Curated problem lists (like the NeetCode 150) with clear video walkthroughs for core patterns.</span>
+            </a>
+            <a class="resource-item" href="https://www.hackerrank.com" target="_blank" rel="noopener">
+                <span class="resource-name">HackerRank</span>
+                <span class="resource-note">Practice problems plus real skill-certification tests some employers accept directly.</span>
+            </a>
+            <a class="resource-item" href="https://www.geeksforgeeks.org" target="_blank" rel="noopener">
+                <span class="resource-name">GeeksforGeeks</span>
+                <span class="resource-note">Deep reference articles on data structures, algorithms, and company-specific interview experiences.</span>
+            </a>
+            <a class="resource-item" href="https://www.interviewbit.com" target="_blank" rel="noopener">
+                <span class="resource-name">InterviewBit</span>
+                <span class="resource-note">Structured, level-based DSA tracks aimed specifically at interview prep.</span>
+            </a>
+            <a class="resource-item" href="https://www.codewars.com" target="_blank" rel="noopener">
+                <span class="resource-name">Codewars</span>
+                <span class="resource-note">Bite-sized "kata" challenges — good for daily practice and language fluency.</span>
+            </a>
         </div>
     </div>
 
-    <div class="section">
-        <h2>🎥 YouTube Resources</h2>
-
-        <div class="card">
-            <div>
-                <h3>AI Interview Preparation</h3>
-                <p>What to expect and how to practice for AI-driven interviews.</p>
-            </div>
-            <a class="btn" href="https://www.youtube.com/watch?v=70heaIgcxr4" target="_blank">▶ Watch Video</a>
-        </div>
-
-        <div class="card">
-            <div>
-                <h3>Resume Tips</h3>
-                <p>Quick, practical edits that raise your ATS score.</p>
-            </div>
-            <a class="btn" href="https://www.youtube.com/watch?v=_mFbMJ7yGfM" target="_blank">▶ Watch Video</a>
+    <!-- System Design -->
+    <div class="section" data-category="system">
+        <div class="section-label">🏗️ System Design</div>
+        <div class="resource-list">
+            <a class="resource-item" href="https://github.com/donnemartin/system-design-primer" target="_blank" rel="noopener">
+                <span class="resource-name">System Design Primer</span>
+                <span class="resource-note">Free, thorough open-source guide covering scalability fundamentals — the standard starting point.</span>
+            </a>
+            <a class="resource-item" href="https://bytebytego.com" target="_blank" rel="noopener">
+                <span class="resource-name">ByteByteGo</span>
+                <span class="resource-note">Visual explainers and newsletter breaking down real-world system architectures.</span>
+            </a>
+            <a class="resource-item" href="https://www.educative.io" target="_blank" rel="noopener">
+                <span class="resource-name">Educative — Grokking System Design</span>
+                <span class="resource-note">Paid, structured interactive course walking through classic system design interview questions.</span>
+            </a>
+            <a class="resource-item" href="http://highscalability.com" target="_blank" rel="noopener">
+                <span class="resource-name">High Scalability</span>
+                <span class="resource-note">Long-running blog of real architecture case studies from engineering teams at scale.</span>
+            </a>
         </div>
     </div>
 
-    <button class="back" onclick="goBack()">⬅ Back to Dashboard</button>
+    <!-- Behavioral & HR -->
+    <div class="section" data-category="behavioral">
+        <div class="section-label">🤝 Behavioral &amp; HR Interviews</div>
+        <div class="resource-list">
+            <a class="resource-item" href="https://www.pramp.com" target="_blank" rel="noopener">
+                <span class="resource-name">Pramp</span>
+                <span class="resource-note">Free live peer-to-peer mock interviews — both technical and behavioral formats.</span>
+            </a>
+            <a class="resource-item" href="https://www.biginterview.com" target="_blank" rel="noopener">
+                <span class="resource-name">Big Interview</span>
+                <span class="resource-note">Structured video-based training built around the STAR method for behavioral answers.</span>
+            </a>
+            <a class="resource-item" href="https://www.glassdoor.com" target="_blank" rel="noopener">
+                <span class="resource-name">Glassdoor Interview Questions</span>
+                <span class="resource-note">Real, company-specific interview questions and experiences reported by past candidates.</span>
+            </a>
+            <a class="resource-item" href="https://www.google.com/search?q=STAR+method+interview">
+                <span class="resource-name">The STAR Method</span>
+                <span class="resource-note">Situation → Task → Action → Result — the standard framework for structuring behavioral answers.</span>
+            </a>
+        </div>
+    </div>
 
+    <!-- Resume & LinkedIn -->
+    <div class="section" data-category="resume">
+        <div class="section-label">📄 Resume &amp; LinkedIn</div>
+        <div class="resource-list">
+            <a class="resource-item" href="https://zety.com" target="_blank" rel="noopener">
+                <span class="resource-name">Zety</span>
+                <span class="resource-note">Resume and cover letter builder with ATS-friendly templates.</span>
+            </a>
+            <a class="resource-item" href="https://novoresume.com" target="_blank" rel="noopener">
+                <span class="resource-name">Novoresume</span>
+                <span class="resource-note">Clean, modern resume templates with built-in content suggestions.</span>
+            </a>
+            <a class="resource-item" href="https://www.linkedin.com/learning" target="_blank" rel="noopener">
+                <span class="resource-name">LinkedIn Learning</span>
+                <span class="resource-note">Video courses on interviewing, resume writing, and personal branding.</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Salary & Offers -->
+    <div class="section" data-category="salary">
+        <div class="section-label">💰 Salary &amp; Offer Negotiation</div>
+        <div class="resource-list">
+            <a class="resource-item" href="https://www.levels.fyi" target="_blank" rel="noopener">
+                <span class="resource-name">Levels.fyi</span>
+                <span class="resource-note">Crowdsourced compensation data by company and level — the standard for tech offer benchmarking.</span>
+            </a>
+            <a class="resource-item" href="https://www.glassdoor.com/Salaries" target="_blank" rel="noopener">
+                <span class="resource-name">Glassdoor Salaries</span>
+                <span class="resource-note">Broader coverage across industries, not just tech.</span>
+            </a>
+            <a class="resource-item" href="https://www.payscale.com" target="_blank" rel="noopener">
+                <span class="resource-name">Payscale</span>
+                <span class="resource-note">Personalized pay reports based on your role, skills, and location.</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Books -->
+    <div class="section" data-category="books">
+        <div class="section-label">📚 Books Worth Reading</div>
+        <div class="resource-list">
+            <a class="resource-item" href="https://www.google.com/search?q=Cracking+the+Coding+Interview+Gayle+Laakmann+McDowell">
+                <span class="resource-name">Cracking the Coding Interview</span>
+                <span class="resource-note">Gayle Laakmann McDowell — the classic reference for coding interview patterns and problems.</span>
+                <span class="resource-tag">Coding</span>
+            </a>
+            <a class="resource-item" href="https://www.google.com/search?q=Designing+Data-Intensive+Applications+Martin+Kleppmann">
+                <span class="resource-name">Designing Data-Intensive Applications</span>
+                <span class="resource-note">Martin Kleppmann — deep, well-respected reading on the fundamentals behind system design.</span>
+                <span class="resource-tag">System Design</span>
+            </a>
+            <a class="resource-item" href="https://www.google.com/search?q=Never+Split+the+Difference+Chris+Voss">
+                <span class="resource-name">Never Split the Difference</span>
+                <span class="resource-note">Chris Voss — negotiation tactics from an FBI hostage negotiator, widely applied to salary talks.</span>
+                <span class="resource-tag">Negotiation</span>
+            </a>
+            <a class="resource-item" href="https://www.google.com/search?q=The+Pragmatic+Programmer+Hunt+Thomas">
+                <span class="resource-name">The Pragmatic Programmer</span>
+                <span class="resource-note">Hunt &amp; Thomas — broad software craftsmanship habits that come up often in technical discussions.</span>
+                <span class="resource-tag">Technical</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Communities -->
+    <div class="section" data-category="community">
+        <div class="section-label">👥 Communities &amp; Networking</div>
+        <div class="resource-list">
+            <a class="resource-item" href="https://www.reddit.com/r/cscareerquestions" target="_blank" rel="noopener">
+                <span class="resource-name">r/cscareerquestions</span>
+                <span class="resource-note">Active Reddit community for interview experiences, offer comparisons, and career advice.</span>
+            </a>
+            <a class="resource-item" href="https://www.teamblind.com" target="_blank" rel="noopener">
+                <span class="resource-name">Blind</span>
+                <span class="resource-note">Anonymous professional community popular for candid compensation and interview discussions.</span>
+            </a>
+            <a class="resource-item" href="https://www.freecodecamp.org" target="_blank" rel="noopener">
+                <span class="resource-name">freeCodeCamp</span>
+                <span class="resource-note">Free curriculum plus an active forum for developers at every stage.</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="no-results" id="noResults">No resources match your search.</div>
+
+    <div class="action-row">
+        <a href="roadmap.html" class="action-link">🧭 Career Roadmap</a>
+        <a href="skill.html" class="action-link">🔍 Skill Gaps</a>
+        <a href="voice-interview.html" class="action-link">🎙️ Voice Interview</a>
+    </div>
 </div>
 
 <script>
-function goBack(){
-    window.location.href = "index.html";
+const searchInput = document.getElementById('searchInput');
+const chips = document.querySelectorAll('.filter-chip');
+const sections = document.querySelectorAll('.section[data-category]');
+const noResults = document.getElementById('noResults');
+let activeCategory = 'all';
+
+chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeCategory = chip.dataset.category;
+        applyFilters();
+    });
+});
+
+searchInput.addEventListener('input', applyFilters);
+
+function applyFilters() {
+    const query = searchInput.value.trim().toLowerCase();
+    let anySectionVisible = false;
+
+    sections.forEach(section => {
+        const cat = section.dataset.category;
+        const categoryMatch = activeCategory === 'all' || activeCategory === cat;
+        let anyItemVisible = false;
+
+        section.querySelectorAll('.resource-item').forEach(item => {
+            const text = item.textContent.toLowerCase();
+            const matchesQuery = !query || text.includes(query);
+            const visible = categoryMatch && matchesQuery;
+            item.style.display = visible ? '' : 'none';
+            if (visible) anyItemVisible = true;
+        });
+
+        section.style.display = anyItemVisible ? '' : 'none';
+        if (anyItemVisible) anySectionVisible = true;
+    });
+
+    noResults.classList.toggle('show', !anySectionVisible);
 }
 </script>
-
 </body>
 </html>
