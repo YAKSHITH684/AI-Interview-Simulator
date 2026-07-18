@@ -722,7 +722,13 @@ a:focus-visible, button:focus-visible, textarea:focus-visible{
         <button class="cw-send" id="cwSend" onclick="cwSendMsg()" aria-label="Send message">➤</button>
     </div>
 </div>
+<body>
 
+<script>
+if (localStorage.getItem("loggedIn") !== "true") {
+    window.location.replace("01_login.html");
+}
+</script>
 
 <script>
 // ── ORIGINAL SCRIPTS (unchanged behavior) ──
@@ -750,9 +756,9 @@ function menu() {
 }
 
 function logout() {
-    localStorage.clear();
+    localStorage.removeItem("loggedIn");
     sessionStorage.clear();
-    window.location.href = "01_login.html";
+    window.location.replace("01_login.html");
 }
 
 // ── CHATBOT ──
