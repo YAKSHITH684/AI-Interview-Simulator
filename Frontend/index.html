@@ -3,6 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ═══════════════════════════════════════
+     AUTH GUARD — must stay first in <head>,
+     before CSS/fonts/anything else.
+     Runs synchronously while the browser is
+     still parsing <head>, so it redirects
+     before the page ever gets painted —
+     no flash of index.html content.
+═══════════════════════════════════════ -->
+<script>
+(function () {
+  if (localStorage.getItem("loggedIn") !== "true") {
+    window.location.replace("01_login.html");
+  }
+})();
+</script>
+
 <title>AI Interview Simulator — Rehearse the room before you walk in</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -722,13 +739,7 @@ a:focus-visible, button:focus-visible, textarea:focus-visible{
         <button class="cw-send" id="cwSend" onclick="cwSendMsg()" aria-label="Send message">➤</button>
     </div>
 </div>
-<body>
 
-<script>
-if (localStorage.getItem("loggedIn") !== "true") {
-    window.location.replace("01_login.html");
-}
-</script>
 
 <script>
 // ── ORIGINAL SCRIPTS (unchanged behavior) ──
@@ -756,9 +767,9 @@ function menu() {
 }
 
 function logout() {
-    localStorage.removeItem("loggedIn");
+    localStorage.clear();
     sessionStorage.clear();
-    window.location.replace("01_login.html");
+    window.location.href = "01_login.html";
 }
 
 // ── CHATBOT ──
