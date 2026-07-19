@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Log In — AI Interview Simulator</title>
 
+<!-- ═══════════════════════════════════════
+     BACKEND WARM-UP — fires the instant this
+     page starts loading (this is the very first
+     page most users hit). By the time they've
+     typed their email/password and clicked Log In,
+     Render's container is already awake, so the
+     /login request itself is fast.
+═══════════════════════════════════════ -->
+<script>
+(function warmBackend() {
+  fetch("https://ai-interview-simulator-316l.onrender.com/ping").catch(function () {});
+})();
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -153,10 +167,29 @@ a:focus-visible, button:focus-visible, input:focus-visible{ outline:2px solid va
   color:#fff;
   cursor:pointer;
   box-shadow: 0 10px 26px rgba(14,138,102,0.28);
-  transition: transform .2s ease, box-shadow .2s ease;
+  transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+  display:flex; align-items:center; justify-content:center; gap:9px;
 }
 .login-btn:hover{ transform:translateY(-2px); box-shadow: 0 14px 32px rgba(14,138,102,0.36); }
 .login-btn:active{ transform:translateY(0); }
+.login-btn:disabled{
+  opacity: .75;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* small spinner shown inside the button while a login request is in flight */
+.spinner{
+  width:15px; height:15px;
+  border:2px solid rgba(255,255,255,0.4);
+  border-top-color:#fff;
+  border-radius:50%;
+  display:none;
+  animation: spin .7s linear infinite;
+}
+.login-btn.loading .spinner{ display:inline-block; }
+.login-btn.loading .btn-text{ opacity:.85; }
+@keyframes spin{ to{ transform: rotate(360deg); } }
 
 .footer{
   text-align:center;
@@ -203,7 +236,10 @@ a:hover{ text-decoration: underline; }
     <a href="03_forgot_password.html">Forgot password?</a>
   </div>
 
-  <button class="login-btn" onclick="login()">Log In</button>
+  <button class="login-btn" id="loginBtn" onclick="login()">
+    <span class="spinner"></span>
+    <span class="btn-text">Log In</span>
+  </button>
 
   <div id="error"></div>
 
@@ -233,6 +269,9 @@ let error =
 document
 .getElementById("error");
 
+let btn = document.getElementById("loginBtn");
+let btnText = btn.querySelector(".btn-text");
+
 
 error.innerHTML="";
 
@@ -249,6 +288,13 @@ error.innerHTML=
 return;
 
 }
+
+// Immediate visual feedback the instant the click happens —
+// button locks and shows a spinner so it never feels unresponsive,
+// even while the network request is still in flight.
+btn.disabled = true;
+btn.classList.add("loading");
+btnText.textContent = "Logging in...";
 
 
 try{
@@ -300,12 +346,10 @@ localStorage.setItem(
 "true"
 );
 
-alert(
-"Login Successful"
-);
-
 window.location.href=
 "index.html";
+
+return; // navigating away — no need to reset button state
 
 }
 
@@ -323,6 +367,16 @@ catch{
 error.innerHTML=
 
 "Backend not running";
+
+}
+
+finally{
+
+// Only reached on failure/invalid-login paths (success already
+// navigated away above), so it's safe to always reset here.
+btn.disabled = false;
+btn.classList.remove("loading");
+btnText.textContent = "Log In";
 
 }
 

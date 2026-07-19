@@ -20,6 +20,21 @@
 })();
 </script>
 
+<!-- ═══════════════════════════════════════
+     BACKEND WARM-UP — fires the moment the
+     browser starts parsing <head>, in parallel
+     with everything else. By the time the user
+     opens the chat widget or clicks "Interview",
+     Render's container + Groq connection are
+     already awake instead of cold-starting on
+     the first real request.
+═══════════════════════════════════════ -->
+<script>
+(function warmBackend() {
+  fetch("https://ai-interview-simulator-316l.onrender.com/ping").catch(function () {});
+})();
+</script>
+
 <title>AI Interview Simulator — Rehearse the room before you walk in</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">

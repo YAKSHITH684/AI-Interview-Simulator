@@ -89,6 +89,16 @@ def stream_groq(system: str, messages: list, max_tokens: int = 300):
 
 
 # ─────────────────────────────────────────
+# WARM-UP PING — called by every frontend page on load to wake
+# a sleeping Render free-tier instance before the user's first
+# real request (login, chat, resume upload, etc.)
+# ─────────────────────────────────────────
+@router.get("/ping")
+def ping():
+    return {"status": "awake"}
+
+
+# ─────────────────────────────────────────
 # AUTH
 # ─────────────────────────────────────────
 class RegisterRequest(BaseModel):
