@@ -3,6 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ═══════════════════════════════════════
+     BACKEND WARM-UP — fires the moment the
+     browser starts parsing <head>, in parallel
+     with everything else, so Render's container
+     + Groq connection are already awake by the
+     time "Generate AI Career Roadmap" is clicked.
+═══════════════════════════════════════ -->
+<script>
+(function warmBackend() {
+  fetch("https://ai-interview-simulator-316l.onrender.com/ping").catch(function () {});
+})();
+</script>
+
 <title>AI Career Roadmap — AI Interview Simulator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
