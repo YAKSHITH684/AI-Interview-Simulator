@@ -509,17 +509,27 @@ function setBusy(state) {
     if (recognition) document.getElementById("micBtn").disabled = state;
 }
 
-async function callChat(message) {
+async function callChat(message, onChunk) {
     const mode = document.getElementById("modeSelect").value;
     const res = await fetch(`${BACKEND}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message, history, mode })
     });
-    if (!res.ok) throw new Error("Backend error " + res.status);
-    const data = await res.json();
-    history = data.history || history;
-    return data.reply;
+    if (!res.ok || !res.body) throw new Error("Backend error " + res.status);
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let full = "";
+
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const text = decoder.decode(value, { stream: true });
+        full += text;
+        onChunk(full);
+    }
+    return full;
 }
 
 async function newSession() {
@@ -529,12 +539,15 @@ async function newSession() {
     document.getElementById("chat").innerHTML = "";
     document.getElementById("progressBar").style.width = "0%";
     setBusy(true);
-    showTyping();
+
+    const div = startAIStreamBubble();
     try {
-        const reply = await callChat("");
-        addAI(reply);
-    } catch(e) {
-        addAI("Could not connect to the server. Please try again.");
+        const full = await callChat("", (partial) => updateAIStreamBubble(div, partial));
+        finalizeAIStreamBubble(div, full);
+        history.push({ role: "assistant", content: full });
+        updateProgress();
+    } catch (e) {
+        finalizeAIStreamBubble(div, "Could not connect to the server. Please try again.");
     } finally {
         setBusy(false);
     }
@@ -548,19 +561,54 @@ async function send() {
     if (recognizing) recognition.stop();
 
     addUser(text);
+    history.push({ role: "user", content: text });
     input.value = "";
     input.style.height = "auto";
     setBusy(true);
-    showTyping();
 
+    const div = startAIStreamBubble();
     try {
-        const reply = await callChat(text);
-        addAI(reply);
-    } catch(e) {
-        addAI("Could not reach the server. Please try again.");
+        const full = await callChat(text, (partial) => updateAIStreamBubble(div, partial));
+        finalizeAIStreamBubble(div, full);
+        history.push({ role: "assistant", content: full });
+        updateProgress();
+    } catch (e) {
+        finalizeAIStreamBubble(div, "Could not reach the server. Please try again.");
     } finally {
         setBusy(false);
     }
+}
+
+// Helpers to render a message bubble that fills in as text streams
+function startAIStreamBubble() {
+    const div = document.createElement("div");
+    div.className = "ai";
+    const span = document.createElement("span");
+    span.className = "msg-text";
+    span.textContent = "🤖 ";
+    div.appendChild(span);
+    document.getElementById("chat").appendChild(div);
+    scrollBottom();
+    return div;
+}
+
+function updateAIStreamBubble(div, partialText) {
+    div.querySelector(".msg-text").textContent = "🤖 " + partialText;
+    scrollBottom();
+}
+
+function finalizeAIStreamBubble(div, finalText) {
+    div.querySelector(".msg-text").textContent = "🤖 " + finalText;
+    if (synthSupported) {
+        const replayBtn = document.createElement("button");
+        replayBtn.className = "replay-btn";
+        replayBtn.title = "Play this question";
+        replayBtn.textContent = "🔊";
+        replayBtn.onclick = () => speak(finalText, replayBtn);
+        div.appendChild(replayBtn);
+        if (autoSpeak) speak(finalText, replayBtn);
+    }
+    scrollBottom();
 }
 
 // Auto resize textarea

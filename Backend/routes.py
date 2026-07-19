@@ -1,8 +1,10 @@
 from fastapi import APIRouter, UploadFile, File
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List
 import random
 import os
+import json
 import requests
 
 from database.database import SessionLocal
@@ -15,7 +17,8 @@ GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_MODEL = "llama-3.3-70b-versatile"
 
 
-def ask_groq(system: str, messages: list, max_tokens: int = 800) -> str:
+def ask_groq(system: str, messages: list, max_tokens: int = 300) -> str:
+    """Non-streaming call — still used by resume analysis, practice feedback, and the assistant chatbot."""
     if not GROQ_API_KEY:
         print("GROQ: No API key found in environment")
         return None
@@ -37,6 +40,52 @@ def ask_groq(system: str, messages: list, max_tokens: int = 800) -> str:
     except Exception as e:
         print(f"GROQ EXCEPTION: {e}")
         return None
+
+
+def stream_groq(system: str, messages: list, max_tokens: int = 300):
+    """Streams text chunks as Groq generates them — used by /chat so the first words
+    reach the browser in well under a second instead of waiting for the full reply."""
+    if not GROQ_API_KEY:
+        print("GROQ: No API key found in environment")
+        yield None
+        return
+    payload = {
+        "model": GROQ_MODEL,
+        "max_tokens": max_tokens,
+        "messages": [{"role": "system", "content": system}] + messages,
+        "stream": True
+    }
+    try:
+        with requests.post(
+            GROQ_URL,
+            headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"},
+            json=payload,
+            stream=True,
+            timeout=15
+        ) as res:
+            got_any = False
+            for line in res.iter_lines():
+                if not line:
+                    continue
+                line = line.decode("utf-8")
+                if not line.startswith("data: "):
+                    continue
+                data_str = line[len("data: "):]
+                if data_str.strip() == "[DONE]":
+                    break
+                try:
+                    chunk = json.loads(data_str)
+                    delta = chunk["choices"][0]["delta"].get("content")
+                    if delta:
+                        got_any = True
+                        yield delta
+                except Exception:
+                    continue
+            if not got_any:
+                yield None
+    except Exception as e:
+        print(f"GROQ STREAM EXCEPTION: {e}")
+        yield None
 
 
 # ─────────────────────────────────────────
@@ -338,6 +387,8 @@ FALLBACK_FEEDBACK = [
 
 @router.post("/chat")
 def chat(data: ChatRequest):
+    """Streams the reply back as plain text chunks. The frontend is responsible for
+    appending each chunk to `history` once the stream finishes (see interview.html)."""
     mode = data.mode if data.mode in SYSTEM_PROMPTS else "technical"
     history = list(data.history)
     msg = data.message.strip()
@@ -349,27 +400,30 @@ def chat(data: ChatRequest):
             "system": "System Design", "dsa": "DSA"
         }.get(mode, "Technical")
 
-        # Try Groq AI for opening
-        ai_reply = ask_groq(
-            SYSTEM_PROMPTS[mode],
-            [{"role": "user", "content": f"Start the interview. Mode: {mode_label}. Greet me warmly and ask the first question."}]
-        )
+        prompt_messages = [{
+            "role": "user",
+            "content": f"Start the interview. Mode: {mode_label}. Greet me warmly and ask the first question."
+        }]
 
-        if ai_reply:
-            reply = ai_reply
-        else:
-            questions = FALLBACK_QUESTIONS[mode]
-            reply = (
-                f"Welcome to the AI Interview Simulator!\n\n"
-                f"Mode: {mode_label}\n\n"
-                f"I will ask you 10 questions. Take your time and answer clearly.\n\n"
-                f"Tip: Be specific, use examples, and stay confident!\n\n"
-                f"---\n"
-                f"Question 1 of 10:\n\n{questions[0]}"
-            )
+        def gen():
+            got_any = False
+            for chunk in stream_groq(SYSTEM_PROMPTS[mode], prompt_messages):
+                if chunk is None and not got_any:
+                    questions = FALLBACK_QUESTIONS[mode]
+                    yield (
+                        f"Welcome to the AI Interview Simulator!\n\n"
+                        f"Mode: {mode_label}\n\n"
+                        f"I will ask you 10 questions. Take your time and answer clearly.\n\n"
+                        f"Tip: Be specific, use examples, and stay confident!\n\n"
+                        f"---\n"
+                        f"Question 1 of 10:\n\n{questions[0]}"
+                    )
+                    return
+                if chunk:
+                    got_any = True
+                    yield chunk
 
-        history.append({"role": "assistant", "content": reply})
-        return {"reply": reply, "history": history}
+        return StreamingResponse(gen(), media_type="text/plain")
 
     # Count answered questions
     user_turns = [h for h in history if h.get("role") == "user"]
@@ -380,34 +434,34 @@ def chat(data: ChatRequest):
 
     # Interview complete after 10 questions
     if answered_count >= 10:
-        reply = (
-            "Interview Complete!\n\n"
-            "You answered all 10 questions.\n\n"
-            "Great job! Keep practicing to improve your confidence.\n\n"
-            "Click New to start another round."
-        )
-        history.append({"role": "assistant", "content": reply})
-        return {"reply": reply, "history": history}
+        def gen_done():
+            yield (
+                "Interview Complete!\n\n"
+                "You answered all 10 questions.\n\n"
+                "Great job! Keep practicing to improve your confidence.\n\n"
+                "Click New to start another round."
+            )
+        return StreamingResponse(gen_done(), media_type="text/plain")
 
-    # Try Groq AI for dynamic response
-    ai_reply = ask_groq(SYSTEM_PROMPTS[mode], history[-6:])  # last 6 turns for context
+    def gen():
+        got_any = False
+        for chunk in stream_groq(SYSTEM_PROMPTS[mode], history[-6:]):  # last 6 turns for context
+            if chunk is None and not got_any:
+                questions = FALLBACK_QUESTIONS[mode]
+                fb = random.choice(FALLBACK_FEEDBACK)
+                next_q_num = answered_count + 1
+                next_question = questions[min(answered_count, len(questions) - 1)]
+                yield (
+                    f"Feedback: {fb}\n\n"
+                    f"---\n"
+                    f"Question {next_q_num} of 10:\n\n{next_question}"
+                )
+                return
+            if chunk:
+                got_any = True
+                yield chunk
 
-    if ai_reply:
-        reply = ai_reply
-    else:
-        # Fallback rule-based
-        questions = FALLBACK_QUESTIONS[mode]
-        fb = random.choice(FALLBACK_FEEDBACK)
-        next_q_num = answered_count + 1
-        next_question = questions[min(answered_count, len(questions) - 1)]
-        reply = (
-            f"Feedback: {fb}\n\n"
-            f"---\n"
-            f"Question {next_q_num} of 10:\n\n{next_question}"
-        )
-
-    history.append({"role": "assistant", "content": reply})
-    return {"reply": reply, "history": history}
+    return StreamingResponse(gen(), media_type="text/plain")
 
 
 # ─────────────────────────────────────────
